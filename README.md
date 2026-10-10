@@ -70,11 +70,11 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 
 ## 待补充
 
-- AIGC-FLOW 案例页按 Figma `31:418` 实现，路径 `/projects/aigc-flow`。GitHub 地址在 `src/lib/aigc-flow.ts` 的 `caseLinks.github` 配置；Contact 沿用 `home-cards.ts` 的配置。链接未提供时显示带说明的占位，首页项目卡片暂不替换。
+- AIGC-FLOW 案例页按 Figma `31:418` 实现，路径 `/projects/aigc-flow`。GitHub 地址在 `src/lib/aigc-flow.ts` 的 `caseLinks.github` 配置；Contact 沿用 `home-cards.ts` 的配置。链接未提供时显示带说明的占位。首页原 Skip 位置已按 Figma `4:617` / `4:1210` 替换为 AIGC-FLOW 入口，左下角按钮在当前标签页跳转；保留 `skip` 布局 ID 以兼容已保存的拖拽排列。
 - 案例页宽度达到 900px 且视口高度至少 700px 时启用滚动固定；短视口、窄屏和减少动态效果模式展示完整说明。步骤支持点击和键盘选择；打磨记录支持触控滑动与前后按钮；重试保存为本地交互演示，不调用真实生成服务。
 - 案例页画布示意在深色主题仍保持浅色，遵循 Figma。原始 SVG 保持不变，无障碍说明由使用处的 `alt`、`figcaption` 和正文提供；Biome 仅对这些 SVG 关闭 `noSvgWithoutTitle`。
 
-- 地图与 Vouch / Skip / Wrap 图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/*-light.png` / `*-dark.png`）。
+- 地图与 Vouch / Wrap 图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/*-light.png` / `*-dark.png`）。
 - Contact、文章、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
 - 项目卡片只通过左下角按钮跳转，整张卡片不可点击，便于拖拽。
 - Media 分类的突出卡片暂定为 Music 与 Social。

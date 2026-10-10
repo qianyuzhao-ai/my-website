@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowIcon } from "@/components/home/icons";
 
 type ProjectLinkProps = {
@@ -26,6 +27,19 @@ export function ProjectLink({ name, href }: ProjectLinkProps) {
       <span className={className} title="链接待提供">
         {content}
       </span>
+    );
+  }
+
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return (
+      <Link
+        href={href}
+        draggable={false}
+        data-no-drag
+        className={`${className} transition-colors before:absolute before:-inset-1 hover:border-fg-muted focus-visible:outline-offset-2`}
+      >
+        {content}
+      </Link>
     );
   }
 

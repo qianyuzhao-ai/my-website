@@ -1,3 +1,4 @@
+import { AigcFlowCard } from "@/components/home/aigc-flow-card";
 import { HomeBento } from "@/components/home/home-bento";
 import { HomeFooter } from "@/components/home/home-footer";
 import {
@@ -37,7 +38,7 @@ export default async function Home({
           music: <MusicCard />,
           social: <SocialCard />,
           vouch: <ProjectCard id="vouch" />,
-          skip: <ProjectCard id="skip" />,
+          skip: <AigcFlowCard />,
           article: <ArticleCard />,
           wrap: <ProjectCard id="wrap" />,
           theme: <ThemeCard />,

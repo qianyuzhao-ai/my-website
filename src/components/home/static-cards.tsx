@@ -99,13 +99,6 @@ const artwork = {
     className: "h-[400px]",
     position: "object-[50%_81%] md:object-center",
   },
-  skip: {
-    width: 280,
-    height: 524,
-    alt: "Skip 项目界面截图",
-    className: "h-[400px]",
-    position: "object-[50%_81%] md:object-center",
-  },
   wrap: {
     width: 576,
     height: 230,

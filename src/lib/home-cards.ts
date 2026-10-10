@@ -126,14 +126,15 @@ export const links = {
   article: undefined as string | undefined,
   social: "https://x.com/qianyu_ai" as string | undefined,
   vouch: undefined as string | undefined,
-  skip: undefined as string | undefined,
+  // 保留 skip 布局 ID，兼容访客已保存的 home-layout-v1 排列。
+  skip: "/projects/aigc-flow",
   wrap: undefined as string | undefined,
 };
 
 export const projects = {
   social: { name: "X", tone: "bg-card-blue" },
   vouch: { name: "Vouch", tone: "bg-card-blue" },
-  skip: { name: "Skip", tone: "bg-card-pink" },
+  skip: { name: "AIGC-FLOW", tone: "bg-card-mint" },
   wrap: { name: "Wrap.so", tone: "bg-card-yellow" },
 } as const;
 

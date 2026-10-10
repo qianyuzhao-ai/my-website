@@ -143,6 +143,32 @@ summary {
   color: var(--fg);
 }
 
+/* AIGC-FLOW 首页卡片：移动端 358×400，桌面端 280×576。 */
+.aigc-entry-art {
+  position: absolute;
+  inset: 0;
+  container-type: inline-size;
+  pointer-events: none;
+}
+.dark .aigc-entry-art {
+  inset: -1.5px;
+}
+.aigc-entry-canvas {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 358px;
+  height: 400px;
+  transform: scale(calc(100cqw / 358px));
+  transform-origin: top left;
+}
+@media (min-width: 768px) {
+  .aigc-entry-canvas {
+    width: 280px;
+    height: 576px;
+    transform: scale(calc(100cqw / 280px));
+  }
+}
+
 /* 拖拽网格（react-grid-layout），仅 md 及以上启用 */
 .react-grid-layout {
   position: relative;
