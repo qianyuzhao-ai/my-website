@@ -18,6 +18,7 @@ import {
   type CardId,
   type CategoryId,
   cardSizes,
+  defaultOrder,
   desktopPlacement,
   type GridCols,
   type GridItem,
@@ -60,6 +61,12 @@ function getCols(): 0 | GridCols {
   return 0;
 }
 
+/** 卡片在视觉顺序（先行后列）中的位置，用于错峰入场 */
+function visualIndex(layout: GridItem[], id: CardId) {
+  const sorted = [...layout].sort((a, b) => a.y - b.y || a.x - b.x);
+  return sorted.findIndex((item) => item.i === id);
+}
+
 type BentoGridProps = {
   cards: Record<CardId, ReactNode>;
   category: CategoryId;
@@ -71,10 +78,14 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
   const [saved, setSaved] = useState<SavedLayouts>({});
   const [session, setSession] = useState<Record<string, GridItem[]>>({});
   const dragged = useRef(false);
+  const [entered, setEntered] = useState(false);
   const active = highlighted[category];
 
   useEffect(() => {
     setSaved(loadLayouts());
+    // 入场动画只播放一次；之后卡片节点移动或重挂载都不会再次淡入
+    const timer = setTimeout(() => setEntered(true), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   function content(id: CardId, index: number) {
@@ -83,7 +94,7 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
         className={`h-full transition-opacity duration-300 ${active.includes(id) ? "" : "opacity-[0.22]"}`}
       >
         <div
-          className="card-enter h-full"
+          className={`h-full ${entered ? "" : "card-enter"}`}
           style={{ "--i": index } as CSSProperties}
         >
           {cards[id]}
@@ -133,8 +144,6 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
   const layout =
     (category === "all" ? saved[cols] : session[key]) ??
     presetLayout(category, cols);
-  // DOM 顺序跟随视觉顺序，保证键盘与读屏顺序一致
-  const ordered = [...layout].sort((a, b) => a.y - b.y || a.x - b.x);
 
   function handleDragStop(next: Layout) {
     const items = next.map(({ i, x, y, w, h }) => ({ i, x, y, w, h }));
@@ -177,8 +186,9 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
         }}
         onDragStop={handleDragStop}
       >
-        {ordered.map(({ i }, index) => (
-          <div key={i}>{content(i, index)}</div>
+        {/* 子节点顺序保持不变：移动 DOM 节点会让浏览器重新播放其中的动画 */}
+        {defaultOrder.map((id) => (
+          <div key={id}>{content(id, visualIndex(layout, id))}</div>
         ))}
       </ReactGridLayout>
     </div>
