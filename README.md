@@ -1,13 +1,14 @@
 # my-website
 
-个人网站基础项目，后续用于文章、履历与作品展示。当前首页为 Starter UI v1 设计规范预览，包含颜色、字体、间距和基础组件。
+个人网站基础项目，后续用于文章、履历与作品展示。当前首页 v1 按 Figma「My Website」稿实现 Bento 卡片布局，含分类筛选、浅深主题与订阅表单（仅本地校验）；二级页面尚未制作。
 
 ## 技术栈
 
 - Next.js 16.4 App Router、React 19.3、TypeScript strict
-- Tailwind CSS v4，使用提供的 Starter UI 语义 token
+- Tailwind CSS v4，使用 `globals.css` 中的语义 token
 - Biome：代码检查、格式化和 import 排序；不使用 ESLint 或 Prettier
 - 原生 HTML / React 基础组件，不依赖组件库
+- next/font 自托管 Poppins（正文）与 Fraunces（标题），运行时不请求外部字体服务
 - 使用 next-themes 管理主题初始化、持久化、系统主题监听与跨标签页同步
 - pnpm 11.24，Node.js 22.17 或更高版本
 
@@ -37,29 +38,25 @@ src/
   app/                  页面、根布局和全局样式
     globals.css         设计 token、Tailwind 映射和组件基础样式
   components/
-    ui/                 Button、Input、Card、Badge
-    theme-switch.tsx    跟随系统 / Light / Dark 切换
-    component-preview.tsx 交互示例
+    ui/                 Button、Input
+    home/               首页头部、Bento 网格与各卡片
   lib/
-    design-tokens.ts    规范预览使用的颜色值与说明
+    home-cards.ts       卡片分类、桌面网格位置、移动端顺序与待提供链接
+public/images/          头像与卡片图片（-light / -dark 两套）
 ```
 
 ## UI 规范
 
-- 颜色使用 `bg-bg`、`bg-surface`、`text-fg`、`text-fg-muted` 等语义 token，不在业务组件中硬编码色值。
-- 字号使用 `text-display`、`text-h1` 至 `text-h3`、`text-body-lg`、`text-body`、`text-label`、`text-caption`、`text-code`。
-- 间距以 4px 为基准，优先使用 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64px；圆角使用 `rounded-sm` / `md` / `lg` / `full`。
-- 主题通过 next-themes 管理，默认跟随系统，手动选择记录在 `starter-ui-theme`。使用 `class` 对接 `.dark` 样式；主题按钮挂载后启用，避免 hydration 不一致。
-- 使用系统字体，不请求外部字体服务。移动端输入框为 16px，按钮和输入框高度至少 44px。
-- 更新颜色时，同时修改 `globals.css` 的浅深色值及 `lib/design-tokens.ts` 的预览数据。
-- 示例表单仅演示本地校验，不保存数据或调用接口。
+- 颜色使用 `bg-bg`、`bg-surface`、`text-fg`、`text-fg-muted`、`bg-card-blue` 等语义 token，不在业务组件中硬编码色值；浅深色值来自 Figma 3:35 / 3:36。
+- 字号使用 `text-logo`、`text-name`、`text-title`（Fraunces 24/30）、`text-body`（16/26）、`text-label`（14/20）、`text-caption`（12/18）；标题加 `font-serif`。
+- 间距以 4px 为基准；卡片圆角移动端 `rounded-card-sm`（24px）、平板起 `rounded-card`（32px）。
+- 布局移动端优先：单列 → `md` 两列 → `lg` 四列（1168px 内容宽、16px 间隔，单元格正方形，内容超出时行高自适应）。
+- 主题通过 next-themes 管理，默认跟随系统，手动选择记录在 `starter-ui-theme`。浅深两套图片用 `dark:hidden` / `hidden dark:block` 切换。
+- 移动端输入框为 16px，触控目标至少 44px；项目卡片有链接时整张卡片可点击。
+- 订阅表单仅本地校验，不保存数据或调用接口。
 
-```tsx
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+## 待补充
 
-<Input id="name" label="名称" helpText="请输入项目名称" />
-<Button variant="primary" size="md" type="submit">保存</Button>
-```
-
-`Button` 支持 `primary / secondary / ghost / danger` 与 `sm / md / lg`；`Input` 支持帮助文字与错误信息；`Card` 用 `raised` 切换浮层；`Badge` 支持品牌样式及状态圆点。
+- 地图与 Vouch / Skip / Wrap 图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/*-light.png` / `*-dark.png`）。
+- Contact、文章、Twitter 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位。
+- Media 分类的突出卡片暂定为 Music 与 Social；拖拽排序与 Toggle Lockdown 留到后续版本。

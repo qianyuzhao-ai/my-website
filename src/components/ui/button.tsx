@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 type ButtonProps = ComponentProps<"button"> & {
-  variant?: "primary" | "secondary" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "ghost";
   size?: "sm" | "md" | "lg";
 };
 

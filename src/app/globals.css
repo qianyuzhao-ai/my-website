@@ -1,46 +1,45 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* 色值来自 Figma「My Website」：Desktop / Light (3:35)、Desktop / Dark (3:36)。 */
 :root {
   color-scheme: light;
-  --bg: #ffffff;
-  --surface: #f7f7f8;
-  --surface-raised: #ffffff;
-  --border: #e4e4e7;
-  --border-strong: #8a8a94;
-  --fg: #18181b;
-  --fg-muted: #52525b;
-  --fg-subtle: #6e6e78;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-fg: #ffffff;
-  --primary-subtle: #eff4ff;
-  --success: #15803d;
-  --warning: #b45309;
+  --bg: #f5eeed;
+  --surface: #fefefe;
+  --border: #e9e6e7;
+  --fg: #111315;
+  --fg-muted: #74747c;
+  --nav-track: #ede9e9;
+  --nav-selected: #fefefe;
+  --accent: #2b806b; /* 设计稿 #61bfa8 对比度不足，加深以满足 4.5:1 */
+  --card-blue: #8cc7fe;
+  --card-pink: #febcd0;
+  --card-yellow: #fedd9a;
+  --social-icon: #ffffff;
+  --toggle-track: #ede9e9;
+  --map-pin: #8cc7ed;
+  --focus: #2563eb;
   --danger: #dc2626;
-  --danger-hover: #b91c1c;
-  --danger-fg: #ffffff;
   --elevation-lg: 0 8px 24px rgb(0 0 0 / 0.12);
 }
 .dark {
   color-scheme: dark;
-  --bg: #121212;
-  --surface: #1c1c1e;
-  --surface-raised: #26262a;
-  --border: #2e2e33;
-  --border-strong: #74747e;
-  --fg: #ececee;
-  --fg-muted: #a1a1aa;
-  --fg-subtle: #8e8e98;
-  --primary: #7aa7ff;
-  --primary-hover: #9bbcff;
-  --primary-fg: #0b1220;
-  --primary-subtle: #1a2440;
-  --success: #4ade80;
-  --warning: #fbbf24;
+  --bg: #0b0d11;
+  --surface: #0e1014;
+  --border: #303338;
+  --fg: #f2f3f5;
+  --fg-muted: #979ba4;
+  --nav-track: #0b0d11;
+  --nav-selected: #1e2229;
+  --accent: #74d6c0;
+  --card-blue: #0e1014;
+  --card-pink: #0e1014;
+  --card-yellow: #0e1014;
+  --social-icon: #8cc7fe;
+  --toggle-track: #1e2229;
+  --map-pin: #406387;
+  --focus: #7aa7ff;
   --danger: #f87171;
-  --danger-hover: #fca5a5;
-  --danger-fg: #2a0a0a;
   --elevation-lg: 0 8px 24px rgb(0 0 0 / 0.5);
 }
 
@@ -51,28 +50,33 @@
   --color-transparent: transparent;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
   --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
   --color-fg: var(--fg);
   --color-fg-muted: var(--fg-muted);
-  --color-fg-subtle: var(--fg-subtle);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-fg: var(--primary-fg);
-  --color-primary-subtle: var(--primary-subtle);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
+  --color-nav-track: var(--nav-track);
+  --color-nav-selected: var(--nav-selected);
+  --color-accent: var(--accent);
+  --color-card-blue: var(--card-blue);
+  --color-card-pink: var(--card-pink);
+  --color-card-yellow: var(--card-yellow);
+  --color-social-icon: var(--social-icon);
+  --color-toggle-track: var(--toggle-track);
+  --color-map-pin: var(--map-pin);
+  --color-focus: var(--focus);
   --color-danger: var(--danger);
-  --color-danger-hover: var(--danger-hover);
-  --color-danger-fg: var(--danger-fg);
+  /* 主题无关的品牌色：Spotify 图标、主题开关图标与旋钮 */
+  --color-brand-green: #61caae;
+  --color-brand-yellow: #fedd9a;
+  --color-ink: #111315;
   --shadow-lg: var(--elevation-lg); /* 换个名字，避免自引用 */
+
+  --font-sans:
+    var(--font-poppins), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, "Songti SC", serif;
 }
 
 @theme {
-  --font-sans:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-mono:
     ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --spacing: 4px; /* p-1=4px p-4=16px p-6=24px */
@@ -80,53 +84,65 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-card-sm: 24px;
+  --radius-card: 32px;
 
-  --text-display: 36px;
-  --text-display--line-height: 44px;
-  --text-h1: 28px;
-  --text-h1--line-height: 36px;
-  --text-h2: 22px;
-  --text-h2--line-height: 30px;
-  --text-h3: 18px;
-  --text-h3--line-height: 26px;
-  --text-body-lg: 16px;
-  --text-body-lg--line-height: 26px;
-  --text-body: 14px;
-  --text-body--line-height: 22px;
+  --text-logo: 42px;
+  --text-logo--line-height: 50px;
+  --text-name: 34px;
+  --text-name--line-height: 26px;
+  --text-title: 24px;
+  --text-title--line-height: 30px;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
   --text-label: 14px;
   --text-label--line-height: 20px;
   --text-caption: 12px;
   --text-caption--line-height: 18px;
-  --text-code: 13px;
-  --text-code--line-height: 20px;
 }
 
 body {
   @apply bg-bg text-fg text-body font-sans;
 }
 
+.font-serif {
+  font-variation-settings:
+    "SOFT" 0,
+    "WONK" 1;
+}
+
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
-}
-html {
-  scroll-padding-top: 24px;
-}
-section[id] {
-  scroll-margin-top: 24px;
 }
 button:not(:disabled),
 summary {
   cursor: pointer;
 }
 ::selection {
-  background: var(--primary-subtle);
+  background: var(--card-blue);
   color: var(--fg);
 }
 
+/* 分类切换时卡片位置过渡（View Transitions API） */
+::view-transition-group(*) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
 @layer components {
+  .logo-gradient {
+    background-image: linear-gradient(
+      90deg,
+      #e85c85 0%,
+      #a98cd0 60%,
+      #edbe66 100%
+    );
+    background-clip: text;
+    color: transparent;
+  }
   .ui-button {
-    @apply inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-label font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-transparent text-label font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
   }
   .ui-button[data-size="sm"] {
     @apply h-8 px-3;
@@ -138,55 +154,32 @@ summary {
     @apply h-11 px-6;
   }
   .ui-button[data-variant="primary"] {
-    @apply bg-primary text-primary-fg enabled:hover:bg-primary-hover;
+    @apply bg-fg text-bg enabled:hover:opacity-90;
   }
   .ui-button[data-variant="secondary"] {
-    @apply border-border-strong bg-surface text-fg enabled:hover:bg-border;
+    @apply border-border bg-surface text-fg enabled:hover:bg-nav-track;
   }
   .ui-button[data-variant="ghost"] {
-    @apply bg-transparent text-fg enabled:hover:bg-surface;
-  }
-  .ui-button[data-variant="danger"] {
-    @apply bg-danger text-danger-fg enabled:hover:bg-danger-hover;
+    @apply bg-transparent text-fg enabled:hover:bg-nav-track;
   }
   .ui-input {
-    @apply h-9 w-full rounded-md border border-border-strong bg-bg px-3 text-body text-fg placeholder:text-fg-subtle disabled:cursor-not-allowed disabled:bg-surface disabled:opacity-50;
+    @apply h-11 w-full border-b border-border bg-transparent text-body text-fg placeholder:text-fg-muted disabled:cursor-not-allowed disabled:opacity-50;
   }
   .ui-input:focus {
-    border-color: var(--primary);
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
+    border-color: var(--fg);
+    outline: none;
+  }
+  .ui-input:focus-visible {
+    box-shadow: 0 2px 0 0 var(--focus);
   }
   .ui-input[aria-invalid="true"] {
     border-color: var(--danger);
   }
-  .ui-input[aria-invalid="true"]:focus {
-    outline-color: var(--danger);
-  }
-  .preview-stage {
-    @apply flex flex-wrap items-center gap-3 rounded-lg border border-border bg-bg p-4 sm:p-6;
-    background-image: radial-gradient(var(--border) 1px, transparent 1px);
-    background-size: 16px 16px;
-  }
-  .section-heading {
-    @apply text-h2 font-semibold;
-  }
-  .inline-code {
-    @apply rounded-sm bg-surface px-1 py-0.5 font-mono text-code;
-  }
 }
 
 @media (max-width: 639px) {
-  body {
-    font-size: var(--text-body-lg);
-    line-height: var(--text-body-lg--line-height);
-  }
   .ui-button[data-size] {
     min-height: 44px;
-  }
-  .ui-input {
-    height: 44px;
-    font-size: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -197,5 +190,11 @@ summary {
     transition: none !important;
     /* biome-ignore lint/complexity/noImportantStyles: Reduced motion must override smooth scrolling utilities. */
     scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    /* biome-ignore lint/complexity/noImportantStyles: Disable view transition animations for reduced motion. */
+    animation: none !important;
   }
 }
