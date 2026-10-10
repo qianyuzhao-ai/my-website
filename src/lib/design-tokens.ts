@@ -1,0 +1,105 @@
+// Values from the supplied Starter UI v1 specification. Runtime styles live in globals.css.
+export const colors = [
+  {
+    name: "bg",
+    light: "#ffffff",
+    dark: "#121212",
+    usage: "页面底色",
+  },
+  {
+    name: "surface",
+    light: "#f7f7f8",
+    dark: "#1c1c1e",
+    usage: "卡片、侧边栏、分组区域",
+  },
+  {
+    name: "surface-raised",
+    light: "#ffffff",
+    dark: "#26262a",
+    usage: "弹窗、下拉菜单、浮层",
+  },
+  {
+    name: "border",
+    light: "#e4e4e7",
+    dark: "#2e2e33",
+    usage: "分割线、卡片描边（装饰性）",
+  },
+  {
+    name: "border-strong",
+    light: "#8a8a94",
+    dark: "#74747e",
+    usage: "输入框、复选框等控件边框（≥3:1）",
+  },
+  {
+    name: "fg",
+    light: "#18181b",
+    dark: "#ececee",
+    usage: "标题、正文",
+  },
+  {
+    name: "fg-muted",
+    light: "#52525b",
+    dark: "#a1a1aa",
+    usage: "描述、副标题、表头",
+  },
+  {
+    name: "fg-subtle",
+    light: "#6e6e78",
+    dark: "#8e8e98",
+    usage: "时间戳、占位符、caption",
+  },
+  {
+    name: "primary",
+    light: "#2563eb",
+    dark: "#7aa7ff",
+    usage: "主按钮、链接、焦点环、选中态",
+  },
+  {
+    name: "primary-hover",
+    light: "#1d4ed8",
+    dark: "#9bbcff",
+    usage: "primary 的 hover / pressed",
+  },
+  {
+    name: "primary-fg",
+    light: "#ffffff",
+    dark: "#0b1220",
+    usage: "primary 底色上的文字",
+  },
+  {
+    name: "primary-subtle",
+    light: "#eff4ff",
+    dark: "#1a2440",
+    usage: "选中行、轻量提示底色",
+  },
+  {
+    name: "success",
+    light: "#15803d",
+    dark: "#4ade80",
+    usage: "成功",
+  },
+  {
+    name: "warning",
+    light: "#b45309",
+    dark: "#fbbf24",
+    usage: "警告",
+  },
+  {
+    name: "danger",
+    light: "#dc2626",
+    dark: "#f87171",
+    usage: "错误、删除",
+  },
+  {
+    name: "danger-hover",
+    light: "#b91c1c",
+    dark: "#fca5a5",
+    usage: "danger 的 hover / pressed",
+  },
+  {
+    name: "danger-fg",
+    light: "#ffffff",
+    dark: "#2a0a0a",
+    usage: "danger 底色上的文字",
+  },
+] as const;
