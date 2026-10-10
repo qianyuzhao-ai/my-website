@@ -67,5 +67,6 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 ## 待补充
 
 - 地图与 Vouch / Skip / Wrap 图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/*-light.png` / `*-dark.png`）。
-- Contact、文章、Twitter 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位。
+- Contact、文章、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
+- 项目卡片只通过左下角按钮跳转，整张卡片不可点击，便于拖拽。
 - Media 分类的突出卡片暂定为 Music 与 Social。

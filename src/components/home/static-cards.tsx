@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { BentoCard, ThemedImage } from "@/components/home/bento-card";
-import { ArrowIcon, SpotifyIcon, TwitterIcon } from "@/components/home/icons";
+import { ArrowIcon, SpotifyIcon, XIcon } from "@/components/home/icons";
 import { IntroAvatar } from "@/components/home/intro-avatar";
 import { ProjectLink } from "@/components/home/project-link";
 import { links, projects } from "@/lib/home-cards";
@@ -85,7 +85,7 @@ export function MusicCard() {
 export function SocialCard() {
   return (
     <BentoCard className="h-[168px] bg-card-blue">
-      <TwitterIcon className="absolute top-[calc(50%+4px)] left-1/2 size-[72px] -translate-1/2 text-social-icon" />
+      <XIcon className="absolute top-1/2 left-1/2 size-16 -translate-1/2 text-social-icon" />
       <ProjectLink name={projects.social.name} href={links.social} />
     </BentoCard>
   );

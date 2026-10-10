@@ -120,18 +120,18 @@ export function mobileOrder(category: CategoryId): CardId[] {
   return [...first, ...defaultOrder.filter((id) => !first.includes(id))];
 }
 
-// TODO: 以下链接待提供；为 undefined 时渲染为不可点击的占位。
+// 卡片跳转地址；为 undefined 时渲染为不可点击的占位。
 export const links = {
   contact: undefined as string | undefined,
   article: undefined as string | undefined,
-  social: undefined as string | undefined,
+  social: "https://x.com/qianyu_ai" as string | undefined,
   vouch: undefined as string | undefined,
   skip: undefined as string | undefined,
   wrap: undefined as string | undefined,
 };
 
 export const projects = {
-  social: { name: "Twitter", tone: "bg-card-blue" },
+  social: { name: "X", tone: "bg-card-blue" },
   vouch: { name: "Vouch", tone: "bg-card-blue" },
   skip: { name: "Skip", tone: "bg-card-pink" },
   wrap: { name: "Wrap.so", tone: "bg-card-yellow" },
