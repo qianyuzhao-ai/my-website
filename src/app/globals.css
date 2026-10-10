@@ -15,6 +15,8 @@
   --card-blue: #8cc7fe;
   --card-pink: #febcd0;
   --card-yellow: #fedd9a;
+  --card-mint: #61caae;
+  --case-stroke: #f5eeed;
   --social-icon: #ffffff;
   --toggle-track: #ede9e9;
   --map-pin: #8cc7ed;
@@ -36,6 +38,8 @@
   --card-blue: #0e1014;
   --card-pink: #0e1014;
   --card-yellow: #0e1014;
+  --card-mint: #0e1014;
+  --case-stroke: #303338;
   --social-icon: #f2f3f5;
   --toggle-track: #1e2229;
   --map-pin: #406387;
@@ -61,6 +65,8 @@
   --color-card-blue: var(--card-blue);
   --color-card-pink: var(--card-pink);
   --color-card-yellow: var(--card-yellow);
+  --color-card-mint: var(--card-mint);
+  --color-case-stroke: var(--case-stroke);
   --color-social-icon: var(--social-icon);
   --color-toggle-track: var(--toggle-track);
   --color-map-pin: var(--map-pin);
@@ -104,6 +110,14 @@
   --text-label--line-height: 20px;
   --text-caption: 12px;
   --text-caption--line-height: 18px;
+  --text-case-display: 80px;
+  --text-case-display--line-height: 88px;
+  --text-case-heading: 36px;
+  --text-case-heading--line-height: 50px;
+  --text-case-title: 20px;
+  --text-case-title--line-height: 30px;
+  --text-case-small: 14px;
+  --text-case-small--line-height: 24px;
 }
 
 body {
@@ -296,4 +310,66 @@ summary {
     /* biome-ignore lint/complexity/noImportantStyles: Disable view transition animations for reduced motion. */
     animation: none !important;
   }
+}
+
+/* Product screenshots retain their light UI in both Figma themes. */
+:root,
+.dark {
+  --preview-surface: #fefefe;
+  --preview-ink: #111315;
+  --preview-muted: #74747c;
+  --preview-background: #f5eeed;
+  --preview-canvas: #faf8f8;
+  --preview-toolbar: #f3f1f1;
+  --preview-border: #e4e1e1;
+  --preview-outline: #d9d2d2;
+  --preview-divider: #efebeb;
+  --preview-image: #cfe6ff;
+  --preview-image-faint: #e7f1fb;
+  --preview-image-chip: #dceeff;
+  --preview-video: #fce1ea;
+  --preview-image-label: #2c6fb8;
+  --preview-video-label: #c2416d;
+  --preview-text-chip: #fff1d1;
+  --preview-text-label: #b07a12;
+  --preview-derived: #fff8e8;
+  --preview-success-bg: #e3f5ef;
+  --preview-success: #1f8a4c;
+  --preview-adopted: #61caae;
+  --preview-discarded: #e86a6a;
+  --preview-placeholder: #b9b4b4;
+  --preview-faint: #c9c6c6;
+  --preview-llm: #7b4fe0;
+  --preview-selection: #8cc7fe;
+  --preview-text-selection: #fedd9a;
+}
+
+@theme inline {
+  --color-preview-surface: var(--preview-surface);
+  --color-preview-ink: var(--preview-ink);
+  --color-preview-muted: var(--preview-muted);
+  --color-preview-background: var(--preview-background);
+  --color-preview-canvas: var(--preview-canvas);
+  --color-preview-toolbar: var(--preview-toolbar);
+  --color-preview-border: var(--preview-border);
+  --color-preview-outline: var(--preview-outline);
+  --color-preview-divider: var(--preview-divider);
+  --color-preview-image: var(--preview-image);
+  --color-preview-image-faint: var(--preview-image-faint);
+  --color-preview-image-chip: var(--preview-image-chip);
+  --color-preview-video: var(--preview-video);
+  --color-preview-image-label: var(--preview-image-label);
+  --color-preview-video-label: var(--preview-video-label);
+  --color-preview-text-chip: var(--preview-text-chip);
+  --color-preview-text-label: var(--preview-text-label);
+  --color-preview-derived: var(--preview-derived);
+  --color-preview-success-bg: var(--preview-success-bg);
+  --color-preview-success: var(--preview-success);
+  --color-preview-adopted: var(--preview-adopted);
+  --color-preview-discarded: var(--preview-discarded);
+  --color-preview-placeholder: var(--preview-placeholder);
+  --color-preview-faint: var(--preview-faint);
+  --color-preview-llm: var(--preview-llm);
+  --color-preview-selection: var(--preview-selection);
+  --color-preview-text-selection: var(--preview-text-selection);
 }

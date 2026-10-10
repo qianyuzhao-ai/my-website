@@ -12,10 +12,11 @@ import {
 
 type HomeBentoProps = {
   cards: Record<CardId, ReactNode>;
+  initialCategory?: CategoryId;
 };
 
-export function HomeBento({ cards }: HomeBentoProps) {
-  const [category, setCategory] = useState<CategoryId>("all");
+export function HomeBento({ cards, initialCategory = "all" }: HomeBentoProps) {
+  const [category, setCategory] = useState<CategoryId>(initialCategory);
   const index = categories.findIndex((item) => item.id === category);
   const label = categories[index].label;
 

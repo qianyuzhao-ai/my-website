@@ -9,8 +9,16 @@ import {
 } from "@/components/home/static-cards";
 import { SubscribeCard } from "@/components/home/subscribe-card";
 import { ThemeCard } from "@/components/home/theme-card";
+import { categories } from "@/lib/home-cards";
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category: requestedCategory } = await searchParams;
+  const category =
+    categories.find((item) => item.id === requestedCategory)?.id ?? "all";
   return (
     <>
       <a
@@ -20,6 +28,8 @@ export default function Home() {
         跳转到主要内容
       </a>
       <HomeBento
+        key={category}
+        initialCategory={category}
         cards={{
           intro: <IntroCard />,
           map: <MapCard />,

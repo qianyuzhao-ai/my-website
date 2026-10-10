@@ -1,6 +1,6 @@
 # my-website
 
-个人网站基础项目，后续用于文章、履历与作品展示。当前首页按 Figma「My Website」稿与交互录屏实现 Bento 卡片布局，含拖拽排序、分类筛选、Toggle Lockdown、浅深主题与订阅表单（仅本地校验）；二级页面尚未制作。
+个人网站基础项目，后续用于文章、履历与作品展示。当前首页按 Figma「My Website」稿与交互录屏实现 Bento 卡片布局，含拖拽排序、分类筛选、Toggle Lockdown、浅深主题与订阅表单（仅本地校验）。AIGC-FLOW 项目案例页位于 `/projects/aigc-flow`。
 
 ## 技术栈
 
@@ -9,6 +9,7 @@
 - Biome：代码检查、格式化和 import 排序；不使用 ESLint 或 Prettier
 - 原生 HTML / React 基础组件，不依赖组件库
 - react-grid-layout：首页 Bento 卡片拖拽排序（md 及以上）
+- GSAP / ScrollTrigger：AIGC-FLOW 案例页的滚动演示
 - next/font 自托管 Poppins（正文）与 Fraunces（标题），运行时不请求外部字体服务
 - 使用 next-themes 管理主题初始化、持久化、系统主题监听与跨标签页同步
 - pnpm 11.24，Node.js 22.17 或更高版本
@@ -41,9 +42,12 @@ src/
   components/
     ui/                 Button、Input
     home/               首页头部、Bento 网格（bento-grid.tsx 负责拖拽）与各卡片
+    aigc-flow/          项目案例内容、画布示意、滚动步骤与横向卡片
   lib/
     home-cards.ts       卡片分类、预设布局、拖拽布局存储与待提供链接
+    aigc-flow.ts        Figma 案例文案、步骤、指标与项目链接
 public/images/          头像与卡片图片（-light / -dark 两套）
+  aigc-flow/            Figma 原始 SVG，按原始尺寸使用
 ```
 
 ## UI 规范
@@ -65,6 +69,10 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 - 所有动画在 `prefers-reduced-motion` 下关闭。
 
 ## 待补充
+
+- AIGC-FLOW 案例页按 Figma `31:418` 实现，路径 `/projects/aigc-flow`。GitHub 地址在 `src/lib/aigc-flow.ts` 的 `caseLinks.github` 配置；Contact 沿用 `home-cards.ts` 的配置。链接未提供时显示带说明的占位，首页项目卡片暂不替换。
+- 案例页宽度达到 900px 且视口高度至少 700px 时启用滚动固定；短视口、窄屏和减少动态效果模式展示完整说明。步骤支持点击和键盘选择；打磨记录支持触控滑动与前后按钮；重试保存为本地交互演示，不调用真实生成服务。
+- 案例页画布示意在深色主题仍保持浅色，遵循 Figma。原始 SVG 保持不变，无障碍说明由使用处的 `alt`、`figcaption` 和正文提供；Biome 仅对这些 SVG 关闭 `noSvgWithoutTitle`。
 
 - 地图与 Vouch / Skip / Wrap 图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/*-light.png` / `*-dark.png`）。
 - Contact、文章、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
