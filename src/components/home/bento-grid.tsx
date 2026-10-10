@@ -14,10 +14,12 @@ import {
   ReactGridLayout,
   useContainerWidth,
 } from "react-grid-layout";
+import { RefreshIcon } from "@/components/home/icons";
 import {
   type CardId,
   type CategoryId,
   cardSizes,
+  clearLayouts,
   defaultOrder,
   desktopPlacement,
   type GridCols,
@@ -79,6 +81,7 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
   const [session, setSession] = useState<Record<string, GridItem[]>>({});
   const dragged = useRef(false);
   const [entered, setEntered] = useState(false);
+  const [status, setStatus] = useState("");
   const active = highlighted[category];
 
   useEffect(() => {
@@ -152,6 +155,7 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
       const updated = { ...saved, [cols]: typed };
       setSaved(updated);
       saveLayouts(updated);
+      setStatus("");
     } else {
       setSession((current) => ({ ...current, [key]: typed }));
     }
@@ -161,36 +165,62 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
     }, 0);
   }
 
+  // 只在 All 分类、当前列数下有自定义排列时提供重置
+  const isCustom = category === "all" && Boolean(saved[cols]);
+
+  function resetLayout() {
+    clearLayouts();
+    setSaved({});
+    setStatus("已恢复默认布局");
+  }
+
   return (
-    <div
-      ref={containerRef}
-      onClickCapture={handleClickCapture}
-      className="mx-auto max-w-[1168px]"
-    >
-      <ReactGridLayout
-        width={width}
-        layout={layout}
-        gridConfig={{
-          cols,
-          rowHeight: (width - GAP * (cols - 1)) / cols,
-          margin: [GAP, GAP],
-          containerPadding: [0, 0],
-        }}
-        dragConfig={{
-          threshold: 4,
-          cancel: "input, textarea, select, label, [data-no-drag]",
-        }}
-        resizeConfig={{ enabled: false }}
-        onDragStart={() => {
-          dragged.current = true;
-        }}
-        onDragStop={handleDragStop}
+    <>
+      <div
+        ref={containerRef}
+        onClickCapture={handleClickCapture}
+        className="mx-auto max-w-[1168px]"
       >
-        {/* 子节点顺序保持不变：移动 DOM 节点会让浏览器重新播放其中的动画 */}
-        {defaultOrder.map((id) => (
-          <div key={id}>{content(id, visualIndex(layout, id))}</div>
-        ))}
-      </ReactGridLayout>
-    </div>
+        <ReactGridLayout
+          width={width}
+          layout={layout}
+          gridConfig={{
+            cols,
+            rowHeight: (width - GAP * (cols - 1)) / cols,
+            margin: [GAP, GAP],
+            containerPadding: [0, 0],
+          }}
+          dragConfig={{
+            threshold: 4,
+            cancel: "input, textarea, select, label, [data-no-drag]",
+          }}
+          resizeConfig={{ enabled: false }}
+          onDragStart={() => {
+            dragged.current = true;
+          }}
+          onDragStop={handleDragStop}
+        >
+          {/* 子节点顺序保持不变：移动 DOM 节点会让浏览器重新播放其中的动画 */}
+          {defaultOrder.map((id) => (
+            <div key={id}>{content(id, visualIndex(layout, id))}</div>
+          ))}
+        </ReactGridLayout>
+      </div>
+      <div className="mt-6 flex min-h-11 justify-center">
+        {isCustom && (
+          <button
+            type="button"
+            onClick={resetLayout}
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-surface px-4 text-label font-medium transition-colors hover:border-fg-muted md:h-[38px]"
+          >
+            <RefreshIcon className="size-4" />
+            Reset layout
+          </button>
+        )}
+        <p aria-live="polite" className="sr-only">
+          {status}
+        </p>
+      </div>
+    </>
   );
 }

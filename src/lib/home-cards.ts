@@ -238,3 +238,11 @@ export function saveLayouts(layouts: SavedLayouts) {
     // 隐私模式或存储被禁用时忽略，布局仅在本次访问内有效
   }
 }
+
+export function clearLayouts() {
+  try {
+    window.localStorage.removeItem(LAYOUT_STORAGE_KEY);
+  } catch {
+    // 存储不可用时无需处理
+  }
+}
