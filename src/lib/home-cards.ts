@@ -136,3 +136,105 @@ export const projects = {
   skip: { name: "Skip", tone: "bg-card-pink" },
   wrap: { name: "Wrap.so", tone: "bg-card-yellow" },
 } as const;
+
+// ---------- 拖拽网格（react-grid-layout）布局 ----------
+
+export type GridCols = 2 | 4;
+
+export type GridItem = {
+  i: CardId;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+const spans: Record<CardSize, [w: number, h: number]> = {
+  square: [1, 1],
+  wide: [2, 1],
+  tall: [1, 2],
+};
+
+/** 按顺序做 first-fit 填充，与 CSS `grid-auto-flow: dense` 的结果一致 */
+function packLayout(order: CardId[], cols: GridCols): GridItem[] {
+  const filled = new Set<string>();
+  const fits = (x: number, y: number, w: number, h: number) => {
+    if (x + w > cols) return false;
+    for (let dy = 0; dy < h; dy++) {
+      for (let dx = 0; dx < w; dx++) {
+        if (filled.has(`${x + dx},${y + dy}`)) return false;
+      }
+    }
+    return true;
+  };
+
+  return order.map((i) => {
+    const [w, h] = spans[cardSizes[i]];
+    for (let y = 0; ; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (fits(x, y, w, h)) {
+          for (let dy = 0; dy < h; dy++) {
+            for (let dx = 0; dx < w; dx++) filled.add(`${x + dx},${y + dy}`);
+          }
+          return { i, x, y, w, h };
+        }
+      }
+    }
+  });
+}
+
+/** 分类的预设布局：4 列取 Figma 位置表，2 列按移动端顺序密排 */
+export function presetLayout(category: CategoryId, cols: GridCols): GridItem[] {
+  if (cols === 2) return packLayout(mobileOrder(category), 2);
+  return defaultOrder.map((i) => {
+    const [col, row] = desktopPlacement[category][i];
+    const [w, h] = spans[cardSizes[i]];
+    return { i, x: col - 1, y: row - 1, w, h };
+  });
+}
+
+export const LAYOUT_STORAGE_KEY = "home-layout-v1";
+
+export type SavedLayouts = Partial<Record<GridCols, GridItem[]>>;
+
+function isValidLayout(value: unknown, cols: GridCols): value is GridItem[] {
+  if (!Array.isArray(value) || value.length !== defaultOrder.length) {
+    return false;
+  }
+  const ids = new Set<string>();
+  for (const item of value) {
+    const { i, x, y, w, h } = item ?? {};
+    const size = cardSizes[i as CardId];
+    if (!size || ids.has(i)) return false;
+    const [sw, sh] = spans[size];
+    if (w !== sw || h !== sh) return false;
+    if (!Number.isInteger(x) || !Number.isInteger(y)) return false;
+    if (x < 0 || y < 0 || x + w > cols) return false;
+    ids.add(i);
+  }
+  return true;
+}
+
+/** 读取 All 分类下访客自定义的排列；不可用或不合法时返回空对象 */
+export function loadLayouts(): SavedLayouts {
+  try {
+    const raw = window.localStorage.getItem(LAYOUT_STORAGE_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : {};
+    const result: SavedLayouts = {};
+    for (const cols of [2, 4] as const) {
+      const layout = (parsed as Record<string, unknown>)?.[cols];
+      if (isValidLayout(layout, cols)) result[cols] = layout;
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
+export function saveLayouts(layouts: SavedLayouts) {
+  try {
+    window.localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(layouts));
+  } catch {
+    // 隐私模式或存储被禁用时忽略，布局仅在本次访问内有效
+  }
+}

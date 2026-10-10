@@ -30,11 +30,13 @@ export function ThemedImage({
     <>
       <Image
         src={`/images/${name}-light.png`}
+        draggable={false}
         className={`dark:hidden ${className}`}
         {...props}
       />
       <Image
         src={`/images/${name}-dark.png`}
+        draggable={false}
         className={`hidden dark:block ${className}`}
         {...props}
       />

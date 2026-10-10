@@ -33,7 +33,7 @@ export function ThemeCard() {
           aria-hidden="true"
           className="relative h-12 w-20 shrink-0 rounded-full bg-toggle-track"
         >
-          <span className="absolute top-1.5 left-1.5 flex size-9 items-center justify-center rounded-full bg-ink text-brand-yellow transition-transform duration-300 dark:translate-x-8">
+          <span className="toggle-knob absolute top-1.5 left-1.5 flex size-9 items-center justify-center rounded-full bg-ink text-brand-yellow dark:translate-x-8">
             <MoonIcon className="size-4 dark:hidden" />
             <SunIcon className="hidden size-6 dark:block" />
           </span>

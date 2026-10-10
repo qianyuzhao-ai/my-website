@@ -32,6 +32,7 @@ export function ProjectLink({ name, href }: ProjectLinkProps) {
   return (
     <a
       href={href}
+      draggable={false}
       target="_blank"
       rel="noreferrer"
       className={`${className} after:absolute after:inset-[-100vmax] focus-visible:outline-offset-2`}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { BentoCard, ThemedImage } from "@/components/home/bento-card";
 import { ArrowIcon, SpotifyIcon, TwitterIcon } from "@/components/home/icons";
+import { IntroAvatar } from "@/components/home/intro-avatar";
 import { ProjectLink } from "@/components/home/project-link";
 import { links, projects } from "@/lib/home-cards";
 
@@ -18,6 +19,7 @@ function Memoji({
         alt=""
         fill
         sizes={sizes}
+        draggable={false}
         className="object-contain dark:hidden"
       />
       <Image
@@ -25,6 +27,7 @@ function Memoji({
         alt=""
         fill
         sizes={sizes}
+        draggable={false}
         className="hidden object-contain dark:block"
       />
     </span>
@@ -34,7 +37,7 @@ function Memoji({
 export function IntroCard() {
   return (
     <BentoCard className="flex flex-col gap-4 bg-surface p-6 lg:justify-between lg:px-10">
-      <Memoji className="relative -ml-4 h-28 w-32 shrink-0" sizes="128px" />
+      <IntroAvatar />
       <div className="flex flex-col gap-[26px] lg:gap-0">
         <p>
           我是 <span className="font-serif text-name font-bold">QianYu</span>
@@ -135,7 +138,7 @@ export function ArticleCard() {
     </>
   );
   const pillClass =
-    "inline-flex h-[38px] items-center gap-2 rounded-full border border-border bg-surface pr-4 pl-3 text-label font-medium";
+    "inline-flex h-[38px] items-center gap-2 rounded-full border border-border bg-surface pr-4 pl-3 text-label font-medium transition-colors hover:border-fg-muted";
 
   return (
     <BentoCard className="flex flex-col justify-between gap-8 bg-surface p-6 lg:px-10 lg:pt-[38px] lg:pb-8">
@@ -150,7 +153,7 @@ export function ArticleCard() {
       </article>
       <div className="flex items-center justify-between gap-4">
         {links.article ? (
-          <a href={links.article} className={pillClass}>
+          <a href={links.article} draggable={false} className={pillClass}>
             {readMore}
           </a>
         ) : (

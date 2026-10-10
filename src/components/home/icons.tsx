@@ -65,3 +65,17 @@ export function SunIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function RefreshIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M13.333 6.667A5.333 5.333 0 0 0 3.2 4.8M2.667 9.333A5.333 5.333 0 0 0 12.8 11.2M3.2 2v2.8H6M12.8 14v-2.8H10"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

@@ -25,6 +25,7 @@ Next.js 个人网站，当前首页按 Figma「My Website」稿实现 Bento 卡�
 ## 技术与编码约定
 
 - 使用 Next.js App Router、pnpm、TypeScript strict、Tailwind CSS v4 和 Biome；不引入组件库、ESLint 或 Prettier。
+- 例外：首页 Bento 拖拽使用 `react-grid-layout`（布局库，仅用于 `bento-grid.tsx`）；md 以下不启用拖拽。
 - 默认使用 Server Components，仅交互边界添加 `"use client"`。
 - 文件名使用 kebab-case，组件使用 PascalCase，导入别名为 `@/*`。
 - UI 遵循 `src/app/globals.css` 中的语义颜色、字号、间距和圆角 token（来源 Figma fileKey `fmqIh2bjvp1EX59h0hXpMF`）。

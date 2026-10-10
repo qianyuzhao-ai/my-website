@@ -31,7 +31,7 @@ export function SubscribeCard() {
   }
 
   return (
-    <BentoCard className="bg-surface p-6 lg:px-10 lg:pt-9">
+    <BentoCard className="bg-surface p-6 lg:px-10 xl:pt-9">
       <form
         noValidate
         onSubmit={handleSubmit}
