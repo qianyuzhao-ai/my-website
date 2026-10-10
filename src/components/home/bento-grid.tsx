@@ -206,7 +206,7 @@ export function BentoGrid({ cards, category }: BentoGridProps) {
           ))}
         </ReactGridLayout>
       </div>
-      <div className="mt-6 flex min-h-11 justify-center">
+      <div className={isCustom ? "mt-6 flex min-h-11 justify-center" : ""}>
         {isCustom && (
           <button
             type="button"

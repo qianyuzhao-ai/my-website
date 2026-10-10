@@ -36,7 +36,10 @@ export function HomeBento({ cards, initialCategory = "all" }: HomeBentoProps) {
 
   return (
     <>
-      <header className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] items-center gap-y-4 px-5 pt-[18px] pb-3 md:grid-cols-[1fr_auto_1fr] md:px-12 md:pt-10 md:pb-[46px]">
+      <header
+        id="top"
+        className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] items-center gap-y-4 px-5 pt-[18px] pb-3 md:grid-cols-[1fr_auto_1fr] md:px-12 md:pt-10 md:pb-[46px]"
+      >
         <a
           href="/"
           className="logo-gradient justify-self-start font-serif text-logo font-bold"
@@ -84,7 +87,7 @@ export function HomeBento({ cards, initialCategory = "all" }: HomeBentoProps) {
         )}
       </header>
 
-      <main id="main" className="px-4 pb-16 md:px-6 md:pb-24 xl:px-0">
+      <main id="main" className="px-4 pb-10 md:px-6 xl:px-0">
         <h1 className="sr-only">QianYu 的个人网站</h1>
         <p aria-live="polite" className="sr-only">
           {category === "all"

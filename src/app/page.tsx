@@ -1,4 +1,5 @@
 import { HomeBento } from "@/components/home/home-bento";
+import { HomeFooter } from "@/components/home/home-footer";
 import {
   ArticleCard,
   IntroCard,
@@ -43,6 +44,7 @@ export default async function Home({
           subscribe: <SubscribeCard />,
         }}
       />
+      <HomeFooter />
     </>
   );
 }

@@ -31,7 +31,10 @@
   },
   "overrides": [
     {
-      "includes": ["public/images/aigc-flow/*.svg"],
+      "includes": [
+        "public/images/aigc-flow/*.svg",
+        "public/images/footer/*.svg"
+      ],
       "linter": {
         "rules": {
           "a11y": { "noSvgWithoutTitle": "off" }

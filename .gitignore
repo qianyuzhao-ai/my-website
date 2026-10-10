@@ -4,6 +4,9 @@
 /.idea
 /.vscode
 
+/output
+/.claude
+
 # dependencies
 /node_modules
 /.pnp
