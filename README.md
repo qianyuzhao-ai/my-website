@@ -8,6 +8,7 @@
 - Tailwind CSS v4，使用提供的 Starter UI 语义 token
 - Biome：代码检查、格式化和 import 排序；不使用 ESLint 或 Prettier
 - 原生 HTML / React 基础组件，不依赖组件库
+- 使用 next-themes 管理主题初始化、持久化、系统主题监听与跨标签页同步
 - pnpm 11.24，Node.js 22.17 或更高版本
 
 ## 开发
@@ -41,7 +42,6 @@ src/
     component-preview.tsx 交互示例
   lib/
     design-tokens.ts    规范预览使用的颜色值与说明
-    theme.ts            首次渲染的主题初始化脚本
 ```
 
 ## UI 规范
@@ -49,7 +49,7 @@ src/
 - 颜色使用 `bg-bg`、`bg-surface`、`text-fg`、`text-fg-muted` 等语义 token，不在业务组件中硬编码色值。
 - 字号使用 `text-display`、`text-h1` 至 `text-h3`、`text-body-lg`、`text-body`、`text-label`、`text-caption`、`text-code`。
 - 间距以 4px 为基准，优先使用 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64px；圆角使用 `rounded-sm` / `md` / `lg` / `full`。
-- 主题默认跟随系统，手动选择记录在 `starter-ui-theme`。系统模式响应系统主题变化；存储不可用时仍可切换。
+- 主题通过 next-themes 管理，默认跟随系统，手动选择记录在 `starter-ui-theme`。使用 `class` 对接 `.dark` 样式；主题按钮挂载后启用，避免 hydration 不一致。
 - 使用系统字体，不请求外部字体服务。移动端输入框为 16px，按钮和输入框高度至少 44px。
 - 更新颜色时，同时修改 `globals.css` 的浅深色值及 `lib/design-tokens.ts` 的预览数据。
 - 示例表单仅演示本地校验，不保存数据或调用接口。
