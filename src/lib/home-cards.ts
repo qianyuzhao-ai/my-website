@@ -33,12 +33,12 @@ export const defaultOrder: CardId[] = [
   "theme",
 ];
 
-/** 每个分类突出显示的卡片；其余卡片降低不透明度。Media 暂定为社交。 */
+/** 每个分类突出显示的卡片；其余卡片降低不透明度。Media 包含社交与文章。 */
 export const highlighted: Record<CategoryId, CardId[]> = {
   all: defaultOrder,
   about: ["intro", "map", "social"],
   projects: ["skip"],
-  media: ["social"],
+  media: ["social", "article"],
 };
 
 /** 桌面 4 列网格中的起始 [列, 行]，跨度由 cardSizes 决定 */
@@ -72,10 +72,10 @@ export const desktopPlacement: Record<
   },
   media: {
     social: [1, 1],
-    map: [1, 2],
+    article: [2, 1],
     skip: [4, 1],
-    intro: [2, 1],
-    article: [2, 2],
+    map: [1, 2],
+    intro: [2, 2],
     theme: [1, 3],
   },
 };
