@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { BentoCard, ThemedImage } from "@/components/home/bento-card";
-import { ArrowIcon, SpotifyIcon, XIcon } from "@/components/home/icons";
+import { ArrowIcon, XIcon } from "@/components/home/icons";
 import { IntroAvatar } from "@/components/home/intro-avatar";
 import { ProjectLink } from "@/components/home/project-link";
 import { links, projects } from "@/lib/home-cards";
@@ -28,7 +28,7 @@ function Memoji({
         fill
         sizes={sizes}
         draggable={false}
-        className="hidden object-contain dark:block"
+        className="hidden object-contain"
       />
     </span>
   );
@@ -38,7 +38,7 @@ export function IntroCard() {
   return (
     <BentoCard className="flex flex-col gap-4 bg-surface p-6 lg:justify-between lg:px-10">
       <IntroAvatar />
-      <div className="flex flex-col gap-[26px] lg:gap-0">
+      <div className="flex flex-col gap-6.5 lg:gap-0">
         <p>
           我是 <span className="font-serif text-name font-bold">QianYu</span>
           ，一名来自北京的产品设计与开发。
@@ -51,7 +51,7 @@ export function IntroCard() {
 
 export function MapCard() {
   return (
-    <BentoCard className="h-[200px] bg-surface">
+    <BentoCard className="h-50 bg-surface">
       <ThemedImage
         name="map"
         alt="地图：当前所在城市"
@@ -60,31 +60,16 @@ export function MapCard() {
         sizes="(min-width: 1024px) 280px, (min-width: 768px) 50vw, 100vw"
         className="absolute inset-0 size-full object-cover"
       />
-      <span className="absolute top-1/2 left-1/2 size-[122px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white bg-map-pin md:size-24">
+      <span className="absolute top-1/2 left-1/2 size-30.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white bg-map-pin md:size-24">
         <Memoji className="absolute inset-1 top-1.5" sizes="112px" />
       </span>
     </BentoCard>
   );
 }
 
-export function MusicCard() {
-  return (
-    <BentoCard className="flex gap-5 bg-surface p-8 md:flex-col md:justify-between">
-      <SpotifyIcon className="size-[54px] shrink-0" />
-      <div className="flex min-w-0 flex-col gap-0.5 pt-[26px] md:pt-0 md:pb-1">
-        <p className="text-label font-medium text-accent">
-          <span aria-hidden="true">ııı </span>Offline. Last played
-        </p>
-        <p className="font-serif text-title font-bold">I Don’t Belong</p>
-        <p>Fontaines D.C.</p>
-      </div>
-    </BentoCard>
-  );
-}
-
 export function SocialCard() {
   return (
-    <BentoCard className="h-[168px] bg-card-blue">
+    <BentoCard className="h-42 bg-card-blue">
       <XIcon className="absolute top-1/2 left-1/2 size-16 -translate-1/2 text-social-icon" />
       <ProjectLink name={projects.social.name} href={links.social} />
     </BentoCard>
@@ -102,7 +87,7 @@ export function ArticleCard() {
     "inline-flex h-[38px] items-center gap-2 rounded-full border border-border bg-surface pr-4 pl-3 text-label font-medium transition-colors hover:border-fg-muted";
 
   return (
-    <BentoCard className="flex flex-col justify-between gap-8 bg-surface p-6 lg:px-10 lg:pt-[38px] lg:pb-8">
+    <BentoCard className="flex flex-col justify-between gap-8 bg-surface p-6 lg:px-10 lg:pt-9.5 lg:pb-8">
       <article className="flex flex-col gap-2">
         <h2 className="font-serif text-title font-bold">
           How it started vs. how it’s going

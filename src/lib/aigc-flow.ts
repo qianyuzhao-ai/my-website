@@ -207,7 +207,7 @@ export const keyMetrics = [
   {
     value: "11",
     unit: "人",
-    label: "内测团队，使用率 100%",
+    label: "产运团队，使用率 100%",
   },
   {
     value: "18",
@@ -230,7 +230,7 @@ export const resultMetrics = [
   {
     value: "100",
     unit: "%",
-    label: "11 人内测团队使用率",
+    label: "11 人产运团队使用率",
   },
   {
     value: "18",

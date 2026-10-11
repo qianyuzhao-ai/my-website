@@ -16,20 +16,6 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
-export function SpotifyIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 54 54" fill="none" aria-hidden="true" {...props}>
-      <circle cx="27" cy="27" r="27" className="fill-brand-green" />
-      <path
-        d="M12.375 19.125c9.9-2.925 19.8-2.25 29.25 2.25M13.95 27c8.775-2.475 17.775-1.575 25.875 2.25M15.75 34.875c7.2-1.8 14.625-1.125 21.825 2.25"
-        stroke="white"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 export function XIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>

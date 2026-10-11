@@ -9,15 +9,7 @@ export const categories = [
 
 export type CategoryId = (typeof categories)[number]["id"];
 
-export type CardId =
-  | "intro"
-  | "map"
-  | "music"
-  | "social"
-  | "skip"
-  | "article"
-  | "theme"
-  | "subscribe";
+export type CardId = "intro" | "map" | "social" | "skip" | "article" | "theme";
 
 /** 1×1、2×1、1×2 三种卡片比例 */
 export type CardSize = "square" | "wide" | "tall";
@@ -25,32 +17,28 @@ export type CardSize = "square" | "wide" | "tall";
 export const cardSizes: Record<CardId, CardSize> = {
   intro: "wide",
   map: "square",
-  music: "square",
   social: "square",
   skip: "tall",
   article: "wide",
   theme: "square",
-  subscribe: "wide",
 };
 
 /** 移动端与平板的默认顺序（Figma 3:37） */
 export const defaultOrder: CardId[] = [
   "intro",
   "map",
-  "music",
   "social",
   "skip",
   "article",
   "theme",
-  "subscribe",
 ];
 
-/** 每个分类突出显示的卡片；其余卡片降低不透明度。Media 稿中未定义，暂定音乐与社交。 */
+/** 每个分类突出显示的卡片；其余卡片降低不透明度。Media 暂定为社交。 */
 export const highlighted: Record<CategoryId, CardId[]> = {
   all: defaultOrder,
   about: ["intro", "map", "social"],
   projects: ["skip"],
-  media: ["music", "social"],
+  media: ["social"],
 };
 
 /** 桌面 4 列网格中的起始 [列, 行]，跨度由 cardSizes 决定 */
@@ -62,41 +50,33 @@ export const desktopPlacement: Record<
     intro: [1, 1],
     map: [3, 1],
     skip: [4, 1],
-    music: [1, 2],
-    social: [2, 2],
-    article: [1, 3],
-    theme: [3, 2],
-    subscribe: [3, 3],
+    social: [3, 2],
+    article: [1, 2],
+    theme: [1, 3],
   },
   about: {
     intro: [1, 1],
     map: [3, 1],
     social: [4, 1],
-    music: [4, 2],
-    theme: [4, 3],
-    skip: [3, 2],
-    article: [1, 2],
-    subscribe: [1, 3],
+    theme: [2, 2],
+    skip: [1, 2],
+    article: [3, 2],
   },
   projects: {
     skip: [1, 1],
     intro: [2, 1],
-    music: [2, 2],
-    theme: [3, 2],
+    theme: [4, 2],
     map: [4, 1],
-    social: [4, 2],
-    article: [1, 3],
-    subscribe: [3, 3],
+    social: [1, 3],
+    article: [2, 2],
   },
   media: {
-    music: [1, 1],
-    social: [2, 1],
-    map: [3, 1],
+    social: [1, 1],
+    map: [1, 2],
     skip: [4, 1],
-    intro: [1, 2],
-    article: [1, 3],
-    theme: [3, 2],
-    subscribe: [3, 3],
+    intro: [2, 1],
+    article: [2, 2],
+    theme: [1, 3],
   },
 };
 

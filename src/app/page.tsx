@@ -5,10 +5,8 @@ import {
   ArticleCard,
   IntroCard,
   MapCard,
-  MusicCard,
   SocialCard,
 } from "@/components/home/static-cards";
-import { SubscribeCard } from "@/components/home/subscribe-card";
 import { ThemeCard } from "@/components/home/theme-card";
 import { categories } from "@/lib/home-cards";
 
@@ -34,12 +32,10 @@ export default async function Home({
         cards={{
           intro: <IntroCard />,
           map: <MapCard />,
-          music: <MusicCard />,
           social: <SocialCard />,
           skip: <AigcFlowCard />,
           article: <ArticleCard />,
           theme: <ThemeCard />,
-          subscribe: <SubscribeCard />,
         }}
       />
       <HomeFooter />

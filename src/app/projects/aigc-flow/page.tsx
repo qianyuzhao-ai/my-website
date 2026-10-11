@@ -16,6 +16,7 @@ import {
   Metrics,
   SectionHead,
 } from "@/components/aigc-flow/primitives";
+import { HomeFooter } from "@/components/home/home-footer";
 import { keyMetrics, resultMetrics, scenes, sections } from "@/lib/aigc-flow";
 import "./case-study.css";
 
@@ -107,6 +108,7 @@ export default function AigcFlowPage() {
           <NextSteps />
         </section>
       </main>
+      <HomeFooter />
     </PageMotion>
   );
 }

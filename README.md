@@ -1,6 +1,6 @@
 # my-website
 
-个人网站基础项目，后续用于文章、履历与作品展示。当前首页按 Figma「My Website」稿与交互录屏实现 Bento 卡片布局，含拖拽排序、分类筛选、Toggle Lockdown、浅深主题与订阅表单（仅本地校验）。AIGC-FLOW 项目案例页位于 `/projects/aigc-flow`。
+个人网站基础项目，后续用于文章、履历与作品展示。当前首页按 Figma「My Website」稿与交互录屏实现 Bento 卡片布局，含拖拽排序、分类筛选、Toggle Lockdown 与浅深主题。AIGC-FLOW 项目案例页位于 `/projects/aigc-flow`。
 
 ## 技术栈
 
@@ -58,7 +58,6 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 - 布局移动端优先：单列 → `md` 两列 → `lg`（1152px 起）四列，1168px 内容宽、16px 间隔，单元格正方形。
 - 主题通过 next-themes 管理，默认跟随系统，手动选择记录在 `starter-ui-theme`。浅深两套图片用 `dark:hidden` / `hidden dark:block` 切换。
 - 移动端输入框为 16px，触控目标至少 44px；项目卡片通过左下角按钮跳转。
-- 订阅表单仅本地校验，不保存数据或调用接口。
 
 ## 交互
 
@@ -78,4 +77,4 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 - 地图图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/map-light.png` / `map-dark.png`）。
 - Contact、文章、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
 - 项目卡片只通过左下角按钮跳转，整张卡片不可点击，便于拖拽。
-- Media 分类的突出卡片暂定为 Music 与 Social。
+- Media 分类突出显示 Social 卡片。
