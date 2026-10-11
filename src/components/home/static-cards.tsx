@@ -28,7 +28,7 @@ function Memoji({
         fill
         sizes={sizes}
         draggable={false}
-        className="hidden object-contain"
+        className="hidden object-contain dark:block"
       />
     </span>
   );

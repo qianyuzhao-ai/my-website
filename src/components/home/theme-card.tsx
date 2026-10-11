@@ -35,7 +35,7 @@ export function ThemeCard() {
         >
           <span className="toggle-knob absolute top-1.5 left-1.5 flex size-9 items-center justify-center rounded-full bg-ink text-brand-yellow dark:translate-x-8">
             <MoonIcon className="size-4 dark:hidden" />
-            <SunIcon className="size-6 dark:block" />
+            <SunIcon className="hidden size-6 dark:block" />
           </span>
         </span>
       </button>
