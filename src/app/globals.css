@@ -286,6 +286,39 @@ summary {
   animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* 地标放在底图缩放层内，共用地图坐标；只有头像和按钮保持固定大小。 */
+.map-card {
+  overflow: clip;
+}
+.map-viewport {
+  container-type: size;
+  /* clip 不创建滚动容器，键盘聚焦按钮时不会滚动放大的底图。 */
+  overflow: clip;
+}
+.map-landmark {
+  @apply pointer-events-none absolute -translate-1/2 whitespace-nowrap text-fg font-medium;
+  /* 相当于 768px 原图上的 18px 文字，和底图一同放大缩小。 */
+  font-size: 2.34375cqw;
+  line-height: 1.2;
+  text-shadow:
+    0 0 1px var(--surface),
+    0 0 2px var(--surface);
+}
+.map-landmark-city {
+  left: 66%;
+  top: 42%;
+  font-size: 2cqw;
+}
+.map-landmark-palace {
+  left: 37.224%;
+  top: 39.595%;
+}
+.map-landmark-temple {
+  @apply -translate-y-full;
+  left: 49.38%;
+  top: 71.7%;
+}
+
 @layer components {
   .logo-gradient {
     background-image: linear-gradient(

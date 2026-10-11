@@ -33,7 +33,8 @@
     {
       "includes": [
         "public/images/aigc-flow/*.svg",
-        "public/images/footer/*.svg"
+        "public/images/footer/*.svg",
+        "public/images/map/*.svg"
       ],
       "linter": {
         "rules": {

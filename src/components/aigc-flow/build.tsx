@@ -1,5 +1,4 @@
 import { CaseCard, CaseLink, CaseSvg } from "@/components/aigc-flow/primitives";
-import { links } from "@/lib/home-cards";
 
 const architecture = [
   ["前端 · Next.js 16", "React Flow 画布 · 静态导出"],
@@ -135,7 +134,6 @@ export function NextSteps() {
           欢迎交流 AIGC 工具、节点式交互和产品落地。
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <CaseLink href={links.contact}>Contact</CaseLink>
           <CaseLink href="/?category=projects">All projects</CaseLink>
         </div>
       </CaseCard>

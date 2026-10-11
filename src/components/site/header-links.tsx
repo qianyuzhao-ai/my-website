@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { links } from "@/lib/home-cards";
 
 const itemClass = "flex min-h-11 items-center text-label font-medium";
 
-/** 头部右侧的 Writing 与 Contact，首页、文章页、项目页共用 */
+/** 头部右侧的 Writing，首页、文章页、项目页共用 */
 export function HeaderLinks({
   current,
   className = "",
@@ -24,15 +23,6 @@ export function HeaderLinks({
       >
         Writing
       </Link>
-      {links.contact ? (
-        <a href={links.contact} className={itemClass}>
-          Contact
-        </a>
-      ) : (
-        <span title="联系方式待提供" className={itemClass}>
-          Contact
-        </span>
-      )}
     </nav>
   );
 }

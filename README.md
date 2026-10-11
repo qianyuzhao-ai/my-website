@@ -91,15 +91,16 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 - 首页项目仅展示 AIGC-FLOW；Vouch 与 Wrap.so 已移除。卡片数量变化后，旧的自定义排列自动回退到新的默认布局。
 - **Toggle Lockdown**：Intro 头像在两张 Memoji 之间互换，伴随缩放与光晕动画。
 - **主题卡**：点击切换浅色 / 深色，旋钮滑动。
+- **北京地图卡**：本地静态底图，初始 2.25× 且只显示左下角「−」；缩小到 1.5× / 1× 后显示「＋」，回到初始视角时隐藏。最小档禁用「−」。故宫、天坛为底图上的文字标注，共用缩放层与地图坐标，不显示独立标签底色；头像与定位圈固定大小，浅深主题同步切换。按钮支持触控与键盘，操作不会触发卡片拖拽，无地图 API 或密钥依赖。
 - 所有动画在 `prefers-reduced-motion` 下关闭。
 
 ## 待补充
 
-- AIGC-FLOW 案例页按 Figma `31:418` 实现，路径 `/projects/aigc-flow`。GitHub 地址在 `src/lib/aigc-flow.ts` 的 `caseLinks.github` 配置；Contact 沿用 `home-cards.ts` 的配置。链接未提供时显示带说明的占位。首页入口按 Figma `4:617` / `4:1210` 实现，左下角按钮在当前标签页跳转，沿用 `skip` 布局 ID。
+- AIGC-FLOW 案例页按 Figma `31:418` 实现，路径 `/projects/aigc-flow`。GitHub 地址在 `src/lib/aigc-flow.ts` 的 `caseLinks.github` 配置；Contact 入口暂时移除。链接未提供时显示带说明的占位。首页入口按 Figma `4:617` / `4:1210` 实现，左下角按钮在当前标签页跳转，沿用 `skip` 布局 ID。
 - 案例页宽度达到 900px 且视口高度至少 700px 时启用滚动固定；短视口、窄屏和减少动态效果模式展示完整说明。步骤支持点击和键盘选择；打磨记录支持触控滑动与前后按钮；重试保存为本地交互演示，不调用真实生成服务。
 - 案例页画布示意在深色主题仍保持浅色，遵循 Figma。原始 SVG 保持不变，无障碍说明由使用处的 `alt`、`figcaption` 和正文提供；Biome 仅对这些 SVG 关闭 `noSvgWithoutTitle`。
 
-- 地图图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/map-light.png` / `map-dark.png`）。
-- Contact、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
+- 地图按 Figma 最新版本实现于 `src/components/home/map-card.tsx`，本地素材位于 `public/images/map/`。底图为 `beijing-detail-light.png` / `beijing-detail-dark.png`（768×768），SVG 保留原始尺寸。素材来源：Esri、HERE、Garmin、© OpenStreetMap contributors、GIS user community；[来源说明](https://www.esri.com/en-us/legal/terms/data-attributions)。替换底图时需保持浅深两套图片的范围、中心与地标坐标一致，并使用新文件名避开图片缓存。
+- X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
 - 项目卡片只通过左下角按钮跳转，整张卡片不可点击，便于拖拽。
 - Media 分类突出显示 Social 与文章卡片。
