@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { categories, links } from "@/lib/home-cards";
+import { HeaderLinks } from "@/components/site/header-links";
+import { categories } from "@/lib/home-cards";
 
 export function CaseHeader() {
   return (
     <header className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] items-center gap-y-4 px-5 pt-[18px] pb-2 md:grid-cols-[1fr_auto_1fr] md:px-12 md:pt-10 md:pb-[46px]">
       <Link
         href="/"
-        aria-label="nev 首页"
+        aria-label="qianyu 首页"
         className="logo-gradient justify-self-start font-serif text-logo font-bold"
       >
-        nev
+        qianyu
       </Link>
       <nav
         aria-label="网站导航"
@@ -29,21 +30,7 @@ export function CaseHeader() {
           ))}
         </ul>
       </nav>
-      {links.contact ? (
-        <a
-          href={links.contact}
-          className="flex min-h-11 items-center justify-self-end text-label font-medium md:col-start-3"
-        >
-          Contact
-        </a>
-      ) : (
-        <span
-          title="联系方式待提供"
-          className="justify-self-end text-label font-medium md:col-start-3"
-        >
-          Contact
-        </span>
-      )}
+      <HeaderLinks className="justify-self-end md:col-start-3" />
     </header>
   );
 }

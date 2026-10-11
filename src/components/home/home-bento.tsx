@@ -3,12 +3,8 @@
 import { type CSSProperties, type ReactNode, useState } from "react";
 import { flushSync } from "react-dom";
 import { BentoGrid } from "@/components/home/bento-grid";
-import {
-  type CardId,
-  type CategoryId,
-  categories,
-  links,
-} from "@/lib/home-cards";
+import { HeaderLinks } from "@/components/site/header-links";
+import { type CardId, type CategoryId, categories } from "@/lib/home-cards";
 
 type HomeBentoProps = {
   cards: Record<CardId, ReactNode>;
@@ -44,7 +40,7 @@ export function HomeBento({ cards, initialCategory = "all" }: HomeBentoProps) {
           href="/"
           className="logo-gradient justify-self-start font-serif text-logo font-bold"
         >
-          nev
+          qianyu
         </a>
         <nav
           aria-label="卡片分类"
@@ -70,21 +66,7 @@ export function HomeBento({ cards, initialCategory = "all" }: HomeBentoProps) {
             ))}
           </ul>
         </nav>
-        {links.contact ? (
-          <a
-            href={links.contact}
-            className="flex min-h-11 items-center justify-self-end text-label font-medium md:col-start-3"
-          >
-            Contact
-          </a>
-        ) : (
-          <span
-            title="联系方式待提供"
-            className="justify-self-end text-label font-medium md:col-start-3"
-          >
-            Contact
-          </span>
-        )}
+        <HeaderLinks className="justify-self-end md:col-start-3" />
       </header>
 
       <main id="main" className="px-4 pb-10 md:px-6 xl:px-0">

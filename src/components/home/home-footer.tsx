@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { links } from "@/lib/home-cards";
 
 function FooterArrow({ direction }: { direction: "up" | "up-right" }) {
@@ -31,6 +32,12 @@ export function HomeFooter() {
           aria-label="页脚导航"
           className="flex flex-wrap items-center gap-6"
         >
+          <Link
+            href="/writing"
+            className="inline-flex min-h-11 items-center rounded-sm transition-colors hover:text-fg"
+          >
+            Writing
+          </Link>
           {links.social ? (
             <a
               href={links.social}

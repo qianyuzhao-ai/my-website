@@ -1,6 +1,6 @@
 # 项目约定
 
-Next.js 个人网站，当前首页按 Figma「My Website」稿实现 Bento 卡片布局（v1，仅首页）。
+Next.js 个人网站：首页按 Figma「My Website」稿实现 Bento 卡片布局；文章列表与详情按 Figma「Writing / 文章列表与详情」页实现。
 
 ## 文件操作
 
@@ -21,11 +21,16 @@ Next.js 个人网站，当前首页按 Figma「My Website」稿实现 Bento 卡�
 - `src/components/ui`：手写 Button、Input。
 - `src/components/home`：首页头部、Bento 网格与卡片。
 - `src/lib/home-cards.ts`：卡片分类、网格位置与待提供链接。
+- `src/components/site`：多页面共用的头部链接（Writing / Contact）与跳转链接。
+- `src/components/writing`：文章页头部与上一篇 / 下一篇。
+- `src/content/posts`：文章 MDX，每篇导出 `metadata`（title、summary、date、tags、draft）；`src/lib/posts.ts` 负责读取、排序与格式化。
+- `src/mdx-components.tsx`：MDX 正文样式与 `Figure` 组件。
 
 ## 技术与编码约定
 
 - 使用 Next.js App Router、pnpm、TypeScript strict、Tailwind CSS v4 和 Biome；不引入组件库、ESLint 或 Prettier。
 - 例外：首页 Bento 拖拽使用 `react-grid-layout`（布局库，仅用于 `bento-grid.tsx`）；md 以下不启用拖拽。
+- 文章使用 `@next/mdx` 编译仓库内的 MDX，不引入额外的 frontmatter 或 CMS 依赖。
 - 默认使用 Server Components，仅交互边界添加 `"use client"`。
 - 文件名使用 kebab-case，组件使用 PascalCase，导入别名为 `@/*`。
 - UI 遵循 `src/app/globals.css` 中的语义颜色、字号、间距和圆角 token（来源 Figma fileKey `fmqIh2bjvp1EX59h0hXpMF`）。

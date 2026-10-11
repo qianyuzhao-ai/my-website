@@ -5,7 +5,7 @@ export function AigcFlowArtwork() {
   return (
     <div className="aigc-entry-canvas" data-name="Artwork / AIGC-FLOW">
       <div
-        className="absolute left-[150px] size-[440px] top-[200px] md:left-[-120px] md:top-[330px]"
+        className="absolute left-37.5 size-110 top-50 md:-left-30 md:top-82.5"
         data-name="Shape"
       >
         <Image
@@ -15,7 +15,7 @@ export function AigcFlowArtwork() {
           height={440}
           draggable={false}
           unoptimized
-          className="block max-w-none dark:hidden"
+          className="block max-w-none"
         />
         <Image
           alt=""
@@ -24,17 +24,17 @@ export function AigcFlowArtwork() {
           height={440}
           draggable={false}
           unoptimized
-          className="hidden max-w-none dark:block"
+          className="hidden max-w-none"
         />
       </div>
-      <div className="absolute flex h-[670.474px] items-center justify-center left-[-107.38px] top-[52px] w-[492.211px] md:left-[-131.38px] md:top-[70px]">
+      <div className="absolute flex h-[670.474px] items-center justify-center left-[-107.38px] top-13 w-[492.211px] md:left-[-131.38px] md:top-17.5">
         <div className="flex-none rotate-16">
           <div
-            className="bg-preview-surface content-stretch flex flex-col h-[600px] items-start overflow-clip relative rounded-[18px] shadow-[0px_20px_40px_0px_rgba(18,20,26,0.18)] w-[340px]"
+            className="bg-preview-surface content-stretch flex flex-col h-150 items-start overflow-clip relative rounded-[18px] shadow-[0px_20px_40px_0px_rgba(18,20,26,0.18)] w-85"
             data-name="App window"
           >
             <div
-              className="bg-preview-toolbar content-stretch flex gap-[7px] items-center overflow-clip px-[14px] py-[10px] relative shrink-0 w-full"
+              className="bg-preview-toolbar content-stretch flex gap-1.75 items-center overflow-clip px-3.5 py-2.5 relative shrink-0 w-full"
               data-name="Tab bar"
             >
               <div className="relative shrink-0 size-[9px]" data-name="Ellipse">

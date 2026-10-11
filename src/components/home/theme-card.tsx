@@ -23,7 +23,7 @@ export function ThemeCard() {
         aria-checked={isDark}
         disabled={!mounted}
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className="flex size-full min-h-[110px] items-center justify-between rounded-[inherit] px-6 text-left disabled:cursor-wait md:justify-center md:px-0"
+        className="flex size-full min-h-27.5 items-center justify-between rounded-[inherit] px-6 text-left disabled:cursor-wait md:justify-center md:px-0"
       >
         <span className="text-label font-medium md:sr-only">
           Appearance<span className="sr-only">：深色模式</span>

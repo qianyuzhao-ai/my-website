@@ -16,15 +16,31 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
-export function SpotifyIcon(props: IconProps) {
+/** 站内跳转：向右箭头 */
+export function ArrowRightIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 54 54" fill="none" aria-hidden="true" {...props}>
-      <circle cx="27" cy="27" r="27" className="fill-brand-green" />
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
       <path
-        d="M12.375 19.125c9.9-2.925 19.8-2.25 29.25 2.25M13.95 27c8.775-2.475 17.775-1.575 25.875 2.25M15.75 34.875c7.2-1.8 14.625-1.125 21.825 2.25"
-        stroke="white"
-        strokeWidth="1.4"
+        d="M3.333 8h9.334M8.667 4l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.8"
         strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** 返回 / 上一篇：向左箭头 */
+export function ArrowLeftIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M12.667 8H3.333M7.333 4l-4 4 4 4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

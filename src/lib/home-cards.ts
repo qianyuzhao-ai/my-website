@@ -1,4 +1,4 @@
-// 首页 Bento 卡片的数据与布局。网格位置对应 Figma 3:35（All）、3:39（About）、3:40（Projects）。
+// 首页 Bento 卡片的数据与布局，基于 Figma 稿调整为当前展示的卡片。
 
 export const categories = [
   { id: "all", label: "All" },
@@ -9,17 +9,7 @@ export const categories = [
 
 export type CategoryId = (typeof categories)[number]["id"];
 
-export type CardId =
-  | "intro"
-  | "map"
-  | "music"
-  | "social"
-  | "vouch"
-  | "skip"
-  | "article"
-  | "wrap"
-  | "theme"
-  | "subscribe";
+export type CardId = "intro" | "map" | "social" | "skip" | "article" | "theme";
 
 /** 1×1、2×1、1×2 三种卡片比例 */
 export type CardSize = "square" | "wide" | "tall";
@@ -27,36 +17,28 @@ export type CardSize = "square" | "wide" | "tall";
 export const cardSizes: Record<CardId, CardSize> = {
   intro: "wide",
   map: "square",
-  music: "square",
   social: "square",
-  vouch: "tall",
   skip: "tall",
   article: "wide",
-  wrap: "wide",
   theme: "square",
-  subscribe: "wide",
 };
 
 /** 移动端与平板的默认顺序（Figma 3:37） */
 export const defaultOrder: CardId[] = [
   "intro",
   "map",
-  "music",
   "social",
-  "vouch",
   "skip",
   "article",
-  "wrap",
   "theme",
-  "subscribe",
 ];
 
-/** 每个分类突出显示的卡片；其余卡片降低不透明度。Media 稿中未定义，暂定音乐与社交。 */
+/** 每个分类突出显示的卡片；其余卡片降低不透明度。Media 包含社交与文章。 */
 export const highlighted: Record<CategoryId, CardId[]> = {
   all: defaultOrder,
   about: ["intro", "map", "social"],
-  projects: ["wrap", "vouch", "skip"],
-  media: ["music", "social"],
+  projects: ["skip"],
+  media: ["social", "article"],
 };
 
 /** 桌面 4 列网格中的起始 [列, 行]，跨度由 cardSizes 决定 */
@@ -68,49 +50,33 @@ export const desktopPlacement: Record<
     intro: [1, 1],
     map: [3, 1],
     skip: [4, 1],
-    music: [1, 2],
-    social: [2, 2],
-    vouch: [3, 2],
-    article: [1, 3],
-    theme: [4, 3],
-    wrap: [1, 4],
-    subscribe: [3, 4],
+    social: [3, 2],
+    article: [1, 2],
+    theme: [1, 3],
   },
   about: {
     intro: [1, 1],
     map: [3, 1],
     social: [4, 1],
-    music: [1, 2],
     theme: [2, 2],
-    vouch: [3, 2],
-    skip: [4, 2],
-    article: [1, 3],
-    wrap: [1, 4],
-    subscribe: [3, 4],
+    skip: [1, 2],
+    article: [3, 2],
   },
   projects: {
-    wrap: [1, 1],
-    vouch: [3, 1],
-    skip: [4, 1],
-    intro: [1, 2],
-    music: [1, 3],
-    theme: [2, 3],
-    map: [3, 3],
-    social: [4, 3],
-    article: [1, 4],
-    subscribe: [3, 4],
+    skip: [1, 1],
+    intro: [2, 1],
+    theme: [4, 2],
+    map: [4, 1],
+    social: [1, 3],
+    article: [2, 2],
   },
   media: {
-    music: [1, 1],
-    social: [2, 1],
-    map: [3, 1],
+    social: [1, 1],
+    article: [2, 1],
     skip: [4, 1],
-    intro: [1, 2],
-    vouch: [3, 2],
-    article: [1, 3],
-    theme: [4, 3],
-    wrap: [1, 4],
-    subscribe: [3, 4],
+    map: [1, 2],
+    intro: [2, 2],
+    theme: [1, 3],
   },
 };
 
@@ -123,19 +89,14 @@ export function mobileOrder(category: CategoryId): CardId[] {
 // 卡片跳转地址；为 undefined 时渲染为不可点击的占位。
 export const links = {
   contact: undefined as string | undefined,
-  article: undefined as string | undefined,
   social: "https://x.com/qianyu_ai" as string | undefined,
-  vouch: undefined as string | undefined,
-  // 保留 skip 布局 ID，兼容访客已保存的 home-layout-v1 排列。
+  // AIGC-FLOW 沿用原 Skip 卡片的布局 ID。
   skip: "/projects/aigc-flow",
-  wrap: undefined as string | undefined,
 };
 
 export const projects = {
   social: { name: "X", tone: "bg-card-blue" },
-  vouch: { name: "Vouch", tone: "bg-card-blue" },
   skip: { name: "AIGC-FLOW", tone: "bg-card-mint" },
-  wrap: { name: "Wrap.so", tone: "bg-card-yellow" },
 } as const;
 
 // ---------- 拖拽网格（react-grid-layout）布局 ----------
@@ -184,7 +145,7 @@ function packLayout(order: CardId[], cols: GridCols): GridItem[] {
   });
 }
 
-/** 分类的预设布局：4 列取 Figma 位置表，2 列按移动端顺序密排 */
+/** 分类的预设布局：4 列取桌面位置表，2 列按移动端顺序密排 */
 export function presetLayout(category: CategoryId, cols: GridCols): GridItem[] {
   if (cols === 2) return packLayout(mobileOrder(category), 2);
   return defaultOrder.map((i) => {
