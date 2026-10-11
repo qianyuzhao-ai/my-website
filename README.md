@@ -1,6 +1,6 @@
 # my-website
 
-个人网站基础项目，后续用于文章、履历与作品展示。当前首页按 Figma「My Website」稿与交互录屏实现 Bento 卡片布局，含拖拽排序、分类筛选、Toggle Lockdown 与浅深主题。AIGC-FLOW 项目案例页位于 `/projects/aigc-flow`。
+个人网站基础项目，后续用于文章、履历与作品展示。当前首页按 Figma「My Website」稿与交互录屏实现 Bento 卡片布局，含拖拽排序、分类筛选、Toggle Lockdown 与浅深主题。AIGC-FLOW 项目案例页位于 `/projects/aigc-flow`，文章列表位于 `/writing`。
 
 ## 技术栈
 
@@ -9,6 +9,7 @@
 - Biome：代码检查、格式化和 import 排序；不使用 ESLint 或 Prettier
 - 原生 HTML / React 基础组件，不依赖组件库
 - react-grid-layout：首页 Bento 卡片拖拽排序（md 及以上）
+- @next/mdx：编译 `src/content/posts` 下的文章
 - GSAP / ScrollTrigger：AIGC-FLOW 案例页的滚动演示
 - next/font 自托管 Poppins（正文）与 Fraunces（标题），运行时不请求外部字体服务
 - 使用 next-themes 管理主题初始化、持久化、系统主题监听与跨标签页同步
@@ -43,12 +44,36 @@ src/
     ui/                 Button、Input
     home/               首页头部、Bento 网格（bento-grid.tsx 负责拖拽）与各卡片
     aigc-flow/          项目案例内容、画布示意、滚动步骤与横向卡片
+    site/               多页面共用的头部链接与跳转链接
+    writing/            文章页头部、上一篇 / 下一篇
+  content/posts/        文章 MDX（文件名即 slug）
+  mdx-components.tsx    MDX 正文样式与 Figure 组件
   lib/
     home-cards.ts       卡片分类、预设布局、拖拽布局存储与待提供链接
     aigc-flow.ts        Figma 案例文案、步骤、指标与项目链接
+    posts.ts            读取文章元信息、排序、按年分组、阅读时长与日期格式
 public/images/          头像与卡片图片（-light / -dark 两套）
   aigc-flow/            Figma 原始 SVG，按原始尺寸使用
 ```
+
+## 文章
+
+- 新建 `src/content/posts/<英文-slug>.mdx`，文件开头导出元信息：
+
+  ```mdx
+  export const metadata = {
+    title: "文章标题",
+    summary: "一句话摘要，用于列表、首页卡片和 SEO 描述",
+    date: "2026-09-28",
+    tags: ["Agent"],
+    draft: false, // true 时只在开发环境显示
+  };
+  ```
+
+- 正文支持标准 Markdown；图片用 `<Figure src="/images/posts/xxx.png" alt="…" caption="…" width={1280} height={720} />`，不填 `src` 时显示占位。
+- `/writing` 按年份分组；`/writing/[slug]` 构建时静态生成，未知 slug 返回 404。首页文章卡片自动展示最新一篇。
+- 阅读时长按中文 400 字 / 分钟、英文 200 词 / 分钟估算。
+- 当前 5 篇为设计稿中的演示文章，替换时直接修改或删除对应 MDX 文件。
 
 ## UI 规范
 
@@ -75,6 +100,6 @@ public/images/          头像与卡片图片（-light / -dark 两套）
 - 案例页画布示意在深色主题仍保持浅色，遵循 Figma。原始 SVG 保持不变，无障碍说明由使用处的 `alt`、`figcaption` 和正文提供；Biome 仅对这些 SVG 关闭 `noSvgWithoutTitle`。
 
 - 地图图片为录屏裁切的占位素材，需替换为原始素材（同名覆盖 `public/images/map-light.png` / `map-dark.png`）。
-- Contact、文章、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
+- Contact、X 与各项目链接在 `src/lib/home-cards.ts` 的 `links` 中填写，未填写时渲染为不可点击的占位；X 目前指向 `https://x.com/`，需替换为个人主页。
 - 项目卡片只通过左下角按钮跳转，整张卡片不可点击，便于拖拽。
 - Media 分类突出显示 Social 卡片。

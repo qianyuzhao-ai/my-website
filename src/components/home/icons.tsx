@@ -16,6 +16,36 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
+/** 站内跳转：向右箭头 */
+export function ArrowRightIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M3.333 8h9.334M8.667 4l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** 返回 / 上一篇：向左箭头 */
+export function ArrowLeftIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M12.667 8H3.333M7.333 4l-4 4 4 4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function XIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>

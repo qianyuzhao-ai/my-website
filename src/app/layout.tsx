@@ -18,7 +18,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "QianYu · nev",
+  title: "QianYu",
   description:
     "QianYu 的个人网站：来自北京的产品设计与开发，关注 React、Node、产品设计、AIGC 与 Agentic。",
 };

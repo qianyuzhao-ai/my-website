@@ -89,7 +89,6 @@ export function mobileOrder(category: CategoryId): CardId[] {
 // 卡片跳转地址；为 undefined 时渲染为不可点击的占位。
 export const links = {
   contact: undefined as string | undefined,
-  article: undefined as string | undefined,
   social: "https://x.com/qianyu_ai" as string | undefined,
   // AIGC-FLOW 沿用原 Skip 卡片的布局 ID。
   skip: "/projects/aigc-flow",

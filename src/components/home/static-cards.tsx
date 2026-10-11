@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { BentoCard, ThemedImage } from "@/components/home/bento-card";
-import { ArrowIcon, XIcon } from "@/components/home/icons";
+import { XIcon } from "@/components/home/icons";
 import { IntroAvatar } from "@/components/home/intro-avatar";
 import { ProjectLink } from "@/components/home/project-link";
 import { links, projects } from "@/lib/home-cards";
@@ -72,45 +72,6 @@ export function SocialCard() {
     <BentoCard className="h-42 bg-card-blue">
       <XIcon className="absolute top-1/2 left-1/2 size-16 -translate-1/2 text-social-icon" />
       <ProjectLink name={projects.social.name} href={links.social} />
-    </BentoCard>
-  );
-}
-
-export function ArticleCard() {
-  const readMore = (
-    <>
-      <ArrowIcon className="size-4" />
-      Read more
-    </>
-  );
-  const pillClass =
-    "inline-flex h-[38px] items-center gap-2 rounded-full border border-border bg-surface pr-4 pl-3 text-label font-medium transition-colors hover:border-fg-muted";
-
-  return (
-    <BentoCard className="flex flex-col justify-between gap-8 bg-surface p-6 lg:px-10 lg:pt-9.5 lg:pb-8">
-      <article className="flex flex-col gap-2">
-        <h2 className="font-serif text-title font-bold">
-          How it started vs. how it’s going
-        </h2>
-        <p>
-          A short personal history as it relates to design and development, and
-          how I’ve found value in the cross-section between both disciplines.
-        </p>
-      </article>
-      <div className="flex items-center justify-between gap-4">
-        {links.article ? (
-          <a href={links.article} draggable={false} className={pillClass}>
-            {readMore}
-          </a>
-        ) : (
-          <span className={pillClass} title="文章页待开发">
-            {readMore}
-          </span>
-        )}
-        <time dateTime="2021-05-05" className="text-caption text-fg-muted">
-          May 5, 2021
-        </time>
-      </div>
     </BentoCard>
   );
 }
