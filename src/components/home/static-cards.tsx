@@ -91,38 +91,6 @@ export function SocialCard() {
   );
 }
 
-const artwork = {
-  vouch: {
-    width: 280,
-    height: 524,
-    alt: "Vouch 项目界面截图",
-    className: "h-[400px]",
-    position: "object-[50%_81%] md:object-center",
-  },
-  wrap: {
-    width: 576,
-    height: 230,
-    alt: "Wrap.so 项目界面截图",
-    className: "h-[216px]",
-    position: "object-center",
-  },
-} as const;
-
-export function ProjectCard({ id }: { id: keyof typeof artwork }) {
-  const { className, position, ...image } = artwork[id];
-  return (
-    <BentoCard className={`${projects[id].tone} ${className}`}>
-      <ThemedImage
-        name={id}
-        sizes="(min-width: 1024px) 576px, 100vw"
-        className={`absolute inset-0 size-full object-cover ${position}`}
-        {...image}
-      />
-      <ProjectLink name={projects[id].name} href={links[id]} />
-    </BentoCard>
-  );
-}
-
 export function ArticleCard() {
   const readMore = (
     <>

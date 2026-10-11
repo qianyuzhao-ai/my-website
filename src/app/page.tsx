@@ -6,7 +6,6 @@ import {
   IntroCard,
   MapCard,
   MusicCard,
-  ProjectCard,
   SocialCard,
 } from "@/components/home/static-cards";
 import { SubscribeCard } from "@/components/home/subscribe-card";
@@ -37,10 +36,8 @@ export default async function Home({
           map: <MapCard />,
           music: <MusicCard />,
           social: <SocialCard />,
-          vouch: <ProjectCard id="vouch" />,
           skip: <AigcFlowCard />,
           article: <ArticleCard />,
-          wrap: <ProjectCard id="wrap" />,
           theme: <ThemeCard />,
           subscribe: <SubscribeCard />,
         }}
