@@ -179,7 +179,12 @@ html {
 }
 
 body {
-  @apply bg-bg text-fg text-body font-sans antialiased overflow-x-clip;
+  @apply bg-bg text-fg text-body font-sans antialiased;
+  overflow-wrap: break-word;
+}
+
+:where(a, code) {
+  overflow-wrap: anywhere;
 }
 
 .font-serif {

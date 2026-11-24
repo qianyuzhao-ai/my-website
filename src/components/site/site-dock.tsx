@@ -14,6 +14,9 @@ export function SiteDock() {
   const isHome = pathname === "/";
   const isWriting = pathname === "/writing" || pathname.startsWith("/writing/");
 
+  // 首页由 3D 空岛专属 HUD 接管，避免与虚拟摇杆/动作键重叠；博客与内页保留全局胶囊导航
+  if (isHome) return null;
+
   function toggleTheme() {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   }

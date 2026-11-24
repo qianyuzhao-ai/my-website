@@ -55,6 +55,7 @@ export function ConnectSheet() {
   }, []);
 
   async function handleCopyEmail() {
+    window.dispatchEvent(new CustomEvent("qianyu:glider-launch"));
     try {
       await navigator.clipboard.writeText(siteConfig.email);
       setCopied(true);

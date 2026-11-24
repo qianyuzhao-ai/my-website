@@ -17,6 +17,32 @@ export const siteConfig = {
   bio: "专注 Agentic 工作流、全栈交互工程与 AIGC 视觉创作。这里记录我亲手构建的数字实验与一线实战复盘。",
   email: "hello@qianyu.ai",
   statusText: "Exploring Agentic Workflows & Generative Systems",
+  /** 悬空彩蛋飞岛「关于我 / Now」私房石碑内容 */
+  about: {
+    headline: "守岛人手记 · About & Now",
+    story:
+      "我是 QianYu，常驻北京的 AI Builder。相比只停留在概念演示，我更痴迷把大模型推理、确定性工程架构与高审美视觉设计拧成真正好用的产品与创作流。",
+    nowItems: [
+      "正在打磨多 Agent 协同的前端与设计自动化工具链",
+      "探索可控性更高的 AIGC 连续分镜与 3D 空间叙事管线",
+      "把踩过的工程坑与创作心得持续沉淀进岛上的手稿石碑",
+    ],
+    arsenal: [
+      "Next.js / React 19",
+      "TypeScript",
+      "Three.js / WebGL",
+      "Blender",
+      "Claude / Gemini Agents",
+      "Flux / ControlNet",
+    ],
+  },
+  /** 出生台旁「塞尔达篝火料理锅」随机冒出的趣味状态语 */
+  potQuotes: [
+    "🍲 锅里正炖着：一份刚跑通的 Agent 工作流 + 两勺审美偏执",
+    "🔥 料理大成功！灵感值恢复满格，快去西侧银杏树下读手稿吧",
+    "✨ 提示：试着把东边的发光左纳乌方块推进石板凹槽里？",
+    "🌬 听说踩上西崖边的青绿乘风阵，能飞去云海深处的神秘小岛！",
+  ],
   socials: [
     {
       id: "x",

@@ -208,3 +208,31 @@ export function RefreshIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function VolumeOnIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3v-5Zm10.2-.8a3.8 3.8 0 0 1 0 6.6m2.2-8.8a6.8 6.8 0 0 1 0 11"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function VolumeOffIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3v-5Zm9.5.5 4 4m0-4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
