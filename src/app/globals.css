@@ -1,70 +1,95 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* 色值来自 Figma「My Website」：Desktop / Light (3:35)、Desktop / Dark (3:36)。 */
+/*
+ * Editorial AI Lab 设计系统：纸墨杂志 (Light) × 暗房极客 (Dark)
+ * 浅深两套语义色均满足 WCAG AA 正文 ≥ 4.5:1 对比度要求。
+ */
 :root {
   color-scheme: light;
-  --bg: #f5eeed;
-  --surface: #fefefe;
-  --border: #e9e6e7;
-  --fg: #111315;
-  --fg-muted: #74747c;
-  --nav-track: #ede9e9;
-  --nav-selected: #fefefe;
-  --pill: #ede9e9;
-  --accent: #2b806b; /* 设计稿 #61bfa8 对比度不足，加深以满足 4.5:1 */
+  --bg: #f6f3ec;
+  --surface: #fcfaf6;
+  --surface-elevated: #ece8dd;
+  --border: #dad4c7;
+  --border-strong: #b6ae9d;
+  --fg: #141413;
+  --fg-muted: #5c5851;
+  --accent: #c23b18;
+  --accent-soft: rgb(194 59 24 / 0.1);
+  --signal: #127353;
+  --signal-soft: rgb(18 115 83 / 0.11);
+  --focus: #1d4ed8;
+  --danger: #b91c1c;
+  --backdrop: rgb(20 20 19 / 0.45);
+  --elevation-lg: 0 20px 48px -12px rgb(20 20 19 / 0.14);
+
+  /* 兼容辅助语义色 */
+  --nav-track: #ece8dd;
+  --nav-selected: #fcfaf6;
+  --pill: #ece8dd;
+  --toggle-track: #ece8dd;
   --card-blue: #8cc7fe;
   --card-pink: #febcd0;
   --card-yellow: #fedd9a;
   --card-mint: #61caae;
-  --case-stroke: #f5eeed;
+  --case-stroke: #dad4c7;
   --social-icon: #ffffff;
-  --toggle-track: #ede9e9;
   --map-pin: #8cc7ed;
-  --pulse: #febcd0;
-  --focus: #2563eb;
-  --danger: #dc2626;
-  --elevation-lg: 0 8px 24px rgb(0 0 0 / 0.12);
+  --pulse: #c23b18;
 }
+
 .dark {
   color-scheme: dark;
-  --bg: #0b0d11;
-  --surface: #0e1014;
-  --border: #303338;
-  --fg: #f2f3f5;
-  --fg-muted: #979ba4;
-  --nav-track: #0b0d11;
-  --nav-selected: #1e2229;
-  --pill: #1e2229;
-  --accent: #74d6c0;
-  --card-blue: #0e1014;
-  --card-pink: #0e1014;
-  --card-yellow: #0e1014;
-  --card-mint: #0e1014;
-  --case-stroke: #303338;
-  --social-icon: #f2f3f5;
-  --toggle-track: #1e2229;
-  --map-pin: #406387;
-  --pulse: #6b3a4c;
+  --bg: #090a0d;
+  --surface: #111319;
+  --surface-elevated: #1a1d26;
+  --border: #262a36;
+  --border-strong: #3d4356;
+  --fg: #f3f1ec;
+  --fg-muted: #9499a6;
+  --accent: #ff6438;
+  --accent-soft: rgb(255 100 56 / 0.15);
+  --signal: #34f5a6;
+  --signal-soft: rgb(52 245 166 / 0.13);
   --focus: #7aa7ff;
   --danger: #f87171;
-  --elevation-lg: 0 8px 24px rgb(0 0 0 / 0.5);
+  --backdrop: rgb(4 5 8 / 0.72);
+  --elevation-lg: 0 24px 56px -12px rgb(0 0 0 / 0.65);
+
+  /* 兼容辅助语义色 */
+  --nav-track: #111319;
+  --nav-selected: #1a1d26;
+  --pill: #1a1d26;
+  --toggle-track: #1a1d26;
+  --card-blue: #111319;
+  --card-pink: #111319;
+  --card-yellow: #111319;
+  --card-mint: #111319;
+  --case-stroke: #262a36;
+  --social-icon: #f3f1ec;
+  --map-pin: #406387;
+  --pulse: #ff6438;
 }
 
 @theme inline {
-  --color-*: initial; /* 清空默认色板，强制只用语义色 */
+  --color-*: initial;
   --color-white: #fff;
   --color-black: #000;
   --color-transparent: transparent;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-fg: var(--fg);
   --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
   --color-nav-track: var(--nav-track);
   --color-nav-selected: var(--nav-selected);
   --color-pill: var(--pill);
-  --color-accent: var(--accent);
   --color-card-blue: var(--card-blue);
   --color-card-pink: var(--card-pink);
   --color-card-yellow: var(--card-yellow);
@@ -76,11 +101,10 @@
   --color-pulse: var(--pulse);
   --color-focus: var(--focus);
   --color-danger: var(--danger);
-  /* 主题无关的品牌色：Spotify 图标、主题开关图标与旋钮 */
   --color-brand-green: #61caae;
   --color-brand-yellow: #fedd9a;
-  --color-ink: #111315;
-  --shadow-lg: var(--elevation-lg); /* 换个名字，避免自引用 */
+  --color-ink: #141413;
+  --shadow-lg: var(--elevation-lg);
 
   --font-sans:
     var(--font-poppins), -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -89,30 +113,39 @@
 }
 
 @theme {
-  /* 4 列网格从 1152px 起：单元格 ≥ 264px，文字卡片不被裁切 */
   --breakpoint-lg: 72rem;
   --font-mono:
     ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
-  --spacing: 4px; /* p-1=4px p-4=16px p-6=24px */
+  --spacing: 4px;
   --radius-full: 9999px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-xl: 18px;
   --radius-card-sm: 24px;
   --radius-card: 32px;
 
+  /* 先锋杂志与流式排版字号 */
+  --text-hero: clamp(2.5rem, 6.8vw, 5.6rem);
+  --text-hero--line-height: 1.03;
+  --text-section: clamp(1.85rem, 4.2vw, 3.35rem);
+  --text-section--line-height: 1.08;
   --text-logo: 42px;
   --text-logo--line-height: 50px;
   --text-name: 34px;
-  --text-name--line-height: 26px;
+  --text-name--line-height: 38px;
   --text-title: 24px;
-  --text-title--line-height: 30px;
+  --text-title--line-height: 32px;
   --text-body: 16px;
   --text-body--line-height: 26px;
   --text-label: 14px;
   --text-label--line-height: 20px;
   --text-caption: 12px;
   --text-caption--line-height: 18px;
+  --text-micro: 11px;
+  --text-micro--line-height: 16px;
+
+  /* 文章与案例字号 */
   --text-case-display: 80px;
   --text-case-display--line-height: 88px;
   --text-case-heading: 36px;
@@ -121,15 +154,14 @@
   --text-case-title--line-height: 30px;
   --text-case-small: 14px;
   --text-case-small--line-height: 24px;
-  /* 文章：Figma「Writing / 文章列表与详情」 */
   --text-display: 48px;
   --text-display--line-height: 56px;
   --text-display-sm: 32px;
   --text-display-sm--line-height: 40px;
   --text-post-title: 40px;
-  --text-post-title--line-height: 56px;
+  --text-post-title--line-height: 52px;
   --text-post-title-sm: 28px;
-  --text-post-title-sm--line-height: 40px;
+  --text-post-title-sm--line-height: 38px;
   --text-post-heading: 24px;
   --text-post-heading--line-height: 34px;
   --text-post-body: 17px;
@@ -140,8 +172,14 @@
   --text-code--line-height: 22px;
 }
 
+html {
+  @media (prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
-  @apply bg-bg text-fg text-body font-sans;
+  @apply bg-bg text-fg text-body font-sans antialiased overflow-x-clip;
 }
 
 .font-serif {
@@ -154,182 +192,98 @@ body {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
+
 button:not(:disabled),
 summary {
   cursor: pointer;
 }
+
 ::selection {
-  background: var(--card-blue);
+  background: var(--accent-soft);
   color: var(--fg);
 }
 
-/* AIGC-FLOW 首页卡片：移动端 358×400，桌面端 280×576。 */
-.aigc-entry-art {
-  position: absolute;
-  inset: 0;
-  container-type: inline-size;
-  pointer-events: none;
+/* 纸张与暗房胶片颗粒质感层 */
+.editorial-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.032;
 }
-.dark .aigc-entry-art {
-  inset: -1.5px;
-}
-.aigc-entry-canvas {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 358px;
-  height: 400px;
-  transform: scale(calc(100cqw / 358px));
-  transform-origin: top left;
-}
-@media (min-width: 768px) {
-  .aigc-entry-canvas {
-    width: 280px;
-    height: 576px;
-    transform: scale(calc(100cqw / 280px));
-  }
+.dark .editorial-grain {
+  opacity: 0.045;
 }
 
-/* 拖拽网格（react-grid-layout），仅 md 及以上启用 */
-.react-grid-layout {
-  position: relative;
-  transition: height 350ms cubic-bezier(0.2, 0, 0, 1);
-}
-.react-grid-item {
-  cursor: grab;
-  touch-action: none;
-}
-.react-grid-item.cssTransforms {
-  transition: transform 350ms cubic-bezier(0.2, 0, 0, 1);
-}
-.react-grid-item img {
-  pointer-events: none;
-  user-select: none;
-}
-.react-grid-item.react-draggable-dragging {
-  z-index: 3;
-  cursor: grabbing;
-  transition: none;
-  will-change: transform;
-}
-.react-grid-item.react-draggable-dragging > * {
-  border-radius: var(--radius-card);
-  box-shadow: var(--elevation-lg);
-}
-.react-grid-item.react-grid-placeholder {
-  z-index: 2;
-  border-radius: var(--radius-card);
-  background: var(--nav-track);
-  transition-duration: 150ms;
-  user-select: none;
+/* 实验台微刻度点阵 */
+.lab-grid {
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-/* 入场、头像互换与主题旋钮动画 */
-@keyframes card-enter {
+/* 原生模态 <dialog> 滚动隔离与顶层遮罩（遵循 modern-web-guidance: dialog） */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: var(--backdrop);
+  backdrop-filter: blur(8px);
+}
+
+/* 阅读页顶部滚动进度条（遵循 scroll-progress-indicator：animation-timeline 声明在 animation 之后） */
+@keyframes grow-reading-progress {
   from {
-    opacity: 0;
-    transform: translateY(8px);
+    transform: scaleX(0);
   }
-}
-@keyframes avatar-out {
   to {
-    opacity: 0;
-    transform: scale(0.6);
+    transform: scaleX(1);
   }
 }
-@keyframes avatar-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.6);
+
+.reading-progress-bar {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      animation: grow-reading-progress auto linear;
+      animation-timeline: scroll(root block);
+    }
   }
-  60% {
-    opacity: 1;
-    transform: scale(1.06);
-  }
+}
+
+/* 状态呼吸绿点（尊重减弱动画） */
+@keyframes signal-pulse {
+  0%,
   100% {
+    opacity: 1;
     transform: scale(1);
   }
-}
-@keyframes avatar-pulse {
-  0% {
-    opacity: 0.9;
-    transform: scale(0.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.6);
+  50% {
+    opacity: 0.45;
+    transform: scale(0.86);
   }
 }
-@keyframes knob-to-light {
-  from {
-    translate: 32px 0;
+.signal-dot {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: signal-pulse 2.6s ease-in-out infinite;
   }
-}
-@keyframes knob-to-dark {
-  from {
-    translate: 0 0;
-  }
-}
-.card-enter {
-  animation: card-enter 450ms cubic-bezier(0.2, 0, 0, 1) both;
-  animation-delay: calc(var(--i, 0) * 40ms);
-}
-.toggle-knob {
-  animation: knob-to-light 300ms cubic-bezier(0.2, 0, 0, 1);
-}
-.dark .toggle-knob {
-  animation-name: knob-to-dark;
 }
 
-/* 分类切换时卡片位置过渡（移动端，View Transitions API） */
-::view-transition-group(*) {
-  animation-duration: 350ms;
-  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+/* View Transitions 仅在允许动画时启用位移过渡 */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(*) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
 }
-
-/* 地标放在底图缩放层内，共用地图坐标；只有头像和按钮保持固定大小。 */
-.map-card {
-  overflow: clip;
-}
-.map-viewport {
-  container-type: size;
-  /* clip 不创建滚动容器，键盘聚焦按钮时不会滚动放大的底图。 */
-  overflow: clip;
-}
-.map-landmark {
-  @apply pointer-events-none absolute -translate-1/2 whitespace-nowrap text-fg font-medium;
-  /* 相当于 768px 原图上的 18px 文字，和底图一同放大缩小。 */
-  font-size: 2.34375cqw;
-  line-height: 1.2;
-  text-shadow:
-    0 0 1px var(--surface),
-    0 0 2px var(--surface);
-}
-.map-landmark-city {
-  left: 66%;
-  top: 42%;
-  font-size: 2cqw;
-}
-.map-landmark-palace {
-  left: 37.224%;
-  top: 39.595%;
-}
-.map-landmark-temple {
-  @apply -translate-y-full;
-  left: 49.38%;
-  top: 71.7%;
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
 }
 
 @layer components {
-  .logo-gradient {
-    background-image: linear-gradient(
-      90deg,
-      #e85c85 0%,
-      #a98cd0 60%,
-      #edbe66 100%
-    );
-    background-clip: text;
-    color: transparent;
-  }
   .ui-button {
     @apply inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-transparent text-label font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
   }
@@ -346,10 +300,10 @@ summary {
     @apply bg-fg text-bg enabled:hover:opacity-90;
   }
   .ui-button[data-variant="secondary"] {
-    @apply border-border bg-surface text-fg enabled:hover:bg-nav-track;
+    @apply border-border bg-surface text-fg enabled:hover:bg-surface-elevated;
   }
   .ui-button[data-variant="ghost"] {
-    @apply bg-transparent text-fg enabled:hover:bg-nav-track;
+    @apply bg-transparent text-fg enabled:hover:bg-surface-elevated;
   }
   .ui-input {
     @apply h-11 w-full border-b border-border bg-transparent text-body text-fg placeholder:text-fg-muted disabled:cursor-not-allowed disabled:opacity-50;
@@ -371,27 +325,8 @@ summary {
     min-height: 44px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    /* biome-ignore lint/complexity/noImportantStyles: Respect reduced motion even when a utility sets a transition. */
-    transition: none !important;
-    /* biome-ignore lint/complexity/noImportantStyles: Reduced motion must override smooth scrolling utilities. */
-    scroll-behavior: auto !important;
-  }
-  *,
-  *::before,
-  *::after,
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    /* biome-ignore lint/complexity/noImportantStyles: Disable view transition animations for reduced motion. */
-    animation: none !important;
-  }
-}
 
-/* Product screenshots retain their light UI in both Figma themes. */
+/* 保留预览组件色值，兼容尚未手动删除的旧组件文件 */
 :root,
 .dark {
   --preview-surface: #fefefe;

@@ -1,37 +1,23 @@
-import { AigcFlowCard } from "@/components/home/aigc-flow-card";
-import { ArticleCard } from "@/components/home/article-card";
-import { HomeBento } from "@/components/home/home-bento";
-import { HomeFooter } from "@/components/home/home-footer";
-import { MapCard } from "@/components/home/map-card";
-import { IntroCard, SocialCard } from "@/components/home/static-cards";
-import { ThemeCard } from "@/components/home/theme-card";
-import { SkipLink } from "@/components/site/skip-link";
-import { categories } from "@/lib/home-cards";
+import { EditorialHero } from "@/components/home/editorial-hero";
+import { EditorialWritingIndex } from "@/components/home/editorial-writing-index";
+import { HomeColophon } from "@/components/home/home-colophon";
+import { WorksShowcase } from "@/components/home/works-showcase";
+import { SiteFooter } from "@/components/site/site-footer";
+import { getPosts } from "@/lib/posts";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string }>;
-}) {
-  const { category: requestedCategory } = await searchParams;
-  const category =
-    categories.find((item) => item.id === requestedCategory)?.id ?? "all";
+export default async function Home() {
+  const posts = await getPosts();
+  const recentPosts = posts.slice(0, 5);
+
   return (
     <>
-      <SkipLink />
-      <HomeBento
-        key={category}
-        initialCategory={category}
-        cards={{
-          intro: <IntroCard />,
-          map: <MapCard />,
-          social: <SocialCard />,
-          skip: <AigcFlowCard />,
-          article: <ArticleCard />,
-          theme: <ThemeCard />,
-        }}
-      />
-      <HomeFooter />
+      <main id="main">
+        <EditorialHero />
+        <WorksShowcase />
+        <EditorialWritingIndex posts={recentPosts} totalCount={posts.length} />
+        <HomeColophon />
+      </main>
+      <SiteFooter />
     </>
   );
 }

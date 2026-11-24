@@ -4,21 +4,18 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import type { MDXContent } from "mdx/types";
 import { cache } from "react";
+import { slugifyHeading } from "@/lib/heading-slug";
+import type { Post, PostHeading, PostMeta } from "@/lib/post-shared";
 
-export type PostMeta = {
-  title: string;
-  summary: string;
-  /** YYYY-MM-DD */
-  date: string;
-  tags?: string[];
-  /** 草稿只在开发环境显示 */
-  draft?: boolean;
-};
-
-export type Post = PostMeta & {
-  slug: string;
-  readingMinutes: number;
-};
+export {
+  formatDate,
+  formatMonthDay,
+  getAllTags,
+  groupByYear,
+  type Post,
+  type PostHeading,
+  type PostMeta,
+} from "@/lib/post-shared";
 
 const POSTS_DIR = path.join(process.cwd(), "src/content/posts");
 
@@ -53,6 +50,25 @@ function readingMinutes(source: string) {
   return Math.max(1, Math.round(cjk / 400 + words / 200));
 }
 
+/** 提取 MDX 正文中的二级与三级标题（忽略代码块内部） */
+function extractHeadings(source: string): PostHeading[] {
+  const withoutCode = source.replace(/```[\s\S]*?```/g, "");
+  const headings: PostHeading[] = [];
+  for (const rawLine of withoutCode.split("\n")) {
+    const match = rawLine.match(/^(#{2,3})\s+(.+?)\s*$/);
+    if (!match) continue;
+    const level = match[1].length as 2 | 3;
+    const text = match[2].replace(/[`*_~]/g, "").trim();
+    if (!text) continue;
+    headings.push({
+      id: slugifyHeading(text),
+      text,
+      level,
+    });
+  }
+  return headings;
+}
+
 /** 全部已发布文章，按日期从新到旧 */
 export const getPosts = cache(async (): Promise<Post[]> => {
   const files = (await readdir(POSTS_DIR)).filter((file) =>
@@ -81,33 +97,17 @@ export async function getPost(slug: string) {
   const posts = await getPosts();
   const index = posts.findIndex((post) => post.slug === slug);
   if (index === -1) return null;
-  const { default: Content } = await importPost(slug);
+  const [{ default: Content }, source] = await Promise.all([
+    importPost(slug),
+    readFile(path.join(POSTS_DIR, `${slug}.mdx`), "utf8"),
+  ]);
   return {
     post: posts[index],
     Content,
+    headings: extractHeadings(source),
     /** 更早的一篇 */
     previous: posts[index + 1] ?? null,
     /** 更新的一篇 */
     next: posts[index - 1] ?? null,
   };
-}
-
-/** 按年份分组，年份从新到旧 */
-export function groupByYear(posts: Post[]) {
-  const groups = new Map<string, Post[]>();
-  for (const post of posts) {
-    const year = post.date.slice(0, 4);
-    groups.set(year, [...(groups.get(year) ?? []), post]);
-  }
-  return [...groups];
-}
-
-/** 2026-09-28 → 2026.09.28 */
-export function formatDate(date: string) {
-  return date.replaceAll("-", ".");
-}
-
-/** 2026-09-28 → 09.28（列表已按年份分组时使用） */
-export function formatMonthDay(date: string) {
-  return date.slice(5).replace("-", ".");
 }

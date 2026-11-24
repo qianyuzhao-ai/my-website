@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { HomeFooter } from "@/components/home/home-footer";
 import { ArrowLeftIcon } from "@/components/home/icons";
-import { SkipLink } from "@/components/site/skip-link";
+import { SiteFooter } from "@/components/site/site-footer";
 import { PostPager } from "@/components/writing/post-pager";
-import { WritingHeader } from "@/components/writing/writing-header";
+import { PostToc } from "@/components/writing/post-toc";
+import { ReadingProgress } from "@/components/writing/reading-progress";
 import { formatDate, getPost, getPosts } from "@/lib/posts";
+import { siteConfig } from "@/lib/site-config";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!result) return {};
   const { title, summary, date, tags } = result.post;
   return {
-    title: `${title} · QianYu`,
+    title: `${title} · ${siteConfig.name}`,
     description: summary,
     openGraph: {
       type: "article",
@@ -39,62 +40,88 @@ export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const result = await getPost(slug);
   if (!result) notFound();
-  const { post, Content, previous, next } = result;
+  const { post, Content, headings, previous, next } = result;
 
   return (
     <>
-      <SkipLink />
-      <WritingHeader />
-      <main id="main" className="px-5 pb-10 md:px-6 xl:px-0">
-        <article className="mx-auto flex max-w-[872px] flex-col gap-6 md:gap-8 md:rounded-card md:bg-surface md:px-12 md:pt-10 md:pb-14 lg:px-[116px] md:dark:border-[1.5px] md:dark:border-border">
-          <Link
-            href="/writing"
-            className="inline-flex min-h-11 items-center gap-1.5 self-start text-label font-medium"
-          >
-            <ArrowLeftIcon className="size-4" />
-            All posts
-          </Link>
-
-          <header className="flex flex-col gap-4">
-            <p className="text-caption text-fg-muted">
-              <time dateTime={post.date}>{formatDate(post.date)}</time> ·{" "}
-              {post.readingMinutes} min read
-            </p>
-            <h1 className="font-serif text-post-title-sm font-bold md:text-post-title">
-              {post.title}
-            </h1>
-            <p className="text-reading text-fg-muted md:text-post-body">
-              {post.summary}
-            </p>
-            {post.tags?.length ? (
-              <ul aria-label="标签" className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-full bg-pill px-3 py-0.5 text-case-small"
-                  >
-                    {tag}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </header>
-
-          <hr className="border-border" />
-
-          <div className="flex flex-col gap-5 text-reading md:gap-6 md:text-post-body">
-            <Content />
+      <ReadingProgress />
+      <main
+        id="main"
+        className="px-4 pt-6 pb-16 sm:px-6 md:px-8 md:pt-24 md:pb-24"
+      >
+        <div className="mx-auto max-w-6xl">
+          {/* 返回文章归档 */}
+          <div className="border-b border-border pb-4">
+            <Link
+              href="/writing"
+              className="inline-flex min-h-11 items-center gap-2 font-mono text-caption font-medium text-fg-muted transition-colors hover:text-accent"
+            >
+              <ArrowLeftIcon className="size-4" />
+              <span>BACK TO WRITING ARCHIVE</span>
+            </Link>
           </div>
 
-          {previous || next ? (
-            <>
-              <hr className="border-border" />
-              <PostPager previous={previous} next={next} />
-            </>
-          ) : null}
-        </article>
+          <div className="mt-8 grid grid-cols-1 gap-10 lg:mt-12 lg:grid-cols-12 lg:items-start">
+            {/* 主阅读列 */}
+            <article className="min-w-0 lg:col-span-8 lg:col-start-1">
+              <header className="flex flex-col gap-4 border-b border-border pb-8">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-caption text-fg-muted">
+                  <time dateTime={post.date}>{formatDate(post.date)}</time>
+                  <span aria-hidden="true">·</span>
+                  <span>{post.readingMinutes} MIN READ</span>
+                  <span aria-hidden="true">·</span>
+                  <span>BY {siteConfig.name.toUpperCase()}</span>
+                </div>
+
+                <h1 className="font-serif text-post-title-sm font-bold tracking-tight text-fg md:text-post-title">
+                  {post.title}
+                </h1>
+
+                <p className="text-reading text-fg-muted md:text-post-body">
+                  {post.summary}
+                </p>
+
+                {post.tags?.length ? (
+                  <ul aria-label="文章标签" className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <li
+                        key={tag}
+                        className="rounded-full border border-border bg-surface-elevated px-3 py-0.5 font-mono text-micro text-fg"
+                      >
+                        #{tag}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </header>
+
+              {/* 移动端可展开目录 */}
+              {headings.length > 0 ? (
+                <div className="mt-6 lg:hidden">
+                  <PostToc headings={headings} variant="mobile" />
+                </div>
+              ) : null}
+
+              {/* MDX 正文 */}
+              <div className="mt-8 flex flex-col gap-5 text-reading md:gap-6 md:text-post-body">
+                <Content />
+              </div>
+
+              {previous || next ? (
+                <div className="mt-14 border-t border-border pt-8">
+                  <PostPager previous={previous} next={next} />
+                </div>
+              ) : null}
+            </article>
+
+            {/* 桌面端右侧粘性目录栏 */}
+            <div className="hidden lg:sticky lg:top-28 lg:col-span-3 lg:col-start-10 lg:block">
+              <PostToc headings={headings} variant="desktop" />
+            </div>
+          </div>
+        </div>
       </main>
-      <HomeFooter />
+      <SiteFooter />
     </>
   );
 }

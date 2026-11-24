@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/home/icons";
-import type { Post } from "@/lib/posts";
+import type { Post } from "@/lib/post-shared";
 
 const cardClass =
-  "flex flex-col gap-1.5 rounded-3xl border border-border px-5 py-[18px] transition-colors hover:border-fg-muted";
-const labelClass = "flex items-center gap-1.5 text-caption text-fg-muted";
-const titleClass = "line-clamp-2 font-serif text-case-title font-semibold";
+  "group flex flex-col justify-between gap-2 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-accent";
+const labelClass =
+  "flex items-center gap-1.5 font-mono text-micro tracking-widest text-fg-muted uppercase transition-colors group-hover:text-accent";
+const titleClass =
+  "line-clamp-2 font-serif text-case-title font-bold text-fg transition-colors group-hover:text-accent";
 
 /** 上一篇（更早）在左，下一篇（更新）在右；移动端上下排列 */
 export function PostPager({
@@ -27,8 +29,8 @@ export function PostPager({
           className={cardClass}
         >
           <span className={labelClass}>
-            <ArrowLeftIcon className="size-4" />
-            Previous
+            <ArrowLeftIcon className="size-3.5" />
+            <span>Older Essay</span>
           </span>
           <span className={titleClass}>{previous.title}</span>
         </Link>
@@ -40,8 +42,8 @@ export function PostPager({
           className={`${cardClass} items-end text-right md:col-start-2`}
         >
           <span className={labelClass}>
-            Next
-            <ArrowRightIcon className="size-4" />
+            <span>Newer Essay</span>
+            <ArrowRightIcon className="size-3.5" />
           </span>
           <span className={titleClass}>{next.title}</span>
         </Link>
