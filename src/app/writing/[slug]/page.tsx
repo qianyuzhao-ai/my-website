@@ -47,52 +47,85 @@ export default async function PostPage({ params }: Props) {
       <ReadingProgress />
       <main
         id="main"
-        className="px-4 pt-6 pb-16 sm:px-6 md:px-8 md:pt-24 md:pb-24"
+        className="px-4 pt-8 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-28"
       >
         <div className="mx-auto max-w-6xl">
-          {/* 返回文章归档 */}
-          <div className="border-b border-border pb-4">
+          {/* 移动端顶部返回入口 */}
+          <div className="border-b border-border pb-3 lg:hidden">
             <Link
               href="/writing"
-              className="inline-flex min-h-11 items-center gap-2 font-mono text-caption font-medium text-fg-muted transition-colors hover:text-accent"
+              className="inline-flex min-h-11 items-center gap-2 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-accent"
             >
               <ArrowLeftIcon className="size-4" />
-              <span>BACK TO WRITING ARCHIVE</span>
+              <span>返回文章列表</span>
             </Link>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-10 lg:mt-12 lg:grid-cols-12 lg:items-start">
-            {/* 主阅读列 */}
-            <article className="min-w-0 lg:col-span-8 lg:col-start-1">
-              <header className="flex flex-col gap-4 border-b border-border pb-8">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-caption text-fg-muted">
-                  <time dateTime={post.date}>{formatDate(post.date)}</time>
-                  <span aria-hidden="true">·</span>
-                  <span>{post.readingMinutes} MIN READ</span>
-                  <span aria-hidden="true">·</span>
-                  <span>BY {siteConfig.name.toUpperCase()}</span>
-                </div>
+          {/* 瑞士 12 列阅读网格：左栏目录与索引，右主栏专注 65ch 阅读与代码块延展 */}
+          <div className="mt-6 grid grid-cols-1 gap-10 lg:mt-0 lg:grid-cols-12 lg:items-start lg:gap-10">
+            {/* 桌面端左侧粘性导览与极简无框目录 */}
+            <aside
+              aria-label="文章导览"
+              className="hidden lg:sticky lg:top-28 lg:col-span-3 lg:flex lg:flex-col lg:gap-7"
+            >
+              <Link
+                href="/writing"
+                className="group inline-flex min-h-11 w-fit items-center gap-2 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-accent"
+              >
+                <ArrowLeftIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-0.5" />
+                <span>返回文章列表</span>
+              </Link>
 
-                <h1 className="font-serif text-post-title-sm font-bold tracking-tight text-fg md:text-post-title">
+              {headings.length > 0 ? (
+                <div className="border-t border-border pt-6">
+                  <PostToc headings={headings} variant="desktop" />
+                </div>
+              ) : null}
+
+              <dl className="flex flex-col gap-3 border-t border-border pt-6 text-label">
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-fg-muted">发布</dt>
+                  <dd className="tabular-nums text-fg">
+                    <time dateTime={post.date}>{formatDate(post.date)}</time>
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-fg-muted">时长</dt>
+                  <dd className="tabular-nums text-fg">
+                    {post.readingMinutes} 分钟
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-fg-muted">作者</dt>
+                  <dd className="text-fg">{siteConfig.name}</dd>
+                </div>
+              </dl>
+            </aside>
+
+            {/* 主阅读列 */}
+            <article className="min-w-0 lg:col-span-8 lg:col-start-5">
+              <header className="border-b border-border pb-8">
+                <h1 className="max-w-[22ch] font-serif text-[clamp(1.875rem,4.2vw,2.75rem)] leading-[1.16] font-bold tracking-[-0.03em] text-fg">
                   {post.title}
                 </h1>
 
-                <p className="text-reading text-fg-muted md:text-post-body">
+                <p className="mt-4 max-w-[62ch] text-body leading-relaxed text-fg-muted md:text-[17px]">
                   {post.summary}
                 </p>
 
-                {post.tags?.length ? (
-                  <ul aria-label="文章标签" className="flex flex-wrap gap-2">
-                    {post.tags.map((tag) => (
-                      <li
-                        key={tag}
-                        className="rounded-full border border-border bg-surface-elevated px-3 py-0.5 font-mono text-micro text-fg"
-                      >
-                        #{tag}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+                <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-label tabular-nums text-fg-muted">
+                  <time dateTime={post.date}>{formatDate(post.date)}</time>
+                  <span aria-hidden="true">·</span>
+                  <span>{post.readingMinutes} 分钟阅读</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{siteConfig.name}</span>
+                  {post.tags?.length ? (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <span className="text-fg">{post.tags.join(" · ")}</span>
+                    </>
+                  ) : null}
+                </div>
               </header>
 
               {/* 移动端可展开目录 */}
@@ -103,21 +136,16 @@ export default async function PostPage({ params }: Props) {
               ) : null}
 
               {/* MDX 正文 */}
-              <div className="mt-8 flex flex-col gap-5 text-reading md:gap-6 md:text-post-body">
+              <div className="mt-8 flex flex-col gap-6 text-body leading-[1.82] md:mt-10 md:text-[17px]">
                 <Content />
               </div>
 
               {previous || next ? (
-                <div className="mt-14 border-t border-border pt-8">
+                <div className="mt-16 border-t border-border pt-8">
                   <PostPager previous={previous} next={next} />
                 </div>
               ) : null}
             </article>
-
-            {/* 桌面端右侧粘性目录栏 */}
-            <div className="hidden lg:sticky lg:top-28 lg:col-span-3 lg:col-start-10 lg:block">
-              <PostToc headings={headings} variant="desktop" />
-            </div>
           </div>
         </div>
       </main>

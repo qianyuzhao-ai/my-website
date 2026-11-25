@@ -16,38 +16,40 @@ export default async function WritingPage() {
   const posts = await getPosts();
   const tags = getAllTags(posts);
   const years = groupByYear(posts);
-  const since = years.at(-1)?.[0];
+  const latestYear = years[0]?.[0];
+  const earliestYear = years.at(-1)?.[0];
+  const yearRange =
+    earliestYear && latestYear && earliestYear !== latestYear
+      ? `${earliestYear}–${latestYear}`
+      : latestYear;
 
   return (
     <>
       <main
         id="main"
-        className="px-4 pt-6 pb-16 sm:px-6 md:px-8 md:pt-24 md:pb-24"
+        className="px-4 pt-10 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-28"
       >
         <div className="mx-auto max-w-6xl">
-          {/* 杂志刊头 */}
-          <header className="border-b border-border pb-8 md:pb-12">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-y border-border py-2.5 font-mono text-micro tracking-widest text-fg-muted uppercase">
-              <span>EDITORIAL ARCHIVE {"//"} WRITING</span>
-              <span>
-                {posts.length} PUBLISHED{since ? ` · SINCE ${since}` : ""}
-              </span>
+          {/* 瑞士国际主义刊头：直接以主标题切入内容，无冗余眉标 */}
+          <header className="grid grid-cols-1 gap-5 pb-8 md:pb-10 lg:grid-cols-12 lg:items-end lg:gap-8">
+            <div className="lg:col-span-7">
+              <h1 className="font-serif text-[clamp(2.75rem,6vw,4.5rem)] leading-[0.98] font-bold tracking-[-0.035em] text-fg">
+                Writing
+              </h1>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-end">
-              <h1 className="font-serif text-hero font-bold tracking-tight text-fg lg:col-span-7">
-                Writing &amp;{" "}
-                <em className="font-normal text-accent italic">Notes</em>.
-              </h1>
-              <p className="text-body text-fg-muted lg:col-span-5 lg:pb-2">
+            <div className="flex flex-col gap-2 lg:col-span-5 lg:pb-1">
+              <p className="max-w-[48ch] text-body leading-relaxed text-fg-muted">
                 {description}
+              </p>
+              <p className="text-label tabular-nums text-fg-muted">
+                共 {posts.length} 篇归档
+                {yearRange ? ` · ${yearRange}` : ""}
               </p>
             </div>
           </header>
 
-          <div className="mt-8">
-            <WritingArchive posts={posts} tags={tags} />
-          </div>
+          <WritingArchive posts={posts} tags={tags} />
         </div>
       </main>
       <SiteFooter />

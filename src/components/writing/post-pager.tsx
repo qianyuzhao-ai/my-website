@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/home/icons";
-import type { Post } from "@/lib/post-shared";
+import { formatDate, type Post } from "@/lib/post-shared";
 
 const cardClass =
-  "group flex flex-col justify-between gap-2 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-accent";
+  "group flex flex-col justify-between gap-3 border border-border bg-surface p-5 transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent hover:bg-surface-elevated/50";
 const labelClass =
-  "flex items-center gap-1.5 font-mono text-micro tracking-widest text-fg-muted uppercase transition-colors group-hover:text-accent";
+  "flex items-center gap-1.5 text-label font-medium text-fg-muted transition-colors duration-150 group-hover:text-accent";
 const titleClass =
-  "line-clamp-2 font-serif text-case-title font-bold text-fg transition-colors group-hover:text-accent";
+  "line-clamp-2 font-serif text-title font-bold tracking-[-0.015em] text-fg transition-colors duration-150 group-hover:text-accent";
 
 /** 上一篇（更早）在左，下一篇（更新）在右；移动端上下排列 */
 export function PostPager({
@@ -20,7 +20,7 @@ export function PostPager({
   return (
     <nav
       aria-label="上一篇与下一篇"
-      className="grid gap-3 md:grid-cols-2 md:gap-4"
+      className="grid grid-cols-1 gap-4 md:grid-cols-2"
     >
       {previous ? (
         <Link
@@ -29,23 +29,42 @@ export function PostPager({
           className={cardClass}
         >
           <span className={labelClass}>
-            <ArrowLeftIcon className="size-3.5" />
-            <span>Older Essay</span>
+            <ArrowLeftIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-0.5" />
+            <span>更早一篇</span>
+            <span className="ml-auto tabular-nums text-fg-muted">
+              {formatDate(previous.date)}
+            </span>
           </span>
-          <span className={titleClass}>{previous.title}</span>
+          <div>
+            <span className={titleClass}>{previous.title}</span>
+            <p className="mt-1.5 line-clamp-1 text-label text-fg-muted">
+              {previous.summary}
+            </p>
+          </div>
         </Link>
       ) : null}
+
       {next ? (
         <Link
           href={`/writing/${next.slug}`}
           rel="next"
-          className={`${cardClass} items-end text-right md:col-start-2`}
+          className={`${cardClass} md:col-start-2`}
         >
-          <span className={labelClass}>
-            <span>Newer Essay</span>
-            <ArrowRightIcon className="size-3.5" />
+          <span className={`${labelClass} justify-between`}>
+            <span className="tabular-nums text-fg-muted">
+              {formatDate(next.date)}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span>更新一篇</span>
+              <ArrowRightIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0.5" />
+            </span>
           </span>
-          <span className={titleClass}>{next.title}</span>
+          <div className="md:text-right">
+            <span className={titleClass}>{next.title}</span>
+            <p className="mt-1.5 line-clamp-1 text-label text-fg-muted">
+              {next.summary}
+            </p>
+          </div>
         </Link>
       ) : null}
     </nav>

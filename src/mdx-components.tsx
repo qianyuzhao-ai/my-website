@@ -30,31 +30,27 @@ export function Figure({
   height = 720,
 }: FigureProps) {
   return (
-    <figure className="my-2 flex flex-col items-center gap-3">
+    <figure className="my-3 flex w-full flex-col gap-3">
       {src ? (
         <Image
           src={src}
           alt={alt}
           width={width}
           height={height}
-          sizes="(min-width: 72rem) 680px, (min-width: 48rem) 80vw, 100vw"
-          className="w-full rounded-2xl border border-border"
+          sizes="(min-width: 72rem) 720px, (min-width: 48rem) 82vw, 100vw"
+          className="w-full rounded-lg border border-border"
         />
       ) : (
         <div
           role="img"
           aria-label={alt}
-          className="lab-grid flex aspect-video w-full items-center justify-center rounded-2xl border border-border bg-surface-elevated px-6 text-center font-mono text-caption text-fg-muted"
+          className="lab-grid flex aspect-video w-full items-center justify-center rounded-lg border border-border bg-surface-elevated px-6 text-center"
         >
-          <span>
-            [ ILLUSTRATION {"//"} {alt} ]
-          </span>
+          <span className="max-w-[40ch] text-label text-fg-muted">{alt}</span>
         </div>
       )}
       {caption ? (
-        <figcaption className="font-mono text-caption text-fg-muted">
-          {caption}
-        </figcaption>
+        <figcaption className="text-label text-fg-muted">{caption}</figcaption>
       ) : null}
     </figure>
   );
@@ -66,7 +62,8 @@ const components: MDXComponents = {
     return (
       <h2
         id={resolvedId}
-        className="mt-6 scroll-mt-24 font-serif text-title font-bold tracking-tight text-fg md:text-post-heading"
+        tabIndex={-1}
+        className="mt-8 max-w-[65ch] scroll-mt-24 font-serif text-title font-bold tracking-[-0.02em] text-fg focus:outline-none"
         {...props}
       >
         {children}
@@ -78,48 +75,53 @@ const components: MDXComponents = {
     return (
       <h3
         id={resolvedId}
-        className="mt-4 scroll-mt-24 font-serif text-case-title font-semibold text-fg"
+        tabIndex={-1}
+        className="mt-5 max-w-[65ch] scroll-mt-24 font-serif text-[1.25rem] leading-[1.4] font-semibold tracking-[-0.01em] text-fg focus:outline-none"
         {...props}
       >
         {children}
       </h3>
     );
   },
-  p: (props) => <p className="leading-relaxed" {...props} />,
+  p: (props) => (
+    <p className="max-w-[65ch] leading-[1.82] text-fg" {...props} />
+  ),
   a: (props) => (
     <a
-      className="underline decoration-accent decoration-1.5 underline-offset-4 transition-colors hover:text-accent"
+      className="text-accent underline decoration-accent/40 decoration-1 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
       {...props}
     />
   ),
   strong: (props) => <strong className="font-semibold text-fg" {...props} />,
   blockquote: (props) => (
     <blockquote
-      className="rounded-r-xl border-l-[3px] border-accent bg-surface-elevated/55 py-3 pr-4 pl-5 font-serif text-fg italic"
+      className="my-2 max-w-[65ch] border-l-[3px] border-accent bg-surface-elevated py-3.5 pr-5 pl-5 font-serif text-fg"
       {...props}
     />
   ),
-  ul: (props) => <ul className="flex flex-col gap-2.5" {...props} />,
+  ul: (props) => (
+    <ul className="flex max-w-[65ch] flex-col gap-2.5" {...props} />
+  ),
   ol: (props) => (
     <ol
-      className="flex list-decimal flex-col gap-2.5 pl-6 marker:font-mono marker:text-accent"
+      className="flex max-w-[65ch] list-decimal flex-col gap-2.5 pl-6 marker:font-medium marker:tabular-nums marker:text-accent"
       {...props}
     />
   ),
   li: (props) => (
     <li
-      className="relative pl-6 in-[ol]:pl-0 before:absolute before:left-0 before:text-accent before:content-['◆'] before:text-[0.65em] before:top-[0.45em] in-[ol]:before:hidden"
+      className="relative pl-5 in-[ol]:pl-0 before:absolute before:top-[0.72em] before:left-0 before:h-px before:w-2.5 before:bg-accent before:content-[''] in-[ol]:before:hidden"
       {...props}
     />
   ),
   pre: (props) => <CodeBlock {...props} />,
   code: (props) => (
     <code
-      className="rounded-sm border border-border bg-surface-elevated px-1.5 py-0.5 font-mono text-[0.88em]"
+      className="rounded-sm border border-border bg-surface-elevated px-1.5 py-0.5 font-mono text-[0.875em] text-fg"
       {...props}
     />
   ),
-  hr: () => <hr className="my-2 border-border" />,
+  hr: () => <hr className="my-4 max-w-[65ch] border-border" />,
   Figure,
 };
 

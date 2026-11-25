@@ -144,6 +144,8 @@ export function ShrineModal({
               <li key={post.slug}>
                 <Link
                   href={`/writing/${post.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group flex flex-col gap-1.5 py-4 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
                 >
                   <div className="min-w-0">
@@ -173,10 +175,12 @@ export function ShrineModal({
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <span className="font-mono text-micro text-fg-muted">
-              点击任意文章进入全屏阅读，返回首页自动跳过漫长加载直达空岛
+              点击任意文章将在新标签页打开阅读，保留当前空岛进度
             </span>
             <Link
               href="/writing"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-5 text-label font-medium text-bg transition-opacity hover:opacity-90"
             >
               <span>前往完整博客归档</span>
@@ -286,6 +290,16 @@ export function ShrineModal({
                     ) : (
                       <Link
                         href={work.href}
+                        target={
+                          work.href.startsWith("/writing")
+                            ? "_blank"
+                            : undefined
+                        }
+                        rel={
+                          work.href.startsWith("/writing")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
                         className="inline-flex min-h-10 items-center gap-1.5 font-mono text-caption font-medium text-accent underline underline-offset-4"
                       >
                         <span>{work.ctaLabel}</span>

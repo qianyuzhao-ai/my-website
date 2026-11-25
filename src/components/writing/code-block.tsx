@@ -21,37 +21,35 @@ export function CodeBlock(props: ComponentProps<"pre">) {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated/75">
-      <div className="flex items-center justify-between border-b border-border px-4 py-2 font-mono text-micro text-fg-muted">
-        <div className="flex items-center gap-1.5" aria-hidden="true">
-          <span className="size-2 rounded-full bg-border-strong" />
-          <span className="size-2 rounded-full bg-border-strong" />
-          <span className="ml-1.5 tracking-wider uppercase">SOURCE</span>
-        </div>
-
+    <div className="relative my-2 w-full overflow-hidden rounded-lg border border-border bg-surface-elevated">
+      <div className="flex items-center justify-end border-b border-border px-3 py-1.5">
         <button
           type="button"
           onClick={handleCopy}
           aria-label={copied ? "代码已复制" : "复制代码"}
-          className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 text-micro font-medium text-fg transition-colors hover:border-border-strong"
+          className="inline-flex min-h-11 items-center gap-1.5 px-2.5 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-fg sm:min-h-8"
         >
           {copied ? (
             <>
               <CheckIcon className="size-3.5 text-signal" />
-              <span>Copied</span>
+              <span className="text-signal">已复制</span>
             </>
           ) : (
             <>
               <CopyIcon className="size-3.5" />
-              <span>Copy</span>
+              <span>复制</span>
             </>
           )}
         </button>
       </div>
 
+      <p aria-live="polite" className="sr-only">
+        {copied ? "代码已复制到剪贴板" : ""}
+      </p>
+
       <pre
         ref={preRef}
-        className="overflow-x-auto px-5 py-4 font-mono text-code text-fg [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[length:inherit]"
+        className="overflow-x-auto px-5 py-4 font-mono text-code text-fg [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[length:inherit]"
         {...props}
       />
     </div>

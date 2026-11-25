@@ -1,5 +1,5 @@
 // 王国之泪风「三层阶梯主岛 + 悬空彩蛋小飞岛（Sky Archipelago v2）」世界坐标与地形碰撞系统。
-// 坐标系约定：Three.js Y-up（+X 向东，-X 向西，-Z 向北/远景高处，+Z 向南/前景低处）。
+// 与 public/model/sky-island-v2.blend（Three.js Y-up 坐标系）精确对齐。
 
 export type ShrineId =
   | "writing"
@@ -41,82 +41,81 @@ export type ShrineConfig = {
 };
 
 /**
- * 三层阶梯主岛 + 左前景悬空彩蛋小飞岛
- * 近低（南 y=0）→ 中高（西北银杏林 y=1.35）→ 远高（东北造物山巅 y=2.85），固定斜俯视下层次最饱满！
+ * 三层阶梯主岛 + 左前景悬空彩蛋小飞岛（已同步最新 .blend 拉开后的南北纵深布局）
  */
 export const ISLAND_TIERS: IslandTier[] = [
   {
     id: "low-plaza",
     name: "觉醒石阵与风车前崖（低层）",
-    x: 0.0,
+    x: 0.18,
     y: 0.0,
-    z: 2.5,
+    z: 2.62,
     radius: 6.4,
     tint: "golden",
   },
   {
     id: "mid-grove",
     name: "黄金银杏古树林（中层）",
-    x: -5.4,
+    x: -6.35,
     y: 1.35,
-    z: -3.5,
+    z: -12.15,
     radius: 5.2,
     tint: "golden",
   },
   {
     id: "high-sanctum",
     name: "左纳乌造物山巅（高层）",
-    x: 5.4,
+    x: 8.83,
     y: 2.85,
-    z: -3.8,
+    z: -12.69,
     radius: 4.9,
     tint: "highland",
   },
   {
     id: "secret-islet",
     name: "云海观景彩蛋飞岛",
-    x: -13.2,
+    x: -13.21,
     y: 2.2,
-    z: 5.4,
+    z: 5.39,
     radius: 3.7,
     tint: "secret",
   },
 ];
 
-/** 连接低层 → 中层、中层 → 高层、以及低层直通高层的风化石阶与石拱桥 */
+/** 连接低层 → 中层、中层 → 高层、以及低层直通高层的三条拉长石阶与石桥 */
 export const WALKABLE_RAMPS: WalkableRamp[] = [
-  // 低层广场 -> 中层银杏古树林（宽石阶坡道）
+  // 低岛至中岛 · 10 级石阶（两端略向岛内延展确保零接缝）
   {
     id: "ramp-low-to-mid",
-    ax: -2.4,
+    ax: -2.05,
     ay: 0.0,
-    az: 0.2,
-    bx: -4.2,
+    az: -2.25,
+    bx: -4.55,
     by: 1.35,
-    bz: -1.6,
-    halfWidth: 1.55,
+    bz: -8.15,
+    halfWidth: 1.4,
   },
-  // 中层银杏林 -> 高层造物山巅（跨溪石拱桥，桥下流过清泉！）
+  // 中岛至高岛 · 11 块石桥
   {
     id: "bridge-mid-to-high",
-    ax: -1.3,
+    ax: -2.1,
     ay: 1.35,
-    az: -3.6,
-    bx: 1.6,
+    az: -12.33,
+    bx: 4.75,
     by: 2.85,
-    bz: -3.7,
-    halfWidth: 1.45,
+    bz: -12.53,
+    halfWidth: 1.3,
   },
-  // 低层东侧 -> 高层造物山巅（东侧盘山石阶）
+  // 低岛至高岛 · 13 级盘山石阶
   {
     id: "ramp-low-to-high",
-    ax: 3.2,
+    ax: 2.75,
     ay: 0.0,
-    az: 0.4,
-    bx: 4.6,
+    az: -2.15,
+    bx: 6.78,
     by: 2.85,
-    bz: -1.5,
-    halfWidth: 1.35,
+    bz: -9.15,
+    halfWidth: 1.25,
   },
 ];
 
@@ -141,17 +140,15 @@ export const PUZZLE_SOCKET = {
   snapRadius: 0.85,
 } as const;
 
-/** 山巅清泉与悬崖瀑布关键路径坐标 */
+/** 山巅清泉、溪流与东崖瀑布关键坐标（同步最新 .blend 高岛位置） */
 export const WATERFALL_PATH = {
-  pondCenter: [3.6, 2.86, -5.2] as [number, number, number],
-  cliffEdge: [0.25, 1.32, -2.2] as [number, number, number],
-  fallX: 8.9,
-  fallTopY: 2.82,
-  fallZ: -2.6,
-  fallHeight: 7.4,
+  pondCenter: [6.64, 2.91, -13.16] as [number, number, number],
+  streamCenter: [10.13, 2.91, -11.02] as [number, number, number],
+  fallEdge: [13.59, -1.0, -9.55] as [number, number, number],
+  mistCenter: [14.18, -4.68, -9.08] as [number, number, number],
 } as const;
 
-/** 六处可交互神庙/石碑/彩蛋点 */
+/** 六处可交互神庙/石碑/彩蛋点（精确对应 .blend 中的地标光环坐标） */
 export const ISLAND_SHRINES: ShrineConfig[] = [
   {
     id: "writing",
@@ -159,8 +156,8 @@ export const ISLAND_SHRINES: ShrineConfig[] = [
     title: "手稿石碑 · Writing",
     subtitle: "中层银杏林 · 一线实战复盘与工程长文",
     actionLabel: "阅读手稿石碑",
-    position: [-6.4, 1.35, -4.4],
-    triggerRadius: 2.5,
+    position: [-7.26, 1.35, -13.72],
+    triggerRadius: 2.6,
   },
   {
     id: "works",
@@ -168,8 +165,8 @@ export const ISLAND_SHRINES: ShrineConfig[] = [
     title: "造物星盘 · Works",
     subtitle: "高层山巅 · Coding × AIGC 作品与实验台",
     actionLabel: "开启造物星盘",
-    position: [5.9, 2.85, -4.3],
-    triggerRadius: 2.6,
+    position: [9.35, 2.85, -13.64],
+    triggerRadius: 2.8,
   },
   {
     id: "connect",
@@ -186,8 +183,8 @@ export const ISLAND_SHRINES: ShrineConfig[] = [
     title: "时之日晷 · 昼夜",
     subtitle: "中层北崖 · 切换空岛白昼与星夜萤火",
     actionLabel: "拨动时之日晷",
-    position: [-2.6, 1.35, -6.6],
-    triggerRadius: 2.2,
+    position: [-3.46, 1.35, -15.32],
+    triggerRadius: 2.3,
   },
   {
     id: "pot",
@@ -204,7 +201,7 @@ export const ISLAND_SHRINES: ShrineConfig[] = [
     title: "守岛人私房碑 · About",
     subtitle: "彩蛋飞岛 · 关于我与近期折腾",
     actionLabel: "阅读守岛人手记",
-    position: [-13.8, 2.2, 5.6],
+    position: [-13.8, 2.2, 5.9],
     triggerRadius: 2.6,
   },
 ];
@@ -217,7 +214,7 @@ export function sampleIslandGround(x: number, z: number): number | null {
 
   for (const tier of ISLAND_TIERS) {
     const dist = Math.hypot(x - tier.x, z - tier.z);
-    if (dist <= tier.radius - 0.35) {
+    if (dist <= tier.radius - 0.32) {
       bestY = bestY === null ? tier.y : Math.max(bestY, tier.y);
     }
   }

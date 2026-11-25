@@ -277,6 +277,8 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
 
           <Link
             href="/writing"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface-elevated/80 px-2 font-mono text-micro font-medium text-fg transition-colors hover:border-accent hover:text-accent sm:px-3 sm:text-caption"
           >
             博客↗

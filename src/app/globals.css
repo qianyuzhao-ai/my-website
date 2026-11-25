@@ -331,6 +331,140 @@ dialog::backdrop {
   }
 }
 
+/*
+ * 写作专栏专属主题（/writing 与 /writing/[slug]）：
+ * 方案 A「画廊纯白 × 国际钴蓝」瑞士国际主义网格，彻底去米色、去紫色；
+ * 仅在存在 .writing-scope 的写作路由生效，不影响首页空岛与其他页面。
+ */
+html:has(.writing-scope),
+.writing-scope {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-elevated: #f4f6f9;
+  --border: #dde2ea;
+  --border-strong: #768396;
+  --fg: #0b0f14;
+  --fg-muted: #4b5563;
+  --accent: #0047ff;
+  --accent-soft: rgb(0 71 255 / 0.08);
+  --signal: #047857;
+  --signal-soft: rgb(4 120 87 / 0.1);
+  --focus: #0047ff;
+  --danger: #b91c1c;
+  --backdrop: rgb(11 15 20 / 0.42);
+  --elevation-lg: 0 18px 40px -16px rgb(11 15 20 / 0.12);
+  --nav-track: #f4f6f9;
+  --nav-selected: #ffffff;
+  --pill: #f4f6f9;
+  --toggle-track: #f4f6f9;
+  --pulse: #0047ff;
+}
+
+html.dark:has(.writing-scope),
+.dark .writing-scope {
+  color-scheme: dark;
+  --bg: #0a0d12;
+  --surface: #10151e;
+  --surface-elevated: #171e2b;
+  --border: #232c3d;
+  --border-strong: #52627a;
+  --fg: #f1f5f9;
+  --fg-muted: #94a3b8;
+  --accent: #4d8bff;
+  --accent-soft: rgb(77 139 255 / 0.14);
+  --signal: #34d399;
+  --signal-soft: rgb(52 211 153 / 0.12);
+  --focus: #4d8bff;
+  --danger: #f87171;
+  --backdrop: rgb(4 6 10 / 0.72);
+  --elevation-lg: 0 22px 48px -14px rgb(0 0 0 / 0.6);
+  --nav-track: #10151e;
+  --nav-selected: #171e2b;
+  --pill: #171e2b;
+  --toggle-track: #171e2b;
+  --pulse: #4d8bff;
+}
+
+/* 写作路由隐藏胶片纸纹层，保持纯白画廊表面 */
+body:has(.writing-scope) .editorial-grain {
+  display: none;
+}
+
+/* 移动端水平筛选条隐藏原生滚动条 */
+.writing-tab-strip {
+  scrollbar-width: none;
+}
+.writing-tab-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* 桌面端目录原生 scrollspy（scroll-target-group + aria-current="true" 兼容降级） */
+.writing-toc-nav {
+  scroll-target-group: auto;
+}
+.writing-toc-link[aria-current="true"],
+.writing-toc-link.target-current {
+  border-inline-start-color: var(--accent);
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* 移动端折叠目录（遵循 modern-web-guidance: accordion） */
+.writing-toc-details > summary {
+  list-style: none;
+}
+.writing-toc-details > summary::-webkit-details-marker {
+  display: none;
+}
+.writing-toc-details > summary::before {
+  content: "";
+  inline-size: 0.9em;
+  block-size: 0.9em;
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  rotate: -90deg;
+}
+.writing-toc-details[open] > summary::before {
+  rotate: 0deg;
+}
+.writing-toc-details::details-content {
+  interpolate-size: allow-keywords;
+  overflow: clip;
+  contain: layout;
+}
+.writing-toc-details:not([open])::details-content {
+  block-size: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .writing-toc-details > summary::before {
+    transition: rotate 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .writing-toc-details::details-content {
+    transition:
+      block-size 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      content-visibility 220ms,
+      display 220ms;
+    transition-behavior: allow-discrete;
+  }
+}
+
+/* 强对比模式（Windows Forced Colors）兜底状态指示 */
+@media (forced-colors: active) {
+  .writing-toc-link[aria-current="true"],
+  .writing-toc-link.target-current {
+    border-inline-start-color: Highlight;
+    color: Highlight;
+  }
+  .writing-tab[aria-selected="true"] {
+    border-bottom-color: Highlight;
+    color: Highlight;
+  }
+}
+
 /* 保留预览组件色值，兼容尚未手动删除的旧组件文件 */
 :root,
 .dark {

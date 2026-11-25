@@ -46,7 +46,8 @@ export function ReadingProgress() {
   return (
     <div
       ref={barRef}
-      className="reading-progress-bar pointer-events-none fixed top-0 left-0 z-50 h-0.75 w-full bg-accent"
+      aria-hidden="true"
+      className="reading-progress-bar pointer-events-none fixed top-0 left-0 z-50 h-0.5 w-full bg-accent"
     />
   );
 }

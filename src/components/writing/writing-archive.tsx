@@ -20,6 +20,7 @@ export function WritingArchive({
   const [selectedTag, setSelectedTag] = useState<string>("ALL");
 
   function switchTag(nextTag: string) {
+    if (nextTag === selectedTag) return;
     const canTransition =
       typeof document !== "undefined" &&
       "startViewTransition" in document &&
@@ -41,28 +42,33 @@ export function WritingArchive({
     return posts.filter((post) => post.tags?.includes(selectedTag));
   }, [posts, selectedTag]);
 
-  const years = useMemo(() => groupByYear(filteredPosts), [filteredPosts]);
+  const leadPost =
+    selectedTag === "ALL" && filteredPosts.length > 0 ? filteredPosts[0] : null;
+  const archivePosts = leadPost ? filteredPosts.slice(1) : filteredPosts;
+  const years = useMemo(() => groupByYear(archivePosts), [archivePosts]);
 
   return (
     <div>
-      {/* 标签过滤栏 */}
+      {/* 水平底线分段筛选栏（非胶囊按钮堆叠，移动端支持顺滑横滑） */}
       {tags.length > 0 ? (
-        <fieldset
-          aria-label="按主题标签筛选"
-          className="flex flex-wrap items-center gap-2 border-x-0 border-t-0 border-b border-border p-0 pb-6"
+        <div
+          role="tablist"
+          aria-label="按主题筛选文章"
+          className="writing-tab-strip -mx-4 flex items-center gap-1 overflow-x-auto border-y border-border px-4 sm:-mx-6 sm:px-6 md:mx-0 md:flex-wrap md:gap-2 md:overflow-visible md:px-0"
         >
           <button
             type="button"
+            role="tab"
+            aria-selected={selectedTag === "ALL"}
             onClick={() => switchTag("ALL")}
-            aria-pressed={selectedTag === "ALL"}
-            className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 font-mono text-caption transition-colors sm:min-h-9 ${
+            className={`writing-tab relative -mb-px inline-flex min-h-12 shrink-0 items-center gap-1.5 border-b-2 px-3 text-label transition-[color,border-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
               selectedTag === "ALL"
-                ? "border-fg bg-fg font-medium text-bg"
-                : "border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg"
+                ? "border-accent font-semibold text-fg"
+                : "border-transparent font-normal text-fg-muted hover:text-fg"
             }`}
           >
-            <span>All</span>
-            <span className="opacity-70">({posts.length})</span>
+            <span>全部</span>
+            <span className="tabular-nums text-fg-muted">{posts.length}</span>
           </button>
 
           {tags.map(({ tag, count }) => {
@@ -71,27 +77,82 @@ export function WritingArchive({
               <button
                 key={tag}
                 type="button"
+                role="tab"
+                aria-selected={active}
                 onClick={() => switchTag(tag)}
-                aria-pressed={active}
-                className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 font-mono text-caption transition-colors sm:min-h-9 ${
+                className={`writing-tab relative -mb-px inline-flex min-h-12 shrink-0 items-center gap-1.5 border-b-2 px-3 text-label transition-[color,border-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                   active
-                    ? "border-accent bg-accent font-medium text-white"
-                    : "border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg"
+                    ? "border-accent font-semibold text-fg"
+                    : "border-transparent font-normal text-fg-muted hover:text-fg"
                 }`}
               >
-                <span>#{tag}</span>
-                <span className="opacity-75">({count})</span>
+                <span>{tag}</span>
+                <span className="tabular-nums text-fg-muted">{count}</span>
               </button>
             );
           })}
-        </fieldset>
+        </div>
       ) : null}
 
-      {/* 按年份分组目录 */}
-      <div className="mt-8 flex flex-col gap-10 md:mt-12 md:gap-14">
-        {years.length === 0 ? (
-          <p className="rounded-card-sm border border-border bg-surface p-6 text-fg-muted">
-            当前标签下暂无文章。
+      <p aria-live="polite" className="sr-only">
+        {selectedTag === "ALL"
+          ? `当前显示全部 ${filteredPosts.length} 篇文章`
+          : `已筛选主题 ${selectedTag}，共 ${filteredPosts.length} 篇文章`}
+      </p>
+
+      {/* 头版焦点条：展示最新文章（仅在「全部」视图出现） */}
+      {leadPost ? (
+        <section aria-label="最新文章" className="mt-8 md:mt-10">
+          <Link
+            href={`/writing/${leadPost.slug}`}
+            className="group grid grid-cols-1 gap-5 border-y border-border bg-surface-elevated px-5 py-7 transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-border-strong sm:px-7 md:py-9 lg:grid-cols-12 lg:gap-8 lg:px-8"
+          >
+            <div className="flex flex-col justify-between gap-4 lg:col-span-4">
+              <div className="flex flex-col gap-2">
+                <span
+                  aria-hidden="true"
+                  className="block h-0.5 w-8 bg-accent"
+                />
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-label tabular-nums text-fg-muted">
+                  <time dateTime={leadPost.date}>
+                    {formatDate(leadPost.date)}
+                  </time>
+                  <span aria-hidden="true">·</span>
+                  <span>{leadPost.readingMinutes} 分钟阅读</span>
+                </div>
+              </div>
+
+              {leadPost.tags?.length ? (
+                <p className="text-label text-fg-muted">
+                  {leadPost.tags.join(" · ")}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col justify-between gap-4 lg:col-span-8">
+              <div>
+                <h2 className="font-serif text-title font-bold tracking-[-0.02em] text-fg transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-accent md:text-[2rem] md:leading-[1.2]">
+                  {leadPost.title}
+                </h2>
+                <p className="mt-3 max-w-[60ch] text-body leading-relaxed text-fg-muted">
+                  {leadPost.summary}
+                </p>
+              </div>
+
+              <span className="inline-flex items-center gap-2 text-label font-medium text-accent">
+                <span>阅读全文</span>
+                <ArrowRightIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1" />
+              </span>
+            </div>
+          </Link>
+        </section>
+      ) : null}
+
+      {/* 按年份分组的瑞士索引目录 */}
+      <div className="mt-10 flex flex-col gap-12 md:mt-14 md:gap-16">
+        {filteredPosts.length === 0 ? (
+          <p className="border-y border-border py-10 text-body text-fg-muted">
+            当前主题下暂无文章。
           </p>
         ) : null}
 
@@ -102,15 +163,15 @@ export function WritingArchive({
             className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8"
           >
             <div className="lg:col-span-3">
-              <div className="flex items-baseline justify-between border-b border-border pb-2 lg:sticky lg:top-24 lg:flex-col lg:border-b-0 lg:pb-0">
+              <div className="flex items-baseline justify-between border-b border-fg/15 pb-2.5 lg:sticky lg:top-28 lg:flex-col lg:gap-1.5 lg:border-b-0 lg:pb-0">
                 <h2
                   id={`year-${year}`}
-                  className="font-serif text-display-sm font-bold tracking-tight text-fg lg:text-display"
+                  className="font-serif text-title font-bold leading-none tracking-[-0.03em] tabular-nums text-fg lg:text-[2.25rem]"
                 >
                   {year}
                 </h2>
-                <span className="font-mono text-caption text-fg-muted lg:mt-1">
-                  {items.length} {items.length === 1 ? "ESSAY" : "ESSAYS"}
+                <span className="text-label tabular-nums text-fg-muted">
+                  {items.length} 篇
                 </span>
               </div>
             </div>
@@ -120,45 +181,41 @@ export function WritingArchive({
                 <li key={post.slug}>
                   <Link
                     href={`/writing/${post.slug}`}
-                    className="group flex flex-col gap-2 py-5 transition-colors md:flex-row md:items-start md:justify-between md:gap-8 md:py-6"
+                    className="group relative flex flex-col gap-2.5 py-5 transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] before:absolute before:inset-y-0 before:-left-3 before:w-0.5 before:bg-accent before:opacity-0 before:transition-opacity before:duration-200 hover:bg-surface-elevated/60 hover:before:opacity-100 md:flex-row md:items-start md:justify-between md:gap-8 md:px-4 md:py-6 md:before:left-0"
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2 font-mono text-micro text-fg-muted md:hidden">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-label tabular-nums text-fg-muted md:hidden">
                         <time dateTime={post.date}>
                           {formatDate(post.date)}
                         </time>
-                        <span>·</span>
-                        <span>{post.readingMinutes} min read</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{post.readingMinutes} 分钟</span>
                       </div>
 
-                      <h3 className="mt-1 font-serif text-title font-bold tracking-tight text-fg transition-colors group-hover:text-accent md:mt-0">
+                      <h3 className="font-serif text-title font-bold tracking-[-0.015em] text-fg transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-accent">
                         {post.title}
                       </h3>
-                      <p className="mt-1.5 line-clamp-2 text-label text-fg-muted">
+
+                      <p className="mt-2 line-clamp-2 max-w-[60ch] text-body leading-relaxed text-fg-muted">
                         {post.summary}
                       </p>
 
                       {post.tags?.length ? (
-                        <div className="mt-2.5 flex flex-wrap gap-1.5">
-                          {post.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full bg-surface-elevated px-2.5 py-0.5 font-mono text-micro text-fg-muted"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
+                        <p className="mt-2.5 text-label text-fg-muted">
+                          {post.tags.join(" · ")}
+                        </p>
                       ) : null}
                     </div>
 
-                    <div className="hidden shrink-0 items-center gap-3 pt-1 font-mono text-caption text-fg-muted md:flex">
-                      <span>{post.readingMinutes} min</span>
-                      <span aria-hidden="true">·</span>
+                    <div className="hidden shrink-0 items-center gap-3.5 pt-1 text-label tabular-nums text-fg-muted md:flex">
+                      <span>{post.readingMinutes} 分钟</span>
+                      <span aria-hidden="true" className="text-border-strong">
+                        /
+                      </span>
                       <time dateTime={post.date} className="w-12 text-right">
                         {formatMonthDay(post.date)}
                       </time>
-                      <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1 group-hover:text-accent" />
+                      <ArrowRightIcon className="size-4 text-fg-muted transition-[transform,color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1 group-hover:text-accent" />
                     </div>
                   </Link>
                 </li>
