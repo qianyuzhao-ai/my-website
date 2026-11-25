@@ -402,7 +402,12 @@ export function SkyIslandCanvas({
 
         gltf.scene.traverse((child) => {
           if (!(child instanceof THREE.Mesh)) return;
-          const meshName = child.name ?? "";
+          // Three.js GLTFLoader 会把节点名中的空格替换为下划线，统一去空格与下划线后再匹配
+          const meshName =
+            `${child.name ?? ""}${child.parent?.name ?? ""}`.replace(
+              /[\s_]+/g,
+              "",
+            );
           const origMat = Array.isArray(child.material)
             ? child.material[0]
             : child.material;
@@ -490,34 +495,34 @@ export function SkyIslandCanvas({
           if (meshName.startsWith("小旅人")) {
             toTraveler.push(child);
           } else if (
-            meshName.includes("风车 · 布帆") ||
+            meshName.includes("布帆") ||
             meshName.includes("鼓起的亚麻帆") ||
-            meshName.includes("风车 · 橡木辐杆") ||
-            meshName.includes("风车 · 帆边木条") ||
-            meshName.includes("风车 · 帆骨")
+            meshName.includes("橡木辐杆") ||
+            meshName.includes("帆边木条") ||
+            meshName.includes("帆骨")
           ) {
             toWindmill.push(child);
           } else if (
             meshName.includes("蜜烤肉卷") ||
             meshName.includes("脆脂纹") ||
             meshName.includes("表面焦纹") ||
-            meshName.includes("烤肉架 · 转叉") ||
-            meshName.includes("烤肉架 · 摇柄") ||
-            meshName.includes("烤肉架 · 木握把") ||
-            meshName.includes("烤肉架 · 双齿肉叉") ||
-            meshName.includes("烤肉架 · 切面脂纹") ||
-            meshName.includes("烤肉架 · 香草")
+            meshName.includes("转叉") ||
+            meshName.includes("摇柄") ||
+            meshName.includes("木握把") ||
+            meshName.includes("双齿肉叉") ||
+            meshName.includes("切面脂纹") ||
+            meshName.includes("香草")
           ) {
             toSpit.push(child);
           } else if (
             meshName.includes("外轨金环") ||
-            meshName.includes("黄道仪轨 1")
+            meshName.includes("黄道仪轨1")
           ) {
             toForgeOuter.push(child);
           } else if (
             meshName.includes("内轨石环") ||
-            meshName.includes("黄道仪轨 2") ||
-            meshName.includes("黄道仪轨 3")
+            meshName.includes("黄道仪轨2") ||
+            meshName.includes("黄道仪轨3")
           ) {
             toForgeInner.push(child);
           } else if (
@@ -1568,7 +1573,12 @@ export function SkyIslandCanvas({
       const aspect =
         container.clientWidth / Math.max(1, container.clientHeight);
       const isNarrow = container.clientWidth < 640;
-      const onSecretIslet = player.x < -9.2 && !player.flight;
+      // 仅在真正登上西南「彩蛋飞岛」圆域 (-13.21, 5.39) 时触发观景远景，避免中岛古树林西侧误触
+      const secretTier = ISLAND_TIERS[3];
+      const onSecretIslet =
+        !player.flight &&
+        Math.hypot(player.x - secretTier.x, player.z - secretTier.z) <=
+          secretTier.radius + 0.6;
       if (stateRef.current.vistaMode || onSecretIslet) {
         const portraitBoost = aspect < 1.05 ? Math.min(1.52, 1.08 / aspect) : 1;
         const focusPoint = onSecretIslet
