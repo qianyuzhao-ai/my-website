@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { skyAudio } from "@/lib/sky-audio";
 import {
@@ -73,7 +75,38 @@ function createToonGradient(): THREE.DataTexture {
   return tex;
 }
 
-/** 为 MeshToonMaterial 注入《旷野之息》柔和逆光边缘高光（Rim Light） */
+function createArchitecturalGrainTexture(): THREE.DataTexture {
+  const size = 128;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      // 无缝周期性手绘石材/陶瓦肌理噪声
+      const ux = (x / size) * Math.PI * 2;
+      const uy = (y / size) * Math.PI * 2;
+      const macro =
+        Math.sin(ux * 2 + Math.cos(uy * 2)) * 0.35 +
+        Math.cos(uy * 3 - Math.sin(ux * 3)) * 0.25;
+      const hash = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
+      const micro = (hash - Math.floor(hash) - 0.5) * 0.4;
+      const v = Math.max(
+        0,
+        Math.min(255, Math.round((0.5 + macro * 0.32 + micro * 0.45) * 255)),
+      );
+      const idx = (y * size + x) * 4;
+      data[idx] = v;
+      data[idx + 1] = v;
+      data[idx + 2] = v;
+      data[idx + 3] = 255;
+    }
+  }
+  const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 3);
+  tex.needsUpdate = true;
+  return tex;
+}
+
 function makeZeldaRimToon(
   gradientMap: THREE.DataTexture,
   color: string,
@@ -150,105 +183,65 @@ export function SkyIslandCanvas({
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    // ---------------- 1. Renderer, Scene & Camera ----------------
+    // ---------------- 1. Transparent Renderer over Sunset Cloud-Sea Backdrop ----------------
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
+      alpha: true,
       powerPreference: "high-performance",
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setClearColor(0x000000, 0);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = 0.92;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const skyDay = new THREE.Color("#b4dbf5");
-    const skyNight = new THREE.Color("#080c17");
-    scene.background = stateRef.current.isNight
-      ? skyNight.clone()
-      : skyDay.clone();
-    scene.fog = new THREE.FogExp2(
-      stateRef.current.isNight ? "#080c17" : "#c6e3f7",
-      0.0095,
-    );
+
+    // 为黄铜星盘、熟铁烤架与清泉池面提供柔和的物理环境反射 (IBL)
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const roomEnv = new RoomEnvironment();
+    const envRT = pmrem.fromScene(roomEnv, 0.04);
+    roomEnv.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = stateRef.current.isNight ? 0.16 : 0.34;
 
     const camera = new THREE.PerspectiveCamera(
-      42,
+      40,
       container.clientWidth / Math.max(1, container.clientHeight),
       0.5,
-      200,
+      220,
     );
     camera.position.set(0, 14, 21);
 
     const gradientMap = createToonGradient();
-    const matMap: Record<string, THREE.Material> = {
-      Zelda_Cliff: makeZeldaRimToon(gradientMap, "#6e685e", "#dce9ff", 0.22),
-      Zelda_CliffDark: makeZeldaRimToon(
-        gradientMap,
-        "#4b4740",
-        "#9bb5d6",
-        0.16,
-      ),
-      Zelda_TurfGold: makeZeldaRimToon(gradientMap, "#baa840", "#fff3bd", 0.2),
-      Zelda_TurfHighland: makeZeldaRimToon(
-        gradientMap,
-        "#61964a",
-        "#dffac8",
-        0.2,
-      ),
-      Zelda_TurfSecret: makeZeldaRimToon(
-        gradientMap,
-        "#78a652",
-        "#eaffd4",
-        0.24,
-      ),
-      Zelda_Stone: makeZeldaRimToon(gradientMap, "#d4cdbd", "#fff7e2", 0.26),
-      Zelda_StoneOld: makeZeldaRimToon(gradientMap, "#9c9688", "#e8e3d5", 0.22),
-      Zelda_Wood: makeZeldaRimToon(gradientMap, "#8a5834", "#ffdca8", 0.18),
-      Zelda_Trunk: makeZeldaRimToon(gradientMap, "#69452b", "#ffdfb3", 0.2),
-      Zelda_GinkgoGold: makeZeldaRimToon(
-        gradientMap,
-        "#f0b529",
-        "#fff39e",
-        0.38,
-      ),
-      Zelda_GinkgoAmber: makeZeldaRimToon(
-        gradientMap,
-        "#e38824",
-        "#ffe394",
-        0.34,
-      ),
-      Zelda_ZonaiRune: makeZeldaRimToon(
-        gradientMap,
-        "#29db98",
-        "#9effdc",
-        0.4,
-        "#34f5a6",
-        1.1,
-      ),
-      Zelda_ZonaiGold: makeZeldaRimToon(
-        gradientMap,
-        "#ebc054",
-        "#fff5c0",
-        0.35,
-        "#e6b64c",
-        0.25,
-      ),
-      Zelda_Iron: makeZeldaRimToon(gradientMap, "#2c2f36", "#9fb4d4", 0.25),
-      Zelda_Vermilion: makeZeldaRimToon(
-        gradientMap,
-        "#d94321",
-        "#ffb59e",
-        0.3,
-        "#ff5c2b",
-        0.14,
-      ),
-    };
+    const matRuneGlow = makeZeldaRimToon(
+      gradientMap,
+      "#29db98",
+      "#9effdc",
+      0.4,
+      "#34f5a6",
+      1.15,
+    );
+    const matGoldGlow = makeZeldaRimToon(
+      gradientMap,
+      "#ebc054",
+      "#fff5c0",
+      0.35,
+      "#e6b64c",
+      0.28,
+    );
+    const matStoneToon = makeZeldaRimToon(
+      gradientMap,
+      "#d4cdbd",
+      "#fff7e2",
+      0.26,
+    );
 
-    // ---------------- 2. World-Space Zelda Water & Waterfall Shader ----------------
-    // 直接作用于 Blender 雕刻的「泉眼 · 清泉池 / 山巅 · 泉水溪流 / 东崖 · 瀑布水帘」网格
+    // ---------------- 2. World-Space Animated Zelda Water & Waterfall Shader ----------------
     const waterUniforms = {
       uTime: { value: 0 },
       uNightMix: { value: stateRef.current.isNight ? 1 : 0 },
@@ -277,13 +270,11 @@ export function SkyIslandCanvas({
         void main() {
           float isTop = smoothstep(0.45, 0.75, abs(vWorldNormal.y));
 
-          // 水平水面（清泉池 + 弯曲溪流）：沿流向流动的亮色卡通涟漪
           float streamCoord = vWorldPos.x * 1.1 + vWorldPos.z * 0.55 - uTime * 1.85;
           float ripple1 = sin(streamCoord * 3.8 + cos(vWorldPos.z * 2.6)) * 0.5 + 0.5;
           float ripple2 = cos((vWorldPos.x * 2.1 - vWorldPos.z * 2.4) - uTime * 1.3) * 0.5 + 0.5;
           float topFoam = step(0.73, ripple1 * 0.62 + ripple2 * 0.45);
 
-          // 垂直瀑布水帘：自上而下高速倾泻的白色水纹与崖底白沫
           float fallScroll = vWorldPos.y * 1.65 + uTime * 5.2;
           float fallStripe1 = sin((vWorldPos.x + vWorldPos.z) * 5.2 + sin(fallScroll) * 0.9) * 0.5 + 0.5;
           float fallStripe2 = cos(fallScroll * 2.1 + vWorldPos.z * 4.0) * 0.5 + 0.5;
@@ -293,8 +284,8 @@ export function SkyIslandCanvas({
 
           float foamMask = mix(fallFoam, topFoam * 0.72, isTop);
 
-          vec3 waterDay = mix(vec3(0.28, 0.74, 0.91), vec3(0.22, 0.68, 0.82), isTop);
-          vec3 waterNight = mix(vec3(0.12, 0.42, 0.66), vec3(0.10, 0.36, 0.54), isTop);
+          vec3 waterDay = mix(vec3(0.28, 0.76, 0.92), vec3(0.24, 0.74, 0.84), isTop);
+          vec3 waterNight = mix(vec3(0.12, 0.44, 0.68), vec3(0.10, 0.38, 0.56), isTop);
           vec3 baseCol = mix(waterDay, waterNight, uNightMix);
           vec3 foamCol = mix(vec3(0.96, 0.99, 1.0), vec3(0.68, 0.96, 0.98), uNightMix);
 
@@ -303,35 +294,43 @@ export function SkyIslandCanvas({
       `,
     });
 
-    // ---------------- 3. Lights (覆盖扩大后的南北群岛范围) ----------------
-    const hemiLight = new THREE.HemisphereLight("#eaf5ff", "#6e6046", 0.95);
+    // ---------------- 3. Golden-Hour Afternoon Sunlight Matching Sky Backdrop ----------------
+    const hemiLight = new THREE.HemisphereLight("#a8caff", "#565c78", 0.55);
     scene.add(hemiLight);
 
-    const sunLight = new THREE.DirectionalLight("#fff0cc", 2.15);
-    sunLight.position.set(14, 28, 12);
+    // 左上角暖金午后斜阳，与「云海天幕 · 绘景」光照方向完全吻合
+    const sunLight = new THREE.DirectionalLight("#ffdfa6", 1.75);
+    sunLight.position.set(-16, 26, 14);
     sunLight.target.position.set(0, 0, -5);
     scene.add(sunLight.target);
     sunLight.castShadow = true;
-    sunLight.shadow.mapSize.set(1024, 1024);
+    sunLight.shadow.mapSize.set(2048, 2048);
     sunLight.shadow.camera.near = 2;
-    sunLight.shadow.camera.far = 72;
+    sunLight.shadow.camera.far = 76;
     const sd = 26;
     sunLight.shadow.camera.left = -sd;
     sunLight.shadow.camera.right = sd;
     sunLight.shadow.camera.top = sd;
     sunLight.shadow.camera.bottom = -sd;
-    sunLight.shadow.bias = -0.0007;
+    sunLight.shadow.bias = -0.0004;
+    sunLight.shadow.normalBias = 0.025;
     scene.add(sunLight);
 
-    const potFireLight = new THREE.PointLight("#ff862e", 2.4, 8, 1.6);
-    potFireLight.position.set(-1.9, 0.55, 1.9);
+    // 柔和蓝天补光（消除树冠与岩体背光死黑，保留暖冷光影层次）
+    const fillLight = new THREE.DirectionalLight("#8eb8ff", 0.22);
+    fillLight.position.set(18, 12, -16);
+    scene.add(fillLight);
+
+    // 烤肉篝火暖光 (-2.88, 0.55, 1.60) & 彩蛋飞岛篝火暖光
+    const potFireLight = new THREE.PointLight("#ff862e", 2.6, 8.5, 1.5);
+    potFireLight.position.set(-2.88, 0.55, 1.6);
     scene.add(potFireLight);
 
-    const secretFireLight = new THREE.PointLight("#ff9438", 2.2, 8, 1.6);
+    const secretFireLight = new THREE.PointLight("#ff9438", 2.2, 8, 1.5);
     secretFireLight.position.set(-12.6, 2.75, 5.4);
     scene.add(secretFireLight);
 
-    // ---------------- 4. Load Updated Sculpted Blender GLB ----------------
+    // ---------------- 4. Load Draco-Compressed Autumn Garden GLB & Bind Dynamic Pivots ----------------
     const walkableMeshes: THREE.Object3D[] = [];
     for (const tier of ISLAND_TIERS) {
       const hitDisc = new THREE.Mesh(
@@ -343,52 +342,213 @@ export function SkyIslandCanvas({
       walkableMeshes.push(hitDisc);
     }
 
+    // 直接驱动 GLB 内精致原版零件的旋转枢轴与唯一主角容器
+    const traveler = new THREE.Group();
+    const bodyPivot = new THREE.Group();
+    const travelerModelPivot = new THREE.Group();
+    traveler.add(bodyPivot);
+
+    const windmillPivot = new THREE.Group();
+    windmillPivot.position.set(-0.7, 2.49, 8.67);
+    scene.add(windmillPivot);
+
+    const spitPivot = new THREE.Group();
+    spitPivot.position.set(-2.88, 1.08, 1.6);
+    const spitAxis = new THREE.Vector3(0.943, 0, -0.333).normalize();
+    scene.add(spitPivot);
+
+    const forgeOuterPivot = new THREE.Group();
+    forgeOuterPivot.position.set(9.35, 5.0, -13.64);
+    scene.add(forgeOuterPivot);
+
+    const forgeInnerPivot = new THREE.Group();
+    forgeInnerPivot.position.set(9.35, 5.0, -13.64);
+    scene.add(forgeInnerPivot);
+
+    const forgeCorePivot = new THREE.Group();
+    forgeCorePivot.position.set(9.35, 5.0, -13.64);
+    scene.add(forgeCorePivot);
+
+    const sundialPivot = new THREE.Group();
+    sundialPivot.position.set(-3.46, 2.69, -15.32);
+    scene.add(sundialPivot);
+
+    const flameMeshes: THREE.Mesh[] = [];
+    const maxAnisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    const archGrainTex = createArchitecturalGrainTexture();
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath("/draco/");
+
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
     loader.load(
-      "/model/sky-island-v2.glb",
+      "/model/autumn-garden.glb",
       (gltf) => {
         if (disposed) return;
+
+        // 先将模型加入场景并刷新世界矩阵，便于 .attach() 精确保留世界坐标
+        scene.add(gltf.scene);
+        gltf.scene.updateMatrixWorld(true);
+
+        const toTraveler: THREE.Object3D[] = [];
+        const toWindmill: THREE.Object3D[] = [];
+        const toSpit: THREE.Object3D[] = [];
+        const toForgeOuter: THREE.Object3D[] = [];
+        const toForgeInner: THREE.Object3D[] = [];
+        const toForgeCore: THREE.Object3D[] = [];
+        const toSundial: THREE.Object3D[] = [];
+
         gltf.scene.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            const meshName = child.name ?? "";
-            const origMat = Array.isArray(child.material)
-              ? child.material[0]
-              : child.material;
-            const origName = (origMat?.name as string | undefined) ?? "";
+          if (!(child instanceof THREE.Mesh)) return;
+          const meshName = child.name ?? "";
+          const origMat = Array.isArray(child.material)
+            ? child.material[0]
+            : child.material;
+          const origName = (origMat?.name as string | undefined) ?? "";
 
-            // 识别 Blender 雕刻的清泉、溪流与东崖瀑布并套用动态卡通水体着色器
-            if (
-              meshName.includes("清泉池") ||
-              meshName.includes("泉水溪流") ||
-              meshName.includes("瀑布水帘") ||
-              origName.startsWith("山涧")
-            ) {
-              child.material = waterfallMat;
-              child.castShadow = false;
-              child.receiveShadow = false;
-              return;
-            }
+          // 1. 水系套用世界空间流动水波与瀑布白沫着色器
+          if (
+            meshName.includes("清泉池") ||
+            meshName.includes("泉水溪流") ||
+            meshName.includes("瀑布水帘")
+          ) {
+            child.material = waterfallMat;
+            child.castShadow = false;
+            child.receiveShadow = false;
+            return;
+          }
 
-            if (origName && matMap[origName]) {
-              child.material = matMap[origName];
-            }
-            const isTurf =
-              origName.includes("Turf") || meshName.includes("草地");
-            child.castShadow = !isTurf;
-            child.receiveShadow = true;
+          // 2. 保留秋日庭园的全部原版手绘贴图、3D 顶点色彩与 PBR 材质
+          const isHeavyFoliage =
+            meshName.includes("扇形叶簇") ||
+            meshName.includes("外梢扇叶") ||
+            meshName.includes("疏密草丛") ||
+            meshName.includes("秋日野花") ||
+            meshName.includes("琥珀矮灌") ||
+            meshName.includes("崖缘与穗梗") ||
+            meshName.includes("芦穗") ||
+            meshName.includes("水畔芦叶");
 
-            if (
-              isTurf ||
+          const isTurf =
+            origName.includes("Turf") ||
+            origName.includes("草径") ||
+            meshName.includes("草地");
+
+          child.castShadow = !isHeavyFoliage && !isTurf;
+          child.receiveShadow = true;
+
+          // 开启各向异性过滤锐化斜视角手绘草径贴图，并为建筑石材/陶瓦/木纹叠加工艺凹凸肌理
+          const hasUv = Boolean(child.geometry?.attributes?.uv);
+          const isArchDetail =
+            !isHeavyFoliage &&
+            !isTurf &&
+            !meshName.startsWith("小旅人") &&
+            (meshName.includes("风车") ||
+              meshName.includes("石门") ||
+              meshName.includes("石碑") ||
               meshName.includes("踏板") ||
               meshName.includes("桥板") ||
-              meshName.includes("外台") ||
-              meshName.includes("石台")
-            ) {
-              walkableMeshes.push(child);
+              meshName.includes("岩") ||
+              meshName.includes("星盘") ||
+              meshName.includes("祭台") ||
+              meshName.includes("石柱") ||
+              meshName.includes("铺石") ||
+              meshName.includes("信箱"));
+          const mats = Array.isArray(child.material)
+            ? child.material
+            : [child.material];
+          for (const m of mats) {
+            if (!m) continue;
+            if (isHeavyFoliage) {
+              m.side = THREE.DoubleSide;
+            }
+            if (m instanceof THREE.MeshStandardMaterial) {
+              if (m.map) m.map.anisotropy = maxAnisotropy;
+              if (m.normalMap) m.normalMap.anisotropy = maxAnisotropy;
+              if (m.roughnessMap) m.roughnessMap.anisotropy = maxAnisotropy;
+              if (isArchDetail && hasUv && !m.bumpMap && !m.normalMap) {
+                m.bumpMap = archGrainTex;
+                m.bumpScale = 0.016;
+              }
             }
           }
+
+          if (
+            isTurf ||
+            meshName.includes("踏板") ||
+            meshName.includes("桥板") ||
+            meshName.includes("外台") ||
+            meshName.includes("石台") ||
+            meshName.includes("铺石环")
+          ) {
+            walkableMeshes.push(child);
+          }
+
+          // 3. 识别唯一原版主角「斗篷小旅人」及场景中需要实时旋转/跳动的精致建筑构件
+          if (meshName.startsWith("小旅人")) {
+            toTraveler.push(child);
+          } else if (
+            meshName.includes("风车 · 布帆") ||
+            meshName.includes("鼓起的亚麻帆") ||
+            meshName.includes("风车 · 橡木辐杆") ||
+            meshName.includes("风车 · 帆边木条") ||
+            meshName.includes("风车 · 帆骨")
+          ) {
+            toWindmill.push(child);
+          } else if (
+            meshName.includes("蜜烤肉卷") ||
+            meshName.includes("脆脂纹") ||
+            meshName.includes("表面焦纹") ||
+            meshName.includes("烤肉架 · 转叉") ||
+            meshName.includes("烤肉架 · 摇柄") ||
+            meshName.includes("烤肉架 · 木握把") ||
+            meshName.includes("烤肉架 · 双齿肉叉") ||
+            meshName.includes("烤肉架 · 切面脂纹") ||
+            meshName.includes("烤肉架 · 香草")
+          ) {
+            toSpit.push(child);
+          } else if (
+            meshName.includes("外轨金环") ||
+            meshName.includes("黄道仪轨 1")
+          ) {
+            toForgeOuter.push(child);
+          } else if (
+            meshName.includes("内轨石环") ||
+            meshName.includes("黄道仪轨 2") ||
+            meshName.includes("黄道仪轨 3")
+          ) {
+            toForgeInner.push(child);
+          } else if (
+            meshName.includes("悬浮符晶") ||
+            meshName.includes("太阳仪芯")
+          ) {
+            toForgeCore.push(child);
+          } else if (meshName.includes("悬浮金环")) {
+            toSundial.push(child);
+          } else if (meshName.includes("火苗")) {
+            flameMeshes.push(child);
+          }
         });
-        scene.add(gltf.scene);
+
+        // 将 Blender 原版「斗篷小旅人」从初始池心 (0, 0.11, 2.8) 归零并挂载到唯一可操控主角
+        if (toTraveler.length > 0) {
+          travelerModelPivot.position.set(0, 0.11, 2.8);
+          scene.add(travelerModelPivot);
+          travelerModelPivot.updateMatrixWorld(true);
+          for (const o of toTraveler) travelerModelPivot.attach(o);
+          travelerModelPivot.position.set(0, 0, 0);
+          bodyPivot.add(travelerModelPivot);
+        }
+
+        for (const o of toWindmill) windmillPivot.attach(o);
+        for (const o of toSpit) spitPivot.attach(o);
+        for (const o of toForgeOuter) forgeOuterPivot.attach(o);
+        for (const o of toForgeInner) forgeInnerPivot.attach(o);
+        for (const o of toForgeCore) forgeCorePivot.attach(o);
+        for (const o of toSundial) sundialPivot.attach(o);
+
         onReady();
       },
       undefined,
@@ -397,111 +557,40 @@ export function SkyIslandCanvas({
       },
     );
 
-    // ---------------- 5. Dynamic Landmarks Synced to Updated .blend Coords ----------------
-    // 5.1 高岛山巅：造物星盘悬浮核心与双轨环 (9.35, 4.59, -13.64)
-    const forgeCore = new THREE.Mesh(
-      new THREE.OctahedronGeometry(0.55, 0),
-      matMap.Zelda_ZonaiRune,
-    );
-    forgeCore.position.set(9.35, 4.6, -13.64);
-    scene.add(forgeCore);
-
-    const forgeRingA = new THREE.Mesh(
-      new THREE.TorusGeometry(1.12, 0.065, 8, 28),
-      matMap.Zelda_ZonaiGold,
-    );
-    forgeRingA.position.copy(forgeCore.position);
-    scene.add(forgeRingA);
-
-    const forgeRingB = new THREE.Mesh(
-      new THREE.TorusGeometry(0.82, 0.05, 8, 24),
-      matMap.Zelda_Stone,
-    );
-    forgeRingB.position.copy(forgeCore.position);
-    scene.add(forgeRingB);
-
-    // 5.2 中岛北崖：时之日晷悬浮金环 (-3.46, 2.69, -15.32)
-    const sundialHalo = new THREE.Mesh(
-      new THREE.TorusGeometry(0.48, 0.055, 8, 24),
-      matMap.Zelda_ZonaiGold,
-    );
-    sundialHalo.position.set(-3.46, 2.69, -15.32);
-    scene.add(sundialHalo);
-
-    // 5.3 低岛南崖：风车布帆（与 .blend 中 风车 · 风轮转轴 (0.10, 2.49, 8.67) 对齐）
-    const windmillSails = new THREE.Group();
-    windmillSails.position.set(0.1, 2.49, 8.67);
-    const sailMat = makeZeldaRimToon(gradientMap, "#f6f0e2", "#ffffff", 0.3);
-    for (let i = 0; i < 4; i++) {
-      const arm = new THREE.Group();
-      arm.rotation.z = (i * Math.PI) / 2;
-      const blade = new THREE.Mesh(
-        new THREE.BoxGeometry(0.32, 1.48, 0.05),
-        sailMat,
-      );
-      blade.position.y = 0.85;
-      arm.add(blade);
-      windmillSails.add(arm);
-    }
-    scene.add(windmillSails);
-
-    // 5.4 两处篝火火苗
-    const matFlame = makeZeldaRimToon(
-      gradientMap,
-      "#ff7b29",
-      "#ffd27d",
-      0.4,
-      "#ff6a1a",
-      1.7,
-    );
-    const potFlame = new THREE.Mesh(
-      new THREE.ConeGeometry(0.22, 0.42, 6),
-      matFlame,
-    );
-    potFlame.position.set(-1.9, 0.18, 1.9);
-    scene.add(potFlame);
-
-    const secretFlame = new THREE.Mesh(
-      new THREE.ConeGeometry(0.24, 0.54, 6),
-      matFlame,
-    );
-    secretFlame.position.set(-12.59, 2.52, 5.41);
-    scene.add(secretFlame);
-
-    // 5.5 东崖瀑布底部翻涌水雾团 (14.18, -4.68, -9.08)
+    // 东崖瀑布底部轻柔水雾团 (14.18, -4.68, -9.08)
     const mistPuffs: { mesh: THREE.Mesh; baseScale: number; phase: number }[] =
       [];
     const mistMat = new THREE.MeshBasicMaterial({
-      color: "#f2fbff",
+      color: "#f5fbff",
       transparent: true,
-      opacity: 0.74,
+      opacity: 0.42,
     });
     const [mx, my, mz] = WATERFALL_PATH.mistCenter;
     for (let i = 0; i < 6; i++) {
       const mp = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(0.58 + (i % 2) * 0.25, 1),
+        new THREE.IcosahedronGeometry(0.32 + (i % 2) * 0.14, 1),
         mistMat,
       );
       const a = (i / 6) * Math.PI * 2;
       mp.position.set(
-        mx + Math.cos(a) * 0.78,
-        my + (i % 2) * 0.24,
-        mz + Math.sin(a) * 0.78,
+        mx + Math.cos(a) * 0.52,
+        my + (i % 2) * 0.18,
+        mz + Math.sin(a) * 0.52,
       );
       scene.add(mp);
       mistPuffs.push({
         mesh: mp,
-        baseScale: 0.86 + (i % 3) * 0.2,
+        baseScale: 0.85 + (i % 3) * 0.18,
         phase: i * 1.1,
       });
     }
 
-    // ---------------- 6. Glowing Blupee Spirit Rabbit (同步至新银杏林与三岛巡逻点) ----------------
+    // ---------------- 5. Glowing Blupee Spirit Rabbit ----------------
     const blupeeGroup = new THREE.Group();
     const matBlupee = new THREE.MeshBasicMaterial({
       color: "#8ff6ff",
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.92,
     });
     const bBody = new THREE.Mesh(
       new THREE.SphereGeometry(0.2, 10, 8),
@@ -527,7 +616,7 @@ export function SkyIslandCanvas({
       new THREE.MeshBasicMaterial({ color: "#ffffff" }),
     );
     bTail.position.set(0, 0.22, -0.24);
-    const blupeeLight = new THREE.PointLight("#6beeff", 1.4, 4.2);
+    const blupeeLight = new THREE.PointLight("#6beeff", 1.5, 4.5);
     blupeeLight.position.set(0, 0.4, 0);
     blupeeGroup.add(bBody, bHead, bEarL, bEarR, bTail, blupeeLight);
 
@@ -548,7 +637,7 @@ export function SkyIslandCanvas({
     blupeeGroup.position.set(blupee.x, blupee.y, blupee.z);
     scene.add(blupeeGroup);
 
-    // ---------------- 7. Zonai Cube Socket Puzzle & Physics Orbs ----------------
+    // ---------------- 6. Zonai Cube Socket Puzzle & Physics Orbs ----------------
     const toys: PhysicsToy[] = [];
     const toySpecs: [number, number, boolean][] = [
       [2.65, 2.56, true],
@@ -562,7 +651,7 @@ export function SkyIslandCanvas({
         isCube
           ? new THREE.BoxGeometry(0.5, 0.5, 0.5)
           : new THREE.IcosahedronGeometry(r, 1),
-        isCube ? matMap.Zelda_ZonaiRune : matMap.Zelda_ZonaiGold,
+        isCube ? matRuneGlow : matGoldGlow,
       );
       mesh.castShadow = true;
       mesh.position.set(tx, gy + r, tz);
@@ -601,16 +690,16 @@ export function SkyIslandCanvas({
     scene.add(puzzleBeam);
     let puzzleSolved = false;
 
-    // ---------------- 8. Zonai Wing Glider at South Pier (-1.45, 0.19, 7.21) ----------------
+    // ---------------- 7. Zonai Wing Glider at South Pier ----------------
     const gliderGroup = new THREE.Group();
     const wingBody = new THREE.Mesh(
       new THREE.ConeGeometry(0.95, 0.12, 3),
-      matMap.Zelda_Stone,
+      matStoneToon,
     );
     wingBody.scale.set(1.35, 1, 0.75);
     const wingRune = new THREE.Mesh(
       new THREE.ConeGeometry(0.55, 0.14, 3),
-      matMap.Zelda_ZonaiRune,
+      matRuneGlow,
     );
     wingRune.scale.set(1.2, 1, 0.65);
     gliderGroup.add(wingBody, wingRune);
@@ -619,22 +708,22 @@ export function SkyIslandCanvas({
     scene.add(gliderGroup);
     const gliderState = { active: false, t: 0 };
 
-    // ---------------- 9. Launch Pad Vortex Rings & Shrine Rings ----------------
+    // ---------------- 8. Launch Pad Vortexes & Subtle Shrine Ground Rings ----------------
     const launchVortexMeshes: THREE.Mesh[] = [];
     for (const pad of [LAUNCH_PADS.toSecret, LAUNCH_PADS.toMain]) {
       const vortex = new THREE.Mesh(
-        new THREE.RingGeometry(0.55, 0.92, 24),
+        new THREE.RingGeometry(0.75, 0.96, 28),
         new THREE.MeshBasicMaterial({
-          color: "#34f5a6",
+          color: "#ffd670",
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.78,
+          opacity: 0.62,
         }),
       );
       vortex.rotation.x = -Math.PI / 2;
       vortex.position.set(
         pad.position[0],
-        pad.position[1] + 0.12,
+        pad.position[1] + 0.19,
         pad.position[2],
       );
       scene.add(vortex);
@@ -647,24 +736,25 @@ export function SkyIslandCanvas({
     >;
     for (const sh of ISLAND_SHRINES) {
       const ring = new THREE.Mesh(
-        new THREE.RingGeometry(0.88, 1.12, 28),
+        new THREE.RingGeometry(0.88, 1.08, 28),
         new THREE.MeshBasicMaterial({
           color: sh.id === "about" ? "#ffd15c" : "#34f5a6",
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.4,
+          opacity: 0.34,
         }),
       );
       ring.rotation.x = -Math.PI / 2;
-      ring.position.set(sh.position[0], sh.position[1] + 0.05, sh.position[2]);
+      ring.position.set(sh.position[0], sh.position[1] + 0.06, sh.position[2]);
       scene.add(ring);
       shrineRings[sh.id] = ring;
     }
 
-    // ---------------- 10. GPU Wind-Swaying Grass (自动对齐四座新岛坐标并避让水系) ----------------
-    const grassCount = 2800;
-    const bladeGeo = new THREE.ConeGeometry(0.065, 0.46, 3);
-    bladeGeo.translate(0, 0.23, 0);
+    // ---------------- 9. Interactive Wind-Parting Grass Accent Layer ----------------
+    // GLB 已自带精致的疏密草丛、野花与灌木，这里叠加轻量互动拨草层保留踩踏压弯反馈
+    const grassCount = 720;
+    const bladeGeo = new THREE.ConeGeometry(0.055, 0.38, 3);
+    bladeGeo.translate(0, 0.19, 0);
 
     const grassUniforms = {
       uTime: { value: 0 },
@@ -682,14 +772,14 @@ export function SkyIslandCanvas({
 
         void main() {
           vec4 worldBase = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-          float h = clamp(position.y / 0.46, 0.0, 1.0);
+          float h = clamp(position.y / 0.38, 0.0, 1.0);
           vTip = h;
           vSeed = fract(sin(dot(worldBase.xz, vec2(12.9898, 78.233))) * 43758.5453);
 
           vec3 pos = position;
           float wind = sin(worldBase.x * 0.45 + uTime * 2.2) * cos(worldBase.z * 0.42 + uTime * 1.6);
-          pos.x += wind * 0.16 * h * h;
-          pos.z += cos(worldBase.x * 0.35 + uTime * 1.9) * 0.09 * h * h;
+          pos.x += wind * 0.14 * h * h;
+          pos.z += cos(worldBase.x * 0.35 + uTime * 1.9) * 0.08 * h * h;
 
           vec2 toBlade = worldBase.xz - uPlayerPos.xz;
           float dist = length(toBlade);
@@ -710,10 +800,10 @@ export function SkyIslandCanvas({
         varying float vSeed;
 
         void main() {
-          vec3 dayBase = mix(vec3(0.28, 0.49, 0.22), vec3(0.56, 0.51, 0.17), vSeed);
-          vec3 dayTip  = mix(vec3(0.60, 0.80, 0.34), vec3(0.92, 0.80, 0.28), vSeed);
+          vec3 dayBase = mix(vec3(0.32, 0.46, 0.22), vec3(0.58, 0.48, 0.20), vSeed);
+          vec3 dayTip  = mix(vec3(0.62, 0.74, 0.32), vec3(0.90, 0.74, 0.28), vSeed);
           vec3 nightBase = vec3(0.07, 0.18, 0.14);
-          vec3 nightTip  = mix(vec3(0.16, 0.44, 0.32), vec3(0.24, 0.64, 0.48), vSeed);
+          vec3 nightTip  = mix(vec3(0.16, 0.42, 0.30), vec3(0.24, 0.60, 0.44), vSeed);
 
           vec3 colDay = mix(dayBase, dayTip, vTip);
           vec3 colNight = mix(nightBase, nightTip, vTip);
@@ -728,21 +818,22 @@ export function SkyIslandCanvas({
     const [streamX, , streamZ] = WATERFALL_PATH.streamCenter;
     let placed = 0;
     let attempts = 0;
-    while (placed < grassCount && attempts < grassCount * 6) {
+    while (placed < grassCount && attempts < grassCount * 8) {
       attempts++;
       const tier = ISLAND_TIERS[placed % ISLAND_TIERS.length];
-      const r = Math.sqrt(Math.random()) * (tier.radius - 0.65);
+      // 偏向边缘草甸生长，完整留出岛心手绘泥土步道
+      const r = (0.48 + Math.random() * 0.42) * (tier.radius - 0.55);
       const theta = Math.random() * Math.PI * 2;
       const gx = tier.x + Math.cos(theta) * r;
       const gz = tier.z + Math.sin(theta) * r;
 
-      if (Math.hypot(gx, gz - 2.5) < 2.05) continue;
-      if (Math.hypot(gx - pondX, gz - pondZ) < 1.65) continue;
-      if (Math.hypot(gx - streamX, gz - streamZ) < 1.75) continue;
+      if (Math.hypot(gx, gz - 2.5) < 2.2) continue;
+      if (Math.hypot(gx - pondX, gz - pondZ) < 1.8) continue;
+      if (Math.hypot(gx - streamX, gz - streamZ) < 1.9) continue;
 
       let blocked = false;
       for (const sh of ISLAND_SHRINES) {
-        if (Math.hypot(gx - sh.position[0], gz - sh.position[2]) < 1.35) {
+        if (Math.hypot(gx - sh.position[0], gz - sh.position[2]) < 1.55) {
           blocked = true;
           break;
         }
@@ -751,8 +842,8 @@ export function SkyIslandCanvas({
 
       dummy.position.set(gx, tier.y, gz);
       dummy.rotation.y = Math.random() * Math.PI * 2;
-      const s = 0.72 + Math.random() * 0.68;
-      dummy.scale.set(s, s * (0.8 + Math.random() * 0.55), s);
+      const s = 0.72 + Math.random() * 0.55;
+      dummy.scale.set(s, s * (0.78 + Math.random() * 0.45), s);
       dummy.updateMatrix();
       grassMesh.setMatrixAt(placed, dummy.matrix);
       placed++;
@@ -761,36 +852,10 @@ export function SkyIslandCanvas({
     grassMesh.instanceMatrix.needsUpdate = true;
     scene.add(grassMesh);
 
-    // ---------------- 11. Cloud Sea & Falling Ginkgo Leaves / Fireflies ----------------
-    const clouds: { group: THREE.Group; speed: number }[] = [];
-    const matCloud = new THREE.MeshBasicMaterial({
-      color: "#ffffff",
-      transparent: true,
-      opacity: 0.78,
-    });
-    for (let i = 0; i < 18; i++) {
-      const cg = new THREE.Group();
-      cg.position.set(
-        -34 + i * 4.1,
-        -5.4 - (i % 3) * 1.4,
-        -24 + ((i * 8.3) % 40),
-      );
-      for (let j = 0; j < 3; j++) {
-        const puff = new THREE.Mesh(
-          new THREE.IcosahedronGeometry(1.5 + (j % 2) * 0.65, 1),
-          matCloud,
-        );
-        puff.position.set((j - 1) * 1.35, (j % 2) * 0.25, 0);
-        puff.scale.set(1.55, 0.44, 1.12);
-        cg.add(puff);
-      }
-      scene.add(cg);
-      clouds.push({ group: cg, speed: 0.32 + (i % 4) * 0.11 });
-    }
-
+    // ---------------- 10. Falling Golden Ginkgo Leaves & Night Fireflies ----------------
     const leafGeo = new THREE.PlaneGeometry(0.15, 0.15);
     const leafMat = new THREE.MeshBasicMaterial({
-      color: "#ffd454",
+      color: "#ffb938",
       side: THREE.DoubleSide,
     });
     const leaves: {
@@ -810,103 +875,17 @@ export function SkyIslandCanvas({
       leaves.push({ mesh: lm, ox, oy, oz, phase: i * 0.79 });
     }
 
-    // ---------------- 12. Champion-Blue Cloaked Traveler + Waist Lantern ----------------
-    const traveler = new THREE.Group();
-    const bodyPivot = new THREE.Group();
-    traveler.add(bodyPivot);
-
-    const matChampionBlue = makeZeldaRimToon(
-      gradientMap,
-      "#2478b5",
-      "#9ce6ff",
-      0.38,
-    );
-    const matLinen = makeZeldaRimToon(gradientMap, "#f2ece0", "#ffffff", 0.3);
-
-    const tunic = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.18, 0.29, 0.68, 10),
-      makeZeldaRimToon(gradientMap, "#2b3b47", "#9fd8ff", 0.22),
-    );
-    tunic.position.y = 0.48;
-    tunic.castShadow = true;
-    bodyPivot.add(tunic);
-
-    const capePivot = new THREE.Group();
-    capePivot.position.set(0, 0.79, 0);
-    const cape = new THREE.Mesh(
-      new THREE.ConeGeometry(0.41, 0.76, 12, 1, true),
-      matChampionBlue,
-    );
-    cape.position.y = -0.34;
-    cape.castShadow = true;
-    capePivot.add(cape);
-
-    const scarfRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.21, 0.055, 8, 16),
-      matLinen,
-    );
-    scarfRing.rotation.x = Math.PI / 2;
-    scarfRing.position.y = 0.03;
-    capePivot.add(scarfRing);
-
-    const scarfTail = new THREE.Mesh(
-      new THREE.BoxGeometry(0.13, 0.05, 0.56),
-      matLinen,
-    );
-    scarfTail.position.set(0.05, -0.04, -0.28);
-    capePivot.add(scarfTail);
-    bodyPivot.add(capePivot);
-
-    const waistLantern = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055, 0.045, 0.13, 8),
-      makeZeldaRimToon(gradientMap, "#ffc152", "#fff2b8", 0.3, "#ffa834", 2.2),
-    );
-    waistLantern.position.set(0.24, 0.44, 0.06);
-    bodyPivot.add(waistLantern);
-
+    // ---------------- 11. Playable Sculpted Blender Traveler + Waist Lantern Light ----------------
     const travelerLanternLight = new THREE.PointLight("#ffad42", 0.3, 6.8, 1.5);
-    travelerLanternLight.position.set(0.28, 0.55, 0.12);
+    travelerLanternLight.position.set(0.3, 0.56, 0.18);
     bodyPivot.add(travelerLanternLight);
-
-    const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.21, 12, 10),
-      makeZeldaRimToon(gradientMap, "#191c24", "#70b8ff", 0.15),
-    );
-    head.position.y = 0.95;
-    bodyPivot.add(head);
-
-    const eyeMat = new THREE.MeshBasicMaterial({ color: "#ffe9a6" });
-    for (const ex of [-0.07, 0.07]) {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.032, 6, 6), eyeMat);
-      eye.position.set(ex, 0.95, 0.185);
-      bodyPivot.add(eye);
-    }
-
-    const hood = new THREE.Mesh(
-      new THREE.ConeGeometry(0.3, 0.48, 10),
-      matLinen,
-    );
-    hood.position.set(0, 1.18, -0.03);
-    hood.rotation.x = -0.18;
-    hood.castShadow = true;
-    bodyPivot.add(hood);
-
-    const footMat = makeZeldaRimToon(gradientMap, "#4a3525", "#ffd8a8", 0.15);
-    const footL = new THREE.Mesh(
-      new THREE.BoxGeometry(0.12, 0.12, 0.22),
-      footMat,
-    );
-    const footR = footL.clone();
-    footL.position.set(-0.11, 0.07, 0);
-    footR.position.set(0.11, 0.07, 0);
-    traveler.add(footL, footR);
 
     const blobShadow = new THREE.Mesh(
       new THREE.CircleGeometry(0.36, 16),
       new THREE.MeshBasicMaterial({
         color: "#000000",
         transparent: true,
-        opacity: 0.28,
+        opacity: 0.26,
       }),
     );
     blobShadow.rotation.x = -Math.PI / 2;
@@ -996,7 +975,7 @@ export function SkyIslandCanvas({
       }
     }
 
-    // ---------------- 13. Controls & Engine Handle ----------------
+    // ---------------- 12. Controls & Engine Handle ----------------
     const keys = new Set<string>();
     const joystick = { x: 0, y: 0 };
     let activeNearShrine: ShrineId | null = null;
@@ -1110,14 +1089,14 @@ export function SkyIslandCanvas({
       const w = container.clientWidth;
       const h = Math.max(1, container.clientHeight);
       camera.aspect = w / h;
-      camera.fov = w < 640 ? 50 : 42;
+      camera.fov = w < 640 ? 48 : 40;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
     onResize();
     window.addEventListener("resize", onResize);
 
-    // ---------------- 14. Main Render Loop ----------------
+    // ---------------- 13. Main Render Loop ----------------
     let rafId = 0;
     let prevTime = performance.now();
     let dustTimer = 0;
@@ -1143,27 +1122,22 @@ export function SkyIslandCanvas({
       grassUniforms.uNightMix.value = nightLerp;
       waterUniforms.uNightMix.value = nightLerp;
 
-      scene.background = skyDay.clone().lerp(skyNight, nightLerp);
-      if (scene.fog instanceof THREE.FogExp2) {
-        scene.fog.color.copy(skyDay).lerp(skyNight, nightLerp);
-      }
-      sunLight.intensity = THREE.MathUtils.lerp(2.15, 0.5, nightLerp);
-      sunLight.color.set("#fff0cc").lerp(new THREE.Color("#688bff"), nightLerp);
-      hemiLight.intensity = THREE.MathUtils.lerp(0.95, 0.34, nightLerp);
+      sunLight.intensity = THREE.MathUtils.lerp(1.75, 0.55, nightLerp);
+      sunLight.color.set("#ffdfa6").lerp(new THREE.Color("#6b8eff"), nightLerp);
+      hemiLight.intensity = THREE.MathUtils.lerp(0.55, 0.26, nightLerp);
+      fillLight.intensity = THREE.MathUtils.lerp(0.22, 0.15, nightLerp);
+      scene.environmentIntensity = THREE.MathUtils.lerp(0.34, 0.16, nightLerp);
       potFireLight.intensity =
-        THREE.MathUtils.lerp(1.4, 3.6, nightLerp) +
+        THREE.MathUtils.lerp(1.6, 4.0, nightLerp) +
         Math.sin(elapsed * 10) * 0.25;
       secretFireLight.intensity =
-        THREE.MathUtils.lerp(1.2, 3.4, nightLerp) +
+        THREE.MathUtils.lerp(1.2, 3.6, nightLerp) +
         Math.cos(elapsed * 9) * 0.22;
       travelerLanternLight.intensity = THREE.MathUtils.lerp(
-        0.2,
-        2.85,
+        0.25,
+        3.1,
         nightLerp,
       );
-      matCloud.color
-        .set("#ffffff")
-        .lerp(new THREE.Color("#1b2438"), nightLerp * 0.85);
 
       if (player.launchCooldown > 0) {
         player.launchCooldown = Math.max(0, player.launchCooldown - dt);
@@ -1325,17 +1299,11 @@ export function SkyIslandCanvas({
       traveler.position.set(player.x, player.y + bounce, player.z);
       traveler.rotation.y = player.angle;
       bodyPivot.rotation.x = player.flight
-        ? 0.35
+        ? 0.32
         : inputLen > 0.05
-          ? 0.12 * Math.min(1, inputLen)
+          ? 0.11 * Math.min(1, inputLen)
           : 0;
-      capePivot.rotation.x =
-        0.16 +
-        (player.flight ? 0.55 : inputLen > 0.05 ? 0.34 : 0) +
-        Math.sin(elapsed * 4.5) * 0.05;
-      scarfTail.rotation.y = Math.sin(elapsed * 6) * 0.14;
-      footL.position.z = stride * 0.14;
-      footR.position.z = -stride * 0.14;
+      bodyPivot.rotation.z = player.flight ? 0 : stride * 0.055;
 
       const shadowGround = sampleIslandGround(player.x, player.z) ?? player.y;
       blobShadow.position.set(player.x, shadowGround + 0.03, player.z);
@@ -1370,14 +1338,14 @@ export function SkyIslandCanvas({
       }
       blupeeGroup.position.set(blupee.x, blupee.y, blupee.z);
 
-      // 料理锅热气粒子
+      // 烤肉架热气与香气粒子
       steamTimer += dt;
       if (steamTimer > 0.55 && !reducedMotion) {
         steamTimer = 0;
-        spawnParticles(-1.9, 0.58, 1.9, "#fff6e5", 1, 0.45);
+        spawnParticles(-2.88, 1.15, 1.6, "#fff4e0", 1, 0.48);
       }
 
-      // 左纳乌方块归位解谜与物理玩具碰撞
+      // 左纳乌方块归位解谜
       for (const toy of toys) {
         if (toy.locked) {
           toy.mesh.position.set(
@@ -1429,7 +1397,7 @@ export function SkyIslandCanvas({
             2.2,
           );
           stateRef.current.onEventToast(
-            "✦ 解谜达成！左纳乌能量方块归位，古老纪念石柱已点亮！",
+            "✦ 解谜达成！左纳乌能量方块归位，图腾方尖碑已唤醒！",
           );
           continue;
         }
@@ -1512,7 +1480,7 @@ export function SkyIslandCanvas({
 
         const s = inside ? 1.16 + Math.sin(elapsed * 4) * 0.05 : 1.0;
         ring.scale.lerp(new THREE.Vector3(s, s, 1), dt * 8);
-        rMat.opacity = inside ? 0.92 : 0.36;
+        rMat.opacity = inside ? 0.88 : 0.3;
       }
 
       if (closestShrine !== activeNearShrine) {
@@ -1535,30 +1503,29 @@ export function SkyIslandCanvas({
       wispCore.rotation.y = elapsed * 2.2;
       wispHalo.lookAt(camera.position);
 
+      // 驱动 GLB 内精致原版风车帆、旋转烤肉架、造物星盘与日晷动画
       if (!reducedMotion) {
-        forgeCore.rotation.y = elapsed * 1.2;
-        forgeCore.position.y = 4.6 + Math.sin(elapsed * 2.2) * 0.14;
-        forgeRingA.rotation.x = elapsed * 0.7;
-        forgeRingA.rotation.y = elapsed * 0.5;
-        forgeRingB.rotation.y = -elapsed * 0.95;
-        forgeRingB.rotation.z = elapsed * 0.65;
-        sundialHalo.rotation.y = elapsed * 0.85;
-        windmillSails.rotation.z = -elapsed * 0.9;
-        potFlame.scale.y = 0.9 + Math.sin(elapsed * 13) * 0.18;
-        secretFlame.scale.y = 0.9 + Math.cos(elapsed * 11) * 0.18;
+        windmillPivot.rotation.z = -elapsed * 0.72;
+        spitPivot.setRotationFromAxisAngle(spitAxis, elapsed * 0.9);
+        forgeOuterPivot.rotation.y = elapsed * 0.45;
+        forgeOuterPivot.rotation.x = Math.sin(elapsed * 0.6) * 0.22;
+        forgeInnerPivot.rotation.y = -elapsed * 0.75;
+        forgeInnerPivot.rotation.z = elapsed * 0.4;
+        forgeCorePivot.rotation.y = elapsed * 1.1;
+        forgeCorePivot.position.y = 5.0 + Math.sin(elapsed * 2.1) * 0.1;
+        sundialPivot.rotation.y = elapsed * 0.7;
 
+        for (const fm of flameMeshes) {
+          fm.scale.y = 0.92 + Math.sin(elapsed * 12) * 0.15;
+        }
         for (const v of launchVortexMeshes) {
-          v.rotation.z = elapsed * 2.4;
-          v.scale.setScalar(0.95 + Math.sin(elapsed * 4) * 0.08);
+          v.rotation.z = elapsed * 2.1;
+          v.scale.setScalar(0.96 + Math.sin(elapsed * 3.8) * 0.06);
         }
         for (const mp of mistPuffs) {
           mp.mesh.scale.setScalar(
             mp.baseScale + Math.sin(elapsed * 3.2 + mp.phase) * 0.18,
           );
-        }
-        for (const cl of clouds) {
-          cl.group.position.x += cl.speed * dt;
-          if (cl.group.position.x > 36) cl.group.position.x = -36;
         }
         for (const lf of leaves) {
           if (nightLerp > 0.5) {
@@ -1572,7 +1539,7 @@ export function SkyIslandCanvas({
             const fall = ((elapsed * 0.52 + lf.phase) % 3.8) / 3.8;
             lf.mesh.position.x =
               lf.ox + Math.sin(elapsed * 1.5 + lf.phase) * 0.6 + fall * 1.2;
-            lf.mesh.position.y = 5.0 - fall * 4.4;
+            lf.mesh.position.y = 5.2 - fall * 4.5;
             lf.mesh.position.z = lf.oz + Math.cos(elapsed + lf.phase) * 0.4;
           }
           lf.mesh.rotation.x = elapsed * 1.5 + lf.phase;
@@ -1597,7 +1564,7 @@ export function SkyIslandCanvas({
         (p.mesh.material as THREE.MeshBasicMaterial).opacity = ratio * 0.7;
       }
 
-      // 全景机位同步 .blend 中的「群岛全景 · 相机」取景范围，并按宽高比自适应竖屏平板/手机，完整框住四座岛与东崖瀑布
+      // 全景机位对齐「秋日云庭 · 全景镜头」并按竖屏宽高比自适应拉远
       const aspect =
         container.clientWidth / Math.max(1, container.clientHeight);
       const isNarrow = container.clientWidth < 640;
@@ -1606,12 +1573,12 @@ export function SkyIslandCanvas({
         const portraitBoost = aspect < 1.05 ? Math.min(1.52, 1.08 / aspect) : 1;
         const focusPoint = onSecretIslet
           ? new THREE.Vector3(-4.2, 1.4, -3.5)
-          : new THREE.Vector3(-1.4, 1.2, -5.8);
+          : new THREE.Vector3(-1.1, 1.4, -5.8);
         camTarget.lerp(focusPoint, dt * 2.8);
         desiredCamPos.set(
-          onSecretIslet ? -7.2 : 3.2,
-          28.5 * portraitBoost,
-          28.5 * portraitBoost,
+          onSecretIslet ? -7.2 : -0.65,
+          29.4 * portraitBoost,
+          36.5 * portraitBoost,
         );
       } else {
         camTarget.lerp(
@@ -1620,8 +1587,8 @@ export function SkyIslandCanvas({
         );
         desiredCamPos.set(
           camTarget.x,
-          camTarget.y + (isNarrow ? 11.8 : 9.6),
-          camTarget.z + (isNarrow ? 14.0 : 11.6),
+          camTarget.y + (isNarrow ? 11.6 : 9.4),
+          camTarget.z + (isNarrow ? 13.8 : 11.4),
         );
       }
       camera.position.lerp(desiredCamPos, dt * 4.5);
@@ -1634,7 +1601,14 @@ export function SkyIslandCanvas({
       for (const sh of ISLAND_SHRINES) {
         const el = markerRefs.current[sh.id];
         if (!el) continue;
-        const heightOffset = sh.id === "pot" ? 1.45 : 2.65;
+        const heightOffset =
+          sh.id === "pot"
+            ? 1.8
+            : sh.id === "time"
+              ? 0.75
+              : sh.id === "writing"
+                ? 3.2
+                : 2.65;
         projVec.set(
           sh.position[0],
           sh.position[1] + heightOffset,
@@ -1666,6 +1640,10 @@ export function SkyIslandCanvas({
       renderer.domElement.removeEventListener("pointerdown", onPointerDown);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
       engineRef.current = null;
+      dracoLoader.dispose();
+      envRT.dispose();
+      pmrem.dispose();
+      archGrainTex.dispose();
       gradientMap.dispose();
       bladeGeo.dispose();
       grassMat.dispose();
@@ -1678,9 +1656,21 @@ export function SkyIslandCanvas({
   }, [engineRef, markerRefs, onReady]);
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 h-dvh w-full touch-none select-none"
-    />
+    <div className="fixed inset-0 h-dvh w-full select-none">
+      {/* 云海天幕背景：白昼呈现原版夕阳云海绘景，入夜平滑过渡为星夜蓝调 */}
+      <div
+        aria-hidden="true"
+        style={{ backgroundImage: "url('/model/sky-backdrop.jpg')" }}
+        className={`pointer-events-none absolute inset-0 bg-cover bg-center transition-[filter] duration-700 ${
+          isNight
+            ? "brightness-[0.22] contrast-115 hue-rotate-15 saturate-75"
+            : "brightness-100"
+        }`}
+      />
+      <div
+        ref={containerRef}
+        className="relative h-full w-full touch-none select-none"
+      />
+    </div>
   );
 }

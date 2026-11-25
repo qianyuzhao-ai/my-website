@@ -189,11 +189,11 @@ export const ISLAND_SHRINES: ShrineConfig[] = [
   {
     id: "pot",
     code: "05",
-    title: "篝火料理锅",
-    subtitle: "尝一口正在炖煮的灵感浓汤",
-    actionLabel: "查看锅中灵感",
-    position: [-1.9, 0.0, 1.9],
-    triggerRadius: 1.9,
+    title: "篝火烤肉架",
+    subtitle: "滋滋旋转的塞尔达风蜜汁烤肉",
+    actionLabel: "尝一口蜜汁烤肉",
+    position: [-2.88, 0.0, 1.6],
+    triggerRadius: 2.0,
   },
   {
     id: "about",
