@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/site-config";
 
 const SESSION_KEY = "qianyu-sky-island-visited-v1";
@@ -15,9 +15,25 @@ export function SkyLoader({
   const [progress, setProgress] = useState(0);
   const [dismissed, setDismissed] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const completedRef = useRef(false);
 
-  // 同一次会话从博客页返回首页时，若场景已就绪则快速放行不重复漫长等待
+  const finishLoading = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    try {
+      window.sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {
+      // 忽略隐私模式限制
+    }
+    setProgress(100);
+    setDismissed(true);
+    onComplete();
+  }, [onComplete]);
+
+  // 1. 推进进度条；同会话回访且场景就绪时直接拉幕放行
   useEffect(() => {
+    if (dismissed) return;
+
     let alreadyVisited = false;
     try {
       alreadyVisited = window.sessionStorage.getItem(SESSION_KEY) === "1";
@@ -26,13 +42,8 @@ export function SkyLoader({
     }
 
     if (alreadyVisited && sceneReady) {
-      setProgress(100);
-      setDismissed(true);
-      const t = window.setTimeout(() => {
-        setHidden(true);
-        onComplete();
-      }, 120);
-      return () => window.clearTimeout(t);
+      finishLoading();
+      return;
     }
 
     const stepMs = 24;
@@ -48,41 +59,29 @@ export function SkyLoader({
     }, stepMs);
 
     return () => window.clearInterval(timer);
-  }, [sceneReady, onComplete]);
+  }, [sceneReady, dismissed, finishLoading]);
 
+  // 2. 进度满且场景就绪后拉起遮罩并立刻解锁空岛操控
   useEffect(() => {
     if (progress < 100 || !sceneReady || dismissed) return;
-    try {
-      window.sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {
-      // 忽略存储异常
-    }
     const openTimer = window.setTimeout(() => {
-      setDismissed(true);
-    }, 220);
+      finishLoading();
+    }, 180);
+    return () => window.clearTimeout(openTimer);
+  }, [progress, sceneReady, dismissed, finishLoading]);
+
+  // 3. 遮罩淡出动画结束后卸载 DOM（独立副作用，避免被自身状态变更提前取消）
+  useEffect(() => {
+    if (!dismissed) return;
     const removeTimer = window.setTimeout(() => {
       setHidden(true);
-      onComplete();
-    }, 780);
-    return () => {
-      window.clearTimeout(openTimer);
-      window.clearTimeout(removeTimer);
-    };
-  }, [progress, sceneReady, dismissed, onComplete]);
+    }, 540);
+    return () => window.clearTimeout(removeTimer);
+  }, [dismissed]);
 
   function handleSkip() {
     if (!sceneReady) return;
-    try {
-      window.sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {
-      // 忽略
-    }
-    setProgress(100);
-    setDismissed(true);
-    window.setTimeout(() => {
-      setHidden(true);
-      onComplete();
-    }, 200);
+    finishLoading();
   }
 
   if (hidden) return null;
