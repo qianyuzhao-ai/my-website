@@ -121,8 +121,12 @@ export default async function PostPage({ params }: Props) {
                   <span>{siteConfig.name}</span>
                   {post.tags?.length ? (
                     <>
-                      <span aria-hidden="true">·</span>
-                      <span className="text-fg">{post.tags.join(" · ")}</span>
+                      <span aria-hidden="true" className="hidden sm:inline">
+                        ·
+                      </span>
+                      <span className="w-full text-fg sm:w-auto">
+                        {post.tags.join(" · ")}
+                      </span>
                     </>
                   ) : null}
                 </div>

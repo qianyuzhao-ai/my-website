@@ -26,8 +26,10 @@ export function PostToc({
       const syncAriaCurrent = () => {
         const nav = navRef.current;
         if (!nav) return;
-        const currentLink = nav.querySelector("a:target-current");
-        for (const link of nav.querySelectorAll("a")) {
+        const links = nav.querySelectorAll("a");
+        const matched = nav.querySelector("a:target-current");
+        const currentLink = matched ?? (window.scrollY < 40 ? links[0] : null);
+        for (const link of links) {
           const isCurrent = link === currentLink;
           link.setAttribute("aria-current", isCurrent ? "true" : "false");
           link.classList.toggle("target-current", isCurrent);

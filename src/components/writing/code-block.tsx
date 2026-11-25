@@ -1,12 +1,20 @@
 "use client";
 
-import type { ComponentProps } from "react";
-import { useRef, useState } from "react";
+import type { ComponentProps, ReactElement } from "react";
+import { isValidElement, useRef, useState } from "react";
 import { CheckIcon, CopyIcon } from "@/components/home/icons";
+
+function extractLanguage(children: ComponentProps<"pre">["children"]): string {
+  if (!isValidElement(children)) return "";
+  const el = children as ReactElement<{ className?: string }>;
+  const match = el.props.className?.match(/language-([a-z0-9+-]+)/i);
+  return match ? match[1] : "";
+}
 
 export function CodeBlock(props: ComponentProps<"pre">) {
   const preRef = useRef<HTMLPreElement>(null);
   const [copied, setCopied] = useState(false);
+  const lang = extractLanguage(props.children);
 
   async function handleCopy() {
     const text = preRef.current?.innerText ?? "";
@@ -22,12 +30,15 @@ export function CodeBlock(props: ComponentProps<"pre">) {
 
   return (
     <div className="relative my-2 w-full overflow-hidden rounded-lg border border-border bg-surface-elevated">
-      <div className="flex items-center justify-end border-b border-border px-3 py-1.5">
+      <div className="flex items-center justify-between border-b border-border px-4 py-1.5">
+        <span className="font-mono text-label text-fg-muted">
+          {lang || "code"}
+        </span>
         <button
           type="button"
           onClick={handleCopy}
           aria-label={copied ? "代码已复制" : "复制代码"}
-          className="inline-flex min-h-11 items-center gap-1.5 px-2.5 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-fg sm:min-h-8"
+          className="inline-flex min-h-11 items-center gap-1.5 px-2 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-fg sm:min-h-8"
         >
           {copied ? (
             <>
