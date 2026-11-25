@@ -1,5 +1,5 @@
 // 王国之泪风「三层阶梯主岛 + 悬空彩蛋小飞岛（Sky Archipelago v2）」世界坐标与地形碰撞系统。
-// 与 public/model/sky-island-v2.blend（Three.js Y-up 坐标系）精确对齐。
+// 与 public/model/秋日浮岛-云上庭园.blend（Three.js Y-up 坐标系）精确对齐。
 
 export type ShrineId =
   | "writing"
