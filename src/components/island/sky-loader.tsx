@@ -485,18 +485,10 @@ export function SkyLoader({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const progressRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
-  const themeDarkRef = useRef(false);
+  const resolvedThemeRef = useRef<string | undefined>(resolvedTheme);
 
   progressRef.current = progress;
-
-  useEffect(() => {
-    if (resolvedTheme) {
-      themeDarkRef.current = resolvedTheme === "dark";
-    } else if (typeof document !== "undefined") {
-      themeDarkRef.current =
-        document.documentElement.classList.contains("dark");
-    }
-  }, [resolvedTheme]);
+  resolvedThemeRef.current = resolvedTheme;
 
   const finishLoading = useCallback(() => {
     if (completedRef.current) return;
@@ -598,12 +590,21 @@ export function SkyLoader({
     };
     window.addEventListener("pointermove", onPointerMove, { passive: true });
 
+    const darkMq = window.matchMedia("(prefers-color-scheme: dark)");
+    let systemPrefersDark = darkMq.matches;
+    const onColorSchemeChange = (e: MediaQueryListEvent) => {
+      systemPrefersDark = e.matches;
+    };
+    darkMq.addEventListener("change", onColorSchemeChange);
+
     let rafId = 0;
     const startMs = performance.now();
     const tick = (now: number) => {
-      const isDark =
-        themeDarkRef.current ||
-        document.documentElement.classList.contains("dark");
+      const rootClass = document.documentElement.classList;
+      const isDark = resolvedThemeRef.current
+        ? resolvedThemeRef.current === "dark"
+        : rootClass.contains("dark") ||
+          (!rootClass.contains("light") && systemPrefersDark);
       pointerRef.current.x +=
         (pointerRef.current.targetX - pointerRef.current.x) * 0.08;
       pointerRef.current.y +=
@@ -625,6 +626,7 @@ export function SkyLoader({
       window.cancelAnimationFrame(rafId);
       ro.disconnect();
       mq.removeEventListener("change", onMotionChange);
+      darkMq.removeEventListener("change", onColorSchemeChange);
       window.removeEventListener("pointermove", onPointerMove);
     };
   }, [hidden]);

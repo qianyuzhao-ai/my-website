@@ -23,7 +23,7 @@ export type IslandEngineHandle = {
 };
 
 type Props = {
-  isNight: boolean;
+  isNight?: boolean;
   paused: boolean;
   entered: boolean;
   vistaMode: boolean;
@@ -179,6 +179,12 @@ export function SkyIslandCanvas({
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const rootClass = document.documentElement.classList;
+    const initialNight =
+      stateRef.current.isNight ||
+      rootClass.contains("dark") ||
+      (!rootClass.contains("light") &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
 
     // ---------------- 1. Transparent Renderer over Sunset Cloud-Sea Backdrop ----------------
     const renderer = new THREE.WebGLRenderer({
@@ -204,7 +210,7 @@ export function SkyIslandCanvas({
     const envRT = pmrem.fromScene(roomEnv, 0.04);
     roomEnv.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = stateRef.current.isNight ? 0.16 : 0.34;
+    scene.environmentIntensity = initialNight ? 0.16 : 0.34;
 
     const camera = new THREE.PerspectiveCamera(
       40,
@@ -227,7 +233,7 @@ export function SkyIslandCanvas({
     // ---------------- 2. World-Space Animated Zelda Water & Waterfall Shader ----------------
     const waterUniforms = {
       uTime: { value: 0 },
-      uNightMix: { value: stateRef.current.isNight ? 1 : 0 },
+      uNightMix: { value: initialNight ? 1 : 0 },
     };
 
     const waterfallMat = new THREE.ShaderMaterial({
@@ -717,7 +723,7 @@ export function SkyIslandCanvas({
     const grassUniforms = {
       uTime: { value: 0 },
       uPlayerPos: { value: new THREE.Vector3(0, 0, 2.8) },
-      uNightMix: { value: stateRef.current.isNight ? 1 : 0 },
+      uNightMix: { value: initialNight ? 1 : 0 },
     };
 
     const grassMat = new THREE.ShaderMaterial({
@@ -1067,7 +1073,7 @@ export function SkyIslandCanvas({
     let prevTime = performance.now();
     let dustTimer = 0;
     let steamTimer = 0;
-    let nightLerp = stateRef.current.isNight ? 1 : 0;
+    let nightLerp = initialNight ? 1 : 0;
     const projVec = new THREE.Vector3();
     const camTarget = new THREE.Vector3(0, 0.8, 2.8);
     const desiredCamPos = new THREE.Vector3();
@@ -1083,7 +1089,7 @@ export function SkyIslandCanvas({
       grassUniforms.uTime.value = reducedMotion ? 0 : elapsed;
       waterUniforms.uTime.value = reducedMotion ? 0 : elapsed;
 
-      const targetNight = stateRef.current.isNight ? 1 : 0;
+      const targetNight = (stateRef.current.isNight ?? initialNight) ? 1 : 0;
       nightLerp += (targetNight - nightLerp) * Math.min(1, dt * 3.5);
       grassUniforms.uNightMix.value = nightLerp;
       waterUniforms.uNightMix.value = nightLerp;
@@ -1586,11 +1592,7 @@ export function SkyIslandCanvas({
       <div
         aria-hidden="true"
         style={{ backgroundImage: "url('/model/sky-backdrop.jpg')" }}
-        className={`pointer-events-none absolute inset-0 bg-cover bg-center transition-[filter] duration-700 ${
-          isNight
-            ? "brightness-[0.22] contrast-115 hue-rotate-15 saturate-75"
-            : "brightness-100"
-        }`}
+        className="pointer-events-none absolute inset-0 bg-cover bg-center brightness-100 transition-[filter] duration-700 dark:brightness-[0.22] dark:contrast-115 dark:hue-rotate-15 dark:saturate-75"
       />
       <div
         ref={containerRef}

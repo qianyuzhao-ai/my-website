@@ -56,6 +56,74 @@
   --pulse: #1d6cf6;
 }
 
+/*
+ * 首次访问尚未写入显式 .light 类时，纯 CSS 跟随系统深色偏好，消除首帧白闪；
+ * next-themes 挂载并设置 html.light / html.dark 后完全由 next-themes 接管。
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+    --bg: #0b0e14;
+    --surface: rgb(22 27 38 / 0.8);
+    --surface-solid: #161b26;
+    --surface-elevated: rgb(30 37 52 / 0.74);
+    --surface-recessed: rgb(35 43 59 / 0.84);
+    --border: rgb(40 50 68 / 0.92);
+    --border-glass: rgb(148 163 184 / 0.22);
+    --border-strong: #475569;
+    --fg: #f8fafc;
+    --fg-secondary: #cbd5e1;
+    --fg-muted: #94a3b8;
+    --ink: #f8fafc;
+    --ink-fg: #0b0e14;
+    --accent: #4f94ff;
+    --accent-hover: #6aa6ff;
+    --accent-soft: rgb(22 38 66 / 0.92);
+    --signal: #34d399;
+    --signal-dot: #34d399;
+    --signal-soft: rgb(18 46 38 / 0.88);
+    --focus: #60a5fa;
+    --danger: #f87171;
+    --backdrop: rgb(4 7 12 / 0.64);
+    --code-bg: rgb(11 15 24 / 0.96);
+    --code-surface: rgb(22 30 46 / 0.82);
+    --code-border: rgb(148 163 184 / 0.16);
+    --glass-specular:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.14),
+      inset 0 0 0 1px rgb(255 255 255 / 0.06);
+    --elevation-glass:
+      0 20px 52px -14px rgb(0 0 0 / 0.52), 0 4px 16px -4px rgb(0 0 0 / 0.28);
+    --elevation-lg:
+      0 28px 68px -16px rgb(0 0 0 / 0.68), 0 8px 24px -8px rgb(0 0 0 / 0.38);
+    --nav-track: rgb(30 37 52 / 0.85);
+    --nav-selected: #232b3b;
+    --pill: rgb(35 43 59 / 0.84);
+    --toggle-track: rgb(35 43 59 / 0.84);
+    --card-blue: #162642;
+    --card-pink: #2a1b2b;
+    --card-yellow: #2b2416;
+    --card-mint: #122e26;
+    --case-stroke: #283244;
+    --social-icon: #f8fafc;
+    --map-pin: #4f94ff;
+    --pulse: #4f94ff;
+  }
+
+  :root:not(.light) .glass-ambient-bg {
+    background-image:
+      radial-gradient(
+        62rem 34rem at 14% -4%,
+        rgb(79 148 255 / 0.16),
+        transparent 65%
+      ),
+      radial-gradient(
+        52rem 30rem at 86% 2%,
+        rgb(52 211 153 / 0.11),
+        transparent 62%
+      );
+  }
+}
+
 .dark {
   color-scheme: dark;
   --bg: #0b0e14;

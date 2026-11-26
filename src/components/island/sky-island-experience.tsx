@@ -77,7 +77,8 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
     return () => window.removeEventListener("qianyu:glider-launch", onGlider);
   }, [showToast]);
 
-  const isNight = mounted ? resolvedTheme === "dark" : false;
+  const isNight =
+    mounted && resolvedTheme ? resolvedTheme === "dark" : undefined;
 
   const toggleDayNight = useCallback(() => {
     const nextDark = resolvedTheme !== "dark";
