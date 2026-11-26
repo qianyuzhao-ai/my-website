@@ -1,97 +1,68 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { HomeFooter } from "@/components/home/home-footer";
-import { SkipLink } from "@/components/site/skip-link";
-import { WritingHeader } from "@/components/writing/writing-header";
-import { formatDate, formatMonthDay, getPosts, groupByYear } from "@/lib/posts";
+import { SiteFooter } from "@/components/site/site-footer";
+import { WritingArchive } from "@/components/writing/writing-archive";
+import { getPosts, groupByYear } from "@/lib/posts";
+import { siteConfig } from "@/lib/site-config";
 
-const description = "关于产品设计、前端开发与 AIGC 的笔记和复盘。";
+const description =
+  "关于 AI Agent 工程、全栈架构与 AIGC 视觉工作流的一线实战笔记与复盘。";
 
 export const metadata: Metadata = {
-  title: "Writing · QianYu",
+  title: `Writing · ${siteConfig.name}`,
   description,
 };
 
 export default async function WritingPage() {
   const posts = await getPosts();
   const years = groupByYear(posts);
-  const since = years.at(-1)?.[0];
+  const latestYear = years[0]?.[0];
+  const earliestYear = years.at(-1)?.[0];
+  const yearRange =
+    earliestYear && latestYear && earliestYear !== latestYear
+      ? `${earliestYear}–${latestYear}`
+      : latestYear;
 
   return (
     <>
-      <SkipLink />
-      <WritingHeader />
-      <main id="main" className="px-4 pb-10 md:px-6 xl:px-0">
-        <div className="mx-auto flex max-w-[1168px] flex-col gap-3 lg:flex-row lg:items-start lg:gap-4">
-          <section className="rounded-card-sm bg-surface p-6 md:rounded-card lg:sticky lg:top-6 lg:w-[280px] lg:shrink-0 lg:px-8 lg:pt-9 lg:pb-8 dark:border-[1.5px] dark:border-border">
-            <h1 className="font-serif text-display-sm font-bold lg:text-display">
-              Writing
-            </h1>
-            <p className="mt-3 text-reading lg:mt-4">{description}</p>
-            <p className="mt-3 text-caption text-fg-muted lg:mt-4">
-              {posts.length} posts{since ? ` · since ${since}` : ""}
-            </p>
-          </section>
+      <main
+        id="main"
+        className="px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
+      >
+        <div className="mx-auto max-w-6xl">
+          {/* Liquid Glass 博客刊头 */}
+          <header className="grid grid-cols-1 gap-5 pb-8 md:pb-10 lg:grid-cols-12 lg:items-end lg:gap-8">
+            <div className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/85 px-3 py-1 font-mono text-micro font-medium tracking-wider text-accent uppercase backdrop-blur-md">
+                <span className="size-1.5 rounded-full bg-signal-dot" />
+                <span>ESSAYS &amp; FIELD NOTES</span>
+              </div>
+              <h1 className="mt-3 text-[clamp(2.5rem,5.8vw,4rem)] leading-[1.02] font-bold tracking-[-0.035em] text-fg">
+                Writing
+              </h1>
+            </div>
 
-          <div className="flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
-            {years.length === 0 ? (
-              <p className="rounded-card-sm bg-surface p-6 text-fg-muted md:rounded-card">
-                文章即将上线。
+            <div className="flex flex-col gap-3 lg:col-span-5 lg:items-end lg:pb-1 lg:text-right">
+              <p className="max-w-[46ch] text-body leading-relaxed text-fg-secondary">
+                {description}
               </p>
-            ) : null}
-            {years.map(([year, items]) => (
-              <section
-                key={year}
-                aria-labelledby={`year-${year}`}
-                className="rounded-card-sm bg-surface px-5 pt-6 pb-1.5 md:rounded-card md:px-10 md:pt-8 md:pb-4 dark:border-[1.5px] dark:border-border"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <h2
-                    id={`year-${year}`}
-                    className="font-serif text-title font-bold"
-                  >
-                    {year}
-                  </h2>
-                  <span className="text-caption text-fg-muted">
-                    {items.length} posts
-                  </span>
-                </div>
-                <ul className="mt-2 md:mt-3">
-                  {items.map((post) => (
-                    <li key={post.slug} className="border-t border-border">
-                      <Link
-                        href={`/writing/${post.slug}`}
-                        className="group flex flex-col gap-1.5 rounded-lg py-[18px] md:flex-row md:items-start md:gap-8 md:py-[22px]"
-                      >
-                        <span className="flex min-w-0 flex-1 flex-col gap-1.5 md:gap-1">
-                          <span className="line-clamp-2 font-serif text-case-title font-semibold transition-colors group-hover:text-accent md:line-clamp-1">
-                            {post.title}
-                          </span>
-                          <span className="line-clamp-2 text-case-small text-fg-muted md:line-clamp-1">
-                            {post.summary}
-                          </span>
-                        </span>
-                        <time
-                          dateTime={post.date}
-                          className="order-first text-caption text-fg-muted md:order-last md:w-16 md:shrink-0 md:text-right md:text-label md:leading-[30px]"
-                        >
-                          <span className="md:hidden">
-                            {formatDate(post.date)}
-                          </span>
-                          <span className="hidden md:inline">
-                            {formatMonthDay(post.date)}
-                          </span>
-                        </time>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-3.5 py-1.5 font-mono text-caption text-fg-muted tabular-nums backdrop-blur-md">
+                <span className="font-semibold text-fg">
+                  {posts.length} 篇归档
+                </span>
+                {yearRange ? (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{yearRange}</span>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          </header>
+
+          <WritingArchive posts={posts} />
         </div>
       </main>
-      <HomeFooter />
+      <SiteFooter />
     </>
   );
 }
