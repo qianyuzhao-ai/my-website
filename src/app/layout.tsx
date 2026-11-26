@@ -1,11 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { ConnectSheet } from "@/components/site/connect-sheet";
+import { SiteDock } from "@/components/site/site-dock";
+import { SkipLink } from "@/components/site/skip-link";
+import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-poppins",
 });
@@ -17,10 +21,13 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
 });
 
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+};
+
 export const metadata: Metadata = {
-  title: "QianYu",
-  description:
-    "QianYu 的个人网站：来自北京的产品设计与开发，关注 React、Node、产品设计、AIGC 与 Agentic。",
+  title: `${siteConfig.name} — ${siteConfig.role}`,
+  description: `${siteConfig.name} 的个人网站：${siteConfig.tagline}`,
 };
 
 export default function RootLayout({
@@ -40,7 +47,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <SkipLink />
+          <SiteDock />
           {children}
+          <ConnectSheet />
         </ThemeProvider>
       </body>
     </html>
