@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DualModeConsole } from "@/components/home/dual-mode-console";
-import {
-  ArrowIcon,
-  ArrowRightIcon,
-  SparklesIcon,
-} from "@/components/home/icons";
+import { ArrowRightIcon, SparklesIcon } from "@/components/home/icons";
 import { SiteFooter } from "@/components/site/site-footer";
 import { siteConfig } from "@/lib/site-config";
-import { featuredWorks } from "@/lib/works";
 
 const description =
   "AI Agent 工程架构、全栈交互工具链与高可控 AIGC 视觉工作流代表作与实时交互实验台。";
@@ -20,10 +14,10 @@ export const metadata: Metadata = {
 
 export default function WorksPage() {
   return (
-    <div className="glass-ambient-bg min-h-dvh text-fg">
+    <div className="glass-ambient-bg flex min-h-dvh flex-col text-fg">
       <main
         id="main"
-        className="px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
+        className="flex-1 px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
       >
         <div className="mx-auto max-w-6xl">
           {/* 页面刊头 */}
@@ -43,138 +37,93 @@ export default function WorksPage() {
                 {description}
               </p>
               <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-3.5 py-1.5 font-mono text-caption text-fg-muted tabular-nums backdrop-blur-md">
-                <span className="font-semibold text-fg">
-                  {featuredWorks.length} 项代表作
-                </span>
+                <span className="font-semibold text-fg">OpenFlow</span>
                 <span aria-hidden="true">·</span>
-                <span>Coding × AIGC</span>
+                <span>Featured Project</span>
               </div>
             </div>
           </header>
 
-          {/* 01 · 代表作毛玻璃卡片矩阵 */}
+          {/* 01 · OpenFlow 子页面入口（占位） */}
           <section
-            aria-labelledby="featured-works-heading"
+            aria-labelledby="featured-openflow-heading"
             className="border-t border-border/80 pt-8 md:pt-10"
           >
             <div className="mb-5 flex items-baseline justify-between gap-4">
               <h2
-                id="featured-works-heading"
+                id="featured-openflow-heading"
                 className="font-mono text-micro font-semibold tracking-widest text-fg-muted uppercase"
               >
-                01 {"//"} SELECTED WORKS
+                01 {"//"} FEATURED PROJECT
               </h2>
               <span className="font-mono text-micro text-fg-muted">
-                2026 EDITION
+                OPENFLOW
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-              {featuredWorks.map((work) => {
-                const isCoding = work.kind === "coding";
-                return (
-                  <article
-                    key={work.id}
-                    className="glass-panel flex flex-col justify-between gap-5 rounded-[24px] p-5 transition-transform duration-200 hover:-translate-y-0.5 sm:p-6"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2">
+            <Link
+              href="/works/openflow"
+              className="glass-panel group block rounded-[28px] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 sm:p-7 md:p-8"
+            >
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center lg:gap-8">
+                {/* 左侧信息占位 */}
+                <div className="flex flex-col justify-between gap-5 lg:col-span-6">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-mono text-micro font-semibold text-accent">
+                        01 · OPENFLOW
+                      </span>
+                      <span className="rounded-full border border-border/80 bg-surface-recessed/80 px-2.5 py-0.5 font-mono text-micro text-fg-muted">
+                        PLACEHOLDER
+                      </span>
+                    </div>
+
+                    <h3 className="mt-4 text-[clamp(1.75rem,3.4vw,2.5rem)] leading-[1.1] font-bold tracking-[-0.03em] text-fg">
+                      OpenFlow
+                    </h3>
+
+                    <p className="mt-2 text-body font-medium text-fg-secondary">
+                      OpenFlow 项目展示子页入口（副标题占位）
+                    </p>
+
+                    <p className="mt-3 max-w-[52ch] text-label leading-relaxed text-fg-muted">
+                      此处用于展示 OpenFlow
+                      的核心简介、亮点信息与封面视觉，目前为结构占位，后续将替换为完整项目内容。
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {["Tag 01", "Tag 02", "Tag 03"].map((tag) => (
                         <span
-                          className={`rounded-full px-2.5 py-0.5 font-mono text-micro font-semibold ${
-                            isCoding
-                              ? "bg-signal-soft text-signal"
-                              : "bg-accent-soft text-accent"
-                          }`}
+                          key={tag}
+                          className="rounded-full border border-dashed border-border-strong/70 bg-surface-recessed/60 px-3 py-1 font-mono text-micro text-fg-muted"
                         >
-                          {work.index} · {work.kind.toUpperCase()}
+                          {tag}
                         </span>
-                        <span className="font-mono text-micro text-fg-muted tabular-nums">
-                          {work.year}
-                        </span>
-                      </div>
-
-                      <h3 className="mt-3.5 text-title font-bold tracking-[-0.02em] text-fg">
-                        {work.title}
-                      </h3>
-                      <p className="mt-1 text-caption font-medium text-fg-secondary">
-                        {work.subtitle}
-                      </p>
-                      <p className="mt-2.5 text-label leading-relaxed text-fg-secondary">
-                        {work.summary}
-                      </p>
-
-                      {/* 关键量化指标条 */}
-                      <dl className="mt-4 grid grid-cols-3 gap-2 rounded-2xl border border-border/80 bg-surface-recessed/70 p-2.5">
-                        {work.metrics.map((metric) => (
-                          <div key={metric.label} className="min-w-0">
-                            <dt className="truncate text-[10px] text-fg-muted">
-                              {metric.label}
-                            </dt>
-                            <dd className="mt-0.5 truncate font-mono text-caption font-semibold text-fg tabular-nums">
-                              {metric.value}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-
-                      {/* 技术栈标签 */}
-                      <div className="mt-4 flex flex-wrap gap-1.5">
-                        {work.stack.map((tech) => (
-                          <span
-                            key={tech}
-                            className="rounded-full border border-border/80 bg-surface-solid/80 px-2.5 py-0.5 font-mono text-micro text-fg-muted"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
+                      ))}
                     </div>
+                  </div>
 
-                    <div className="border-t border-border/75 pt-3.5">
-                      {work.isExternal ? (
-                        <a
-                          href={work.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex min-h-11 items-center gap-1.5 font-mono text-caption font-medium text-accent transition-opacity hover:opacity-80"
-                        >
-                          <span>{work.ctaLabel}</span>
-                          <ArrowIcon className="size-3.5" />
-                        </a>
-                      ) : (
-                        <Link
-                          href={work.href}
-                          className="group inline-flex min-h-11 items-center gap-1.5 font-mono text-caption font-medium text-accent transition-opacity hover:opacity-80"
-                        >
-                          <span>{work.ctaLabel}</span>
-                          <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-                        </Link>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
+                  <div className="border-t border-border/75 pt-4">
+                    <span className="inline-flex min-h-11 items-center gap-2 font-mono text-caption font-semibold text-accent transition-opacity group-hover:opacity-85">
+                      <span>进入 OpenFlow 页面</span>
+                      <ArrowRightIcon className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </div>
 
-          {/* 02 · 交互式双模控制台 */}
-          <section
-            aria-labelledby="dual-console-heading"
-            className="mt-12 md:mt-16"
-          >
-            <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
-              <h2
-                id="dual-console-heading"
-                className="font-mono text-micro font-semibold tracking-widest text-fg-muted uppercase"
-              >
-                02 {"//"} INTERACTIVE DUAL-MODE CONSOLE
-              </h2>
-              <span className="text-caption text-fg-muted">
-                实时切换 Code 工程态与 AIGC 潜空间采样态
-              </span>
-            </div>
-
-            <DualModeConsole />
+                {/* 右侧视觉封面占位 */}
+                <div className="lg:col-span-6">
+                  <div className="lab-grid relative flex aspect-[16/10] w-full flex-col items-center justify-center overflow-hidden rounded-[20px] border border-dashed border-border-strong/80 bg-surface-recessed/70 p-6 text-center">
+                    <span className="rounded-full border border-border/80 bg-surface/90 px-3 py-1 font-mono text-micro font-medium text-fg-secondary backdrop-blur-md">
+                      OPENFLOW PREVIEW PLACEHOLDER
+                    </span>
+                    <p className="mt-3 max-w-[30ch] text-caption text-fg-muted">
+                      主视觉封面 / 交互预览占位区（16:10）
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Link>
           </section>
         </div>
       </main>
