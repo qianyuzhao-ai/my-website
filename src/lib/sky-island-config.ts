@@ -133,57 +133,50 @@ export const LAUNCH_PADS = {
   },
 } as const;
 
-/** 左纳乌方块归位解谜机关坐标 */
-export const PUZZLE_SOCKET = {
-  position: [4.2, 0.02, 2.9] as [number, number, number],
-  pillarPosition: [5.1, 0.0, 1.8] as [number, number, number],
-  snapRadius: 0.85,
-} as const;
-
-/** 山巅清泉、溪流与东崖瀑布关键坐标（同步最新 .blend 高岛位置） */
+/** 山巅清溪浅滩与东崖瀑布关键坐标（同步最新 .blend 高岛位置） */
 export const WATERFALL_PATH = {
   pondCenter: [6.64, 2.91, -13.16] as [number, number, number],
-  streamCenter: [10.13, 2.91, -11.02] as [number, number, number],
+  streamCenter: [9.33, 2.91, -11.97] as [number, number, number],
   fallEdge: [13.59, -1.0, -9.55] as [number, number, number],
   mistCenter: [14.18, -4.68, -9.08] as [number, number, number],
 } as const;
 
-/** 六处可交互神庙/石碑/彩蛋点（精确对应 .blend 中的地标光环坐标） */
+/** 六处可交互神庙/书台/星扇/纪念碑功能点（精确对齐最新 .blend 布局） */
 export const ISLAND_SHRINES: ShrineConfig[] = [
   {
     id: "writing",
     code: "01",
-    title: "手稿石碑 · Writing",
+    title: "石页书台 · Writing",
     subtitle: "中层银杏林 · 一线实战复盘与工程长文",
-    actionLabel: "阅读手稿石碑",
-    position: [-7.26, 1.35, -13.72],
-    triggerRadius: 2.6,
+    actionLabel: "翻阅石页手稿",
+    position: [-4.82, 1.35, -13.86],
+    triggerRadius: 2.5,
   },
   {
     id: "works",
     code: "02",
-    title: "造物星盘 · Works",
+    title: "银杏星扇 · Works",
     subtitle: "高层山巅 · Coding × AIGC 作品与实验台",
-    actionLabel: "开启造物星盘",
-    position: [9.35, 2.85, -13.64],
-    triggerRadius: 2.8,
+    actionLabel: "展开银杏星扇",
+    position: [9.45, 2.85, -13.4],
+    triggerRadius: 2.9,
   },
   {
     id: "connect",
     code: "03",
     title: "风车信使 · Connect",
-    subtitle: "低层南崖 · 社交频率与飞翼传信",
+    subtitle: "低层东崖 · 社交频率与南崖飞翼传信",
     actionLabel: "打开发信信箱",
-    position: [1.5, 0.0, 7.2],
-    triggerRadius: 2.4,
+    position: [2.5, 0.0, 5.2],
+    triggerRadius: 2.3,
   },
   {
     id: "time",
     code: "04",
-    title: "时之日晷 · 昼夜",
-    subtitle: "中层北崖 · 切换空岛白昼与星夜萤火",
-    actionLabel: "拨动时之日晷",
-    position: [-3.46, 1.35, -15.32],
+    title: "双面日月晷 · 昼夜",
+    subtitle: "中层西南崖 · 翻转铜盘切换白昼与星夜萤火",
+    actionLabel: "翻转日月铜盘",
+    position: [-7.25, 1.35, -9.35],
     triggerRadius: 2.3,
   },
   {
@@ -192,17 +185,17 @@ export const ISLAND_SHRINES: ShrineConfig[] = [
     title: "篝火烤肉架",
     subtitle: "滋滋旋转的塞尔达风蜜汁烤肉",
     actionLabel: "尝一口蜜汁烤肉",
-    position: [-2.88, 0.0, 1.6],
+    position: [-3.85, 0.0, 1.25],
     triggerRadius: 2.0,
   },
   {
     id: "about",
     code: "★",
-    title: "守岛人私房碑 · About",
+    title: "守岛人纪念碑 · About",
     subtitle: "彩蛋飞岛 · 关于我与近期折腾",
     actionLabel: "阅读守岛人手记",
-    position: [-13.8, 2.2, 5.9],
-    triggerRadius: 2.6,
+    position: [-14.3, 2.2, 4.15],
+    triggerRadius: 2.8,
   },
 ];
 

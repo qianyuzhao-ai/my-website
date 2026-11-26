@@ -10,7 +10,6 @@ import {
   ISLAND_SHRINES,
   ISLAND_TIERS,
   LAUNCH_PADS,
-  PUZZLE_SOCKET,
   type ShrineId,
   sampleIslandGround,
   WATERFALL_PATH,
@@ -40,8 +39,6 @@ type Props = {
 
 type PhysicsToy = {
   mesh: THREE.Mesh;
-  isPuzzleCube: boolean;
-  locked: boolean;
   homeX: number;
   homeZ: number;
   x: number;
@@ -218,14 +215,6 @@ export function SkyIslandCanvas({
     camera.position.set(0, 14, 21);
 
     const gradientMap = createToonGradient();
-    const matRuneGlow = makeZeldaRimToon(
-      gradientMap,
-      "#29db98",
-      "#9effdc",
-      0.4,
-      "#34f5a6",
-      1.15,
-    );
     const matGoldGlow = makeZeldaRimToon(
       gradientMap,
       "#ebc054",
@@ -233,12 +222,6 @@ export function SkyIslandCanvas({
       0.35,
       "#e6b64c",
       0.28,
-    );
-    const matStoneToon = makeZeldaRimToon(
-      gradientMap,
-      "#d4cdbd",
-      "#fff7e2",
-      0.26,
     );
 
     // ---------------- 2. World-Space Animated Zelda Water & Waterfall Shader ----------------
@@ -322,12 +305,13 @@ export function SkyIslandCanvas({
     scene.add(fillLight);
 
     // 烤肉篝火暖光 (-2.88, 0.55, 1.60) & 彩蛋飞岛篝火暖光
+    // 烤肉篝火暖光 (-3.85, 0.55, 1.25) & 守岛人纪念碑双仪灯暖光 (-14.3, 3.6, 4.15)
     const potFireLight = new THREE.PointLight("#ff862e", 2.6, 8.5, 1.5);
-    potFireLight.position.set(-2.88, 0.55, 1.6);
+    potFireLight.position.set(-3.85, 0.55, 1.25);
     scene.add(potFireLight);
 
-    const secretFireLight = new THREE.PointLight("#ff9438", 2.2, 8, 1.5);
-    secretFireLight.position.set(-12.6, 2.75, 5.4);
+    const secretFireLight = new THREE.PointLight("#ff9438", 2.2, 8.5, 1.5);
+    secretFireLight.position.set(-14.3, 3.6, 4.15);
     scene.add(secretFireLight);
 
     // ---------------- 4. Load Draco-Compressed Autumn Garden GLB & Bind Dynamic Pivots ----------------
@@ -342,35 +326,31 @@ export function SkyIslandCanvas({
       walkableMeshes.push(hitDisc);
     }
 
-    // 直接驱动 GLB 内精致原版零件的旋转枢轴与唯一主角容器
+    // 直接驱动 GLB 内精致原版零件的旋转枢轴、唯一主角与传信滑翔翼容器
     const traveler = new THREE.Group();
     const bodyPivot = new THREE.Group();
     const travelerModelPivot = new THREE.Group();
     traveler.add(bodyPivot);
 
+    const gliderHome = new THREE.Vector3(-0.2, 0.19, 7.1);
+    const gliderGroup = new THREE.Group();
+    gliderGroup.position.copy(gliderHome);
+    scene.add(gliderGroup);
+    const gliderState = { active: false, t: 0 };
+
     const windmillPivot = new THREE.Group();
-    windmillPivot.position.set(-0.7, 2.49, 8.67);
+    windmillPivot.position.set(3.665, 2.49, 4.403);
+    const windmillAxis = new THREE.Vector3(0.5, 0, -0.866).normalize();
     scene.add(windmillPivot);
 
     const spitPivot = new THREE.Group();
-    spitPivot.position.set(-2.88, 1.08, 1.6);
-    const spitAxis = new THREE.Vector3(0.943, 0, -0.333).normalize();
+    spitPivot.position.set(-3.85, 1.08, 1.25);
+    const spitAxis = new THREE.Vector3(0.834, 0, -0.552).normalize();
     scene.add(spitPivot);
 
-    const forgeOuterPivot = new THREE.Group();
-    forgeOuterPivot.position.set(9.35, 5.0, -13.64);
-    scene.add(forgeOuterPivot);
-
-    const forgeInnerPivot = new THREE.Group();
-    forgeInnerPivot.position.set(9.35, 5.0, -13.64);
-    scene.add(forgeInnerPivot);
-
-    const forgeCorePivot = new THREE.Group();
-    forgeCorePivot.position.set(9.35, 5.0, -13.64);
-    scene.add(forgeCorePivot);
-
     const sundialPivot = new THREE.Group();
-    sundialPivot.position.set(-3.46, 2.69, -15.32);
+    sundialPivot.position.set(-7.25, 2.952, -9.35);
+    const sundialFlipAxis = new THREE.Vector3(0.914, 0, -0.407).normalize();
     scene.add(sundialPivot);
 
     const flameMeshes: THREE.Mesh[] = [];
@@ -393,11 +373,9 @@ export function SkyIslandCanvas({
         gltf.scene.updateMatrixWorld(true);
 
         const toTraveler: THREE.Object3D[] = [];
+        const toGlider: THREE.Object3D[] = [];
         const toWindmill: THREE.Object3D[] = [];
         const toSpit: THREE.Object3D[] = [];
-        const toForgeOuter: THREE.Object3D[] = [];
-        const toForgeInner: THREE.Object3D[] = [];
-        const toForgeCore: THREE.Object3D[] = [];
         const toSundial: THREE.Object3D[] = [];
 
         gltf.scene.traverse((child) => {
@@ -417,6 +395,7 @@ export function SkyIslandCanvas({
           if (
             meshName.includes("清泉池") ||
             meshName.includes("泉水溪流") ||
+            meshName.includes("清溪水面") ||
             meshName.includes("瀑布水帘")
           ) {
             child.material = waterfallMat;
@@ -425,7 +404,7 @@ export function SkyIslandCanvas({
             return;
           }
 
-          // 2. 保留秋日庭园的全部原版手绘贴图、3D 顶点色彩与 PBR 材质
+          // 2. 保留秋日庭园的全部原版手绘贴图、材质与曲线细部
           const isHeavyFoliage =
             meshName.includes("扇形叶簇") ||
             meshName.includes("外梢扇叶") ||
@@ -434,7 +413,8 @@ export function SkyIslandCanvas({
             meshName.includes("琥珀矮灌") ||
             meshName.includes("崖缘与穗梗") ||
             meshName.includes("芦穗") ||
-            meshName.includes("水畔芦叶");
+            meshName.includes("水畔芦叶") ||
+            meshName.includes("岸边菖蒲");
 
           const isTurf =
             origName.includes("Turf") ||
@@ -453,10 +433,15 @@ export function SkyIslandCanvas({
             (meshName.includes("风车") ||
               meshName.includes("石门") ||
               meshName.includes("石碑") ||
+              meshName.includes("书台") ||
+              meshName.includes("石书") ||
+              meshName.includes("日月晷") ||
+              meshName.includes("星扇") ||
+              meshName.includes("纪念碑") ||
+              meshName.includes("罗盘") ||
               meshName.includes("踏板") ||
               meshName.includes("桥板") ||
               meshName.includes("岩") ||
-              meshName.includes("星盘") ||
               meshName.includes("祭台") ||
               meshName.includes("石柱") ||
               meshName.includes("铺石") ||
@@ -486,14 +471,17 @@ export function SkyIslandCanvas({
             meshName.includes("桥板") ||
             meshName.includes("外台") ||
             meshName.includes("石台") ||
-            meshName.includes("铺石环")
+            meshName.includes("铺石环") ||
+            meshName.includes("银杏罗盘")
           ) {
             walkableMeshes.push(child);
           }
 
-          // 3. 识别唯一原版主角「斗篷小旅人」及场景中需要实时旋转/跳动的精致建筑构件
+          // 3. 识别唯一原版主角、传信滑翔翼及场景中需要实时旋转/翻转的精致构件
           if (meshName.startsWith("小旅人")) {
             toTraveler.push(child);
+          } else if (meshName.includes("传信滑翔翼")) {
+            toGlider.push(child);
           } else if (
             meshName.includes("布帆") ||
             meshName.includes("鼓起的亚麻帆") ||
@@ -515,31 +503,33 @@ export function SkyIslandCanvas({
           ) {
             toSpit.push(child);
           } else if (
-            meshName.includes("外轨金环") ||
-            meshName.includes("黄道仪轨1")
+            meshName.includes("厚铜盘") ||
+            meshName.includes("向阳刻面") ||
+            meshName.includes("夜空刻面") ||
+            meshName.includes("双圈镶边") ||
+            meshName.includes("太阳圆心") ||
+            meshName.includes("指针座") ||
+            meshName.includes("指针金尖") ||
+            meshName.includes("放射时线") ||
+            meshName.includes("日芒") ||
+            meshName.includes("时点") ||
+            meshName.includes("晷针") ||
+            meshName.includes("弧形刻线") ||
+            meshName.includes("星点") ||
+            meshName.includes("银月")
           ) {
-            toForgeOuter.push(child);
-          } else if (
-            meshName.includes("内轨石环") ||
-            meshName.includes("黄道仪轨2") ||
-            meshName.includes("黄道仪轨3")
-          ) {
-            toForgeInner.push(child);
-          } else if (
-            meshName.includes("悬浮符晶") ||
-            meshName.includes("太阳仪芯")
-          ) {
-            toForgeCore.push(child);
-          } else if (meshName.includes("悬浮金环")) {
             toSundial.push(child);
-          } else if (meshName.includes("火苗")) {
+          } else if (
+            meshName.includes("火苗") ||
+            meshName.includes("仪灯暖焰")
+          ) {
             flameMeshes.push(child);
           }
         });
 
-        // 将 Blender 原版「斗篷小旅人」从初始池心 (0, 0.11, 2.8) 归零并挂载到唯一可操控主角
+        // 将 Blender 原版「斗篷小旅人」从初始银杏罗盘台面 (0, 0.16, 2.8) 归零并挂载到唯一可操控主角
         if (toTraveler.length > 0) {
-          travelerModelPivot.position.set(0, 0.11, 2.8);
+          travelerModelPivot.position.set(0, 0.16, 2.8);
           scene.add(travelerModelPivot);
           travelerModelPivot.updateMatrixWorld(true);
           for (const o of toTraveler) travelerModelPivot.attach(o);
@@ -547,11 +537,14 @@ export function SkyIslandCanvas({
           bodyPivot.add(travelerModelPivot);
         }
 
+        // 将原版「传信滑翔翼 · 石翼与符纹」挂载到可放飞滑翔翼容器
+        if (toGlider.length > 0) {
+          gliderGroup.updateMatrixWorld(true);
+          for (const o of toGlider) gliderGroup.attach(o);
+        }
+
         for (const o of toWindmill) windmillPivot.attach(o);
         for (const o of toSpit) spitPivot.attach(o);
-        for (const o of toForgeOuter) forgeOuterPivot.attach(o);
-        for (const o of toForgeInner) forgeInnerPivot.attach(o);
-        for (const o of toForgeCore) forgeCorePivot.attach(o);
         for (const o of toSundial) sundialPivot.attach(o);
 
         onReady();
@@ -627,8 +620,8 @@ export function SkyIslandCanvas({
 
     const blupeeSpots: [number, number, number][] = [
       [-5.14, 1.35, -10.9],
-      [-8.2, 1.35, -10.2],
-      [2.2, 0.0, 4.4],
+      [-8.2, 1.35, -12.6],
+      [0.6, 0.0, 5.6],
       [7.1, 2.85, -10.6],
       [-3.3, 0.0, 4.8],
     ];
@@ -642,29 +635,24 @@ export function SkyIslandCanvas({
     blupeeGroup.position.set(blupee.x, blupee.y, blupee.z);
     scene.add(blupeeGroup);
 
-    // ---------------- 6. Zonai Cube Socket Puzzle & Physics Orbs ----------------
+    // ---------------- 6. Pushable Golden Physics Orbs ----------------
     const toys: PhysicsToy[] = [];
-    const toySpecs: [number, number, boolean][] = [
-      [2.65, 2.56, true],
-      [-0.78, 4.68, false],
-      [-3.95, -0.87, false],
+    const toySpecs: [number, number][] = [
+      [-0.78, 4.68],
+      [-3.95, -0.87],
     ];
-    for (const [tx, tz, isCube] of toySpecs) {
+    for (const [tx, tz] of toySpecs) {
       const gy = sampleIslandGround(tx, tz) ?? 0;
       const r = 0.27;
       const mesh = new THREE.Mesh(
-        isCube
-          ? new THREE.BoxGeometry(0.5, 0.5, 0.5)
-          : new THREE.IcosahedronGeometry(r, 1),
-        isCube ? matRuneGlow : matGoldGlow,
+        new THREE.IcosahedronGeometry(r, 1),
+        matGoldGlow,
       );
       mesh.castShadow = true;
       mesh.position.set(tx, gy + r, tz);
       scene.add(mesh);
       toys.push({
         mesh,
-        isPuzzleCube: isCube,
-        locked: false,
         homeX: tx,
         homeZ: tz,
         x: tx,
@@ -678,42 +666,7 @@ export function SkyIslandCanvas({
       });
     }
 
-    const puzzleBeam = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.24, 0.34, 18, 16, 1, true),
-      new THREE.MeshBasicMaterial({
-        color: "#34f5a6",
-        transparent: true,
-        opacity: 0,
-        side: THREE.DoubleSide,
-      }),
-    );
-    puzzleBeam.position.set(
-      PUZZLE_SOCKET.pillarPosition[0],
-      10.2,
-      PUZZLE_SOCKET.pillarPosition[2],
-    );
-    scene.add(puzzleBeam);
-    let puzzleSolved = false;
-
-    // ---------------- 7. Zonai Wing Glider at South Pier ----------------
-    const gliderGroup = new THREE.Group();
-    const wingBody = new THREE.Mesh(
-      new THREE.ConeGeometry(0.95, 0.12, 3),
-      matStoneToon,
-    );
-    wingBody.scale.set(1.35, 1, 0.75);
-    const wingRune = new THREE.Mesh(
-      new THREE.ConeGeometry(0.55, 0.14, 3),
-      matRuneGlow,
-    );
-    wingRune.scale.set(1.2, 1, 0.65);
-    gliderGroup.add(wingBody, wingRune);
-    const gliderHome = new THREE.Vector3(-1.45, 0.19, 7.21);
-    gliderGroup.position.copy(gliderHome);
-    scene.add(gliderGroup);
-    const gliderState = { active: false, t: 0 };
-
-    // ---------------- 8. Launch Pad Vortexes & Subtle Shrine Ground Rings ----------------
+    // ---------------- 7. Launch Pad Vortexes & Subtle Shrine Ground Rings ----------------
     const launchVortexMeshes: THREE.Mesh[] = [];
     for (const pad of [LAUNCH_PADS.toSecret, LAUNCH_PADS.toMain]) {
       const vortex = new THREE.Mesh(
@@ -1013,9 +966,17 @@ export function SkyIslandCanvas({
       teleportToShrine(id) {
         const sh = ISLAND_SHRINES.find((item) => item.id === id);
         if (!sh) return;
-        const offsetZ = id === "connect" ? -1.1 : id === "works" ? 1.95 : 1.35;
-        const destX = sh.position[0];
-        const destZ = sh.position[2] + offsetZ;
+        const offsets: Record<ShrineId, [number, number]> = {
+          writing: [0, 1.55],
+          works: [-0.3, 1.95],
+          connect: [-0.9, -0.8],
+          time: [0.9, -0.95],
+          pot: [0.75, 1.2],
+          about: [1.15, 1.4],
+        };
+        const [ox, oz] = offsets[id];
+        const destX = sh.position[0] + ox;
+        const destZ = sh.position[2] + oz;
         const gy = sampleIslandGround(destX, destZ) ?? sh.position[1];
         player.flight = null;
         player.x = destX;
@@ -1343,26 +1304,15 @@ export function SkyIslandCanvas({
       }
       blupeeGroup.position.set(blupee.x, blupee.y, blupee.z);
 
-      // 烤肉架热气与香气粒子
+      // 烤肉架热气与香气粒子 (-3.85, 1.15, 1.25)
       steamTimer += dt;
       if (steamTimer > 0.55 && !reducedMotion) {
         steamTimer = 0;
-        spawnParticles(-2.88, 1.15, 1.6, "#fff4e0", 1, 0.48);
+        spawnParticles(-3.85, 1.15, 1.25, "#fff4e0", 1, 0.48);
       }
 
-      // 左纳乌方块归位解谜
+      // 可推动金色物理球
       for (const toy of toys) {
-        if (toy.locked) {
-          toy.mesh.position.set(
-            PUZZLE_SOCKET.position[0],
-            0.55 + Math.sin(elapsed * 3) * 0.08,
-            PUZZLE_SOCKET.position[2],
-          );
-          toy.mesh.rotation.y = elapsed * 1.4;
-          toy.mesh.rotation.x = elapsed * 0.9;
-          continue;
-        }
-
         const dx = toy.x - player.x;
         const dz = toy.z - player.z;
         const dist = Math.hypot(dx, dz);
@@ -1381,31 +1331,6 @@ export function SkyIslandCanvas({
         toy.z += toy.vz * dt;
         toy.vx *= 0.91;
         toy.vz *= 0.91;
-
-        if (
-          toy.isPuzzleCube &&
-          !puzzleSolved &&
-          Math.hypot(
-            toy.x - PUZZLE_SOCKET.position[0],
-            toy.z - PUZZLE_SOCKET.position[2],
-          ) < PUZZLE_SOCKET.snapRadius
-        ) {
-          toy.locked = true;
-          puzzleSolved = true;
-          skyAudio.playPuzzleSolved();
-          spawnParticles(
-            PUZZLE_SOCKET.position[0],
-            0.4,
-            PUZZLE_SOCKET.position[2],
-            "#34f5a6",
-            10,
-            2.2,
-          );
-          stateRef.current.onEventToast(
-            "✦ 解谜达成！左纳乌能量方块归位，图腾方尖碑已唤醒！",
-          );
-          continue;
-        }
 
         const tg = sampleIslandGround(toy.x, toy.z);
         if (tg !== null && !toy.falling) {
@@ -1428,16 +1353,6 @@ export function SkyIslandCanvas({
         toy.mesh.position.set(toy.x, toy.y, toy.z);
         toy.mesh.rotation.x += toy.vz * dt * 2.2;
         toy.mesh.rotation.z -= toy.vx * dt * 2.2;
-      }
-
-      if (puzzleSolved) {
-        const beamMat = puzzleBeam.material as THREE.MeshBasicMaterial;
-        beamMat.opacity = THREE.MathUtils.lerp(
-          beamMat.opacity,
-          0.36 + Math.sin(elapsed * 4) * 0.08,
-          dt * 3,
-        );
-        puzzleBeam.rotation.y = elapsed * 0.8;
       }
 
       if (gliderState.active) {
@@ -1508,17 +1423,16 @@ export function SkyIslandCanvas({
       wispCore.rotation.y = elapsed * 2.2;
       wispHalo.lookAt(camera.position);
 
-      // 驱动 GLB 内精致原版风车帆、旋转烤肉架、造物星盘与日晷动画
+      // 双面日月晷铜盘随昼夜切换沿水平翻面轴平滑翻转 180°（日面 ↔ 月面）
+      sundialPivot.setRotationFromAxisAngle(
+        sundialFlipAxis,
+        nightLerp * Math.PI,
+      );
+
+      // 驱动 GLB 内精致原版风车帆、旋转烤肉架与火焰水雾动画
       if (!reducedMotion) {
-        windmillPivot.rotation.z = -elapsed * 0.72;
+        windmillPivot.setRotationFromAxisAngle(windmillAxis, elapsed * 0.72);
         spitPivot.setRotationFromAxisAngle(spitAxis, elapsed * 0.9);
-        forgeOuterPivot.rotation.y = elapsed * 0.45;
-        forgeOuterPivot.rotation.x = Math.sin(elapsed * 0.6) * 0.22;
-        forgeInnerPivot.rotation.y = -elapsed * 0.75;
-        forgeInnerPivot.rotation.z = elapsed * 0.4;
-        forgeCorePivot.rotation.y = elapsed * 1.1;
-        forgeCorePivot.position.y = 5.0 + Math.sin(elapsed * 2.1) * 0.1;
-        sundialPivot.rotation.y = elapsed * 0.7;
 
         for (const fm of flameMeshes) {
           fm.scale.y = 0.92 + Math.sin(elapsed * 12) * 0.15;
@@ -1588,7 +1502,7 @@ export function SkyIslandCanvas({
         desiredCamPos.set(
           onSecretIslet ? -7.2 : -0.65,
           29.4 * portraitBoost,
-          36.5 * portraitBoost,
+          39.5 * portraitBoost,
         );
       } else {
         camTarget.lerp(
@@ -1611,14 +1525,15 @@ export function SkyIslandCanvas({
       for (const sh of ISLAND_SHRINES) {
         const el = markerRefs.current[sh.id];
         if (!el) continue;
-        const heightOffset =
-          sh.id === "pot"
-            ? 1.8
-            : sh.id === "time"
-              ? 0.75
-              : sh.id === "writing"
-                ? 3.2
-                : 2.65;
+        const heightOffsets: Record<ShrineId, number> = {
+          pot: 1.85,
+          connect: 2.35,
+          writing: 2.55,
+          time: 2.55,
+          works: 4.35,
+          about: 5.55,
+        };
+        const heightOffset = heightOffsets[sh.id];
         projVec.set(
           sh.position[0],
           sh.position[1] + heightOffset,

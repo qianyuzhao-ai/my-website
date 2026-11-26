@@ -387,8 +387,8 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
         </fieldset>
 
         <p className="hidden rounded-full border border-border bg-surface/82 px-4 py-2 font-mono text-micro text-fg-muted backdrop-blur-md xl:block">
-          WASD / 点击草地寻路 · 西崖青绿阵弹射去彩蛋飞岛 ·
-          推发光方块进东侧石槽解谜
+          WASD / 点击草地寻路 · 西崖乘风阵飞往守岛人纪念碑 ·
+          翻转中岛日月晷切换昼夜
         </p>
 
         <div className="pointer-events-auto flex flex-col items-end gap-2">
