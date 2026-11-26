@@ -47,105 +47,116 @@ export default async function PostPage({ params }: Props) {
       <ReadingProgress />
       <main
         id="main"
-        className="px-4 pt-8 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-28"
+        className="px-4 pt-8 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-24"
       >
         <div className="mx-auto max-w-6xl">
-          {/* 移动端顶部返回入口 */}
-          <div className="border-b border-border pb-3 lg:hidden">
+          {/* 移动端顶部返回毛玻璃胶囊 */}
+          <div className="mb-5 lg:hidden">
             <Link
               href="/writing"
-              className="inline-flex min-h-11 items-center gap-2 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-accent"
+              className="glass-card inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-label font-medium text-fg-secondary transition-colors hover:text-accent"
             >
               <ArrowLeftIcon className="size-4" />
               <span>返回文章列表</span>
             </Link>
           </div>
 
-          {/* 瑞士 12 列阅读网格：左栏目录与索引，右主栏专注 65ch 阅读与代码块延展 */}
-          <div className="mt-6 grid grid-cols-1 gap-10 lg:mt-0 lg:grid-cols-12 lg:items-start lg:gap-10">
-            {/* 桌面端左侧粘性导览与极简无框目录 */}
+          {/* 12 列 Liquid Glass 阅读布局：左侧粘性毛玻璃导览卡片，右侧通透阅读稿纸 */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start lg:gap-8">
+            {/* 桌面端左侧粘性导览与元信息毛玻璃卡片 */}
             <aside
               aria-label="文章导览"
-              className="hidden lg:sticky lg:top-28 lg:col-span-3 lg:flex lg:flex-col lg:gap-7"
+              className="hidden lg:sticky lg:top-28 lg:col-span-3 lg:flex lg:flex-col lg:gap-4"
             >
               <Link
                 href="/writing"
-                className="group inline-flex min-h-11 w-fit items-center gap-2 text-label font-medium text-fg-muted transition-colors duration-150 hover:text-accent"
+                className="glass-card group inline-flex min-h-11 w-fit items-center gap-2 rounded-full px-4 text-label font-medium text-fg-secondary transition-all hover:border-accent/45 hover:text-accent"
               >
-                <ArrowLeftIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-0.5" />
+                <ArrowLeftIcon className="size-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
                 <span>返回文章列表</span>
               </Link>
 
               {headings.length > 0 ? (
-                <div className="border-t border-border pt-6">
+                <div className="glass-card rounded-2xl p-5">
                   <PostToc headings={headings} variant="desktop" />
                 </div>
               ) : null}
 
-              <dl className="flex flex-col gap-3 border-t border-border pt-6 text-label">
+              <dl className="glass-card flex flex-col gap-3 rounded-2xl p-5 text-caption">
                 <div className="flex items-baseline justify-between gap-4">
-                  <dt className="text-fg-muted">发布</dt>
-                  <dd className="tabular-nums text-fg">
+                  <dt className="font-mono text-micro tracking-wider text-fg-muted uppercase">
+                    发布日期
+                  </dt>
+                  <dd className="font-mono font-medium text-fg tabular-nums">
                     <time dateTime={post.date}>{formatDate(post.date)}</time>
                   </dd>
                 </div>
-                <div className="flex items-baseline justify-between gap-4">
-                  <dt className="text-fg-muted">时长</dt>
-                  <dd className="tabular-nums text-fg">
+                <div className="flex items-baseline justify-between gap-4 border-t border-border/70 pt-2.5">
+                  <dt className="font-mono text-micro tracking-wider text-fg-muted uppercase">
+                    预计阅读
+                  </dt>
+                  <dd className="font-mono font-medium text-fg tabular-nums">
                     {post.readingMinutes} 分钟
                   </dd>
                 </div>
-                <div className="flex items-baseline justify-between gap-4">
-                  <dt className="text-fg-muted">作者</dt>
-                  <dd className="text-fg">{siteConfig.name}</dd>
+                <div className="flex items-baseline justify-between gap-4 border-t border-border/70 pt-2.5">
+                  <dt className="font-mono text-micro tracking-wider text-fg-muted uppercase">
+                    作者
+                  </dt>
+                  <dd className="font-medium text-fg">{siteConfig.name}</dd>
                 </div>
               </dl>
             </aside>
 
-            {/* 主阅读列 */}
-            <article className="min-w-0 lg:col-span-8 lg:col-start-5">
-              <header className="border-b border-border pb-8">
-                <h1 className="max-w-[22ch] font-serif text-[clamp(1.875rem,4.2vw,2.75rem)] leading-[1.16] font-bold tracking-[-0.03em] text-fg">
-                  {post.title}
-                </h1>
-
-                <p className="mt-4 max-w-[62ch] text-body leading-relaxed text-fg-muted md:text-[17px]">
-                  {post.summary}
-                </p>
-
-                <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-label tabular-nums text-fg-muted">
-                  <time dateTime={post.date}>{formatDate(post.date)}</time>
-                  <span aria-hidden="true">·</span>
-                  <span>{post.readingMinutes} 分钟阅读</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{siteConfig.name}</span>
+            {/* 主阅读毛玻璃稿纸 */}
+            <article className="min-w-0 lg:col-span-9">
+              <div className="glass-panel rounded-[24px] p-5 sm:rounded-[28px] sm:p-8 md:p-10">
+                <header className="border-b border-border/80 pb-7">
                   {post.tags?.length ? (
-                    <>
-                      <span aria-hidden="true" className="hidden sm:inline">
-                        ·
-                      </span>
-                      <span className="w-full text-fg sm:w-auto">
-                        {post.tags.join(" · ")}
-                      </span>
-                    </>
+                    <div className="mb-4 flex flex-wrap gap-1.5">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-accent-soft px-3 py-1 font-mono text-micro font-medium text-accent"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
                   ) : null}
-                </div>
-              </header>
 
-              {/* 移动端可展开目录 */}
-              {headings.length > 0 ? (
-                <div className="mt-6 lg:hidden">
-                  <PostToc headings={headings} variant="mobile" />
-                </div>
-              ) : null}
+                  <h1 className="max-w-[24ch] text-[clamp(1.75rem,4vw,2.5rem)] leading-[1.18] font-bold tracking-[-0.03em] text-fg">
+                    {post.title}
+                  </h1>
 
-              {/* MDX 正文 */}
-              <div className="mt-8 flex flex-col gap-6 text-body leading-[1.82] md:mt-10 md:text-[17px]">
-                <Content />
+                  <p className="mt-4 max-w-[62ch] text-body leading-relaxed text-fg-secondary md:text-[17px]">
+                    {post.summary}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-caption text-fg-muted tabular-nums">
+                    <time dateTime={post.date}>{formatDate(post.date)}</time>
+                    <span aria-hidden="true">·</span>
+                    <span>{post.readingMinutes} 分钟阅读</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{siteConfig.name}</span>
+                  </div>
+                </header>
+
+                {/* 移动端可展开毛玻璃目录 */}
+                {headings.length > 0 ? (
+                  <div className="mt-6 lg:hidden">
+                    <PostToc headings={headings} variant="mobile" />
+                  </div>
+                ) : null}
+
+                {/* MDX 正文 */}
+                <div className="mt-8 flex flex-col gap-6 text-body leading-[1.84] md:mt-9 md:text-[17px]">
+                  <Content />
+                </div>
               </div>
 
               {previous || next ? (
-                <div className="mt-16 border-t border-border pt-8">
+                <div className="mt-8">
                   <PostPager previous={previous} next={next} />
                 </div>
               ) : null}

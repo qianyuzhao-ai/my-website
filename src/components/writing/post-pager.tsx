@@ -3,11 +3,11 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@/components/home/icons";
 import { formatDate, type Post } from "@/lib/post-shared";
 
 const cardClass =
-  "group flex flex-col justify-between gap-3 border border-border bg-surface p-5 transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent hover:bg-surface-elevated/50";
+  "glass-card group flex flex-col justify-between gap-3 rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:bg-surface-solid/90";
 const labelClass =
-  "flex items-center gap-1.5 text-label font-medium text-fg-muted transition-colors duration-150 group-hover:text-accent";
+  "flex items-center gap-1.5 font-mono text-micro font-medium text-fg-muted transition-colors duration-150 group-hover:text-accent";
 const titleClass =
-  "line-clamp-2 font-serif text-title font-bold tracking-[-0.015em] text-fg transition-colors duration-150 group-hover:text-accent";
+  "line-clamp-2 text-case-title font-bold tracking-[-0.015em] text-fg transition-colors duration-150 group-hover:text-accent";
 
 /** 上一篇（更早）在左，下一篇（更新）在右；移动端上下排列 */
 export function PostPager({
@@ -29,7 +29,7 @@ export function PostPager({
           className={cardClass}
         >
           <span className={labelClass}>
-            <ArrowLeftIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-0.5" />
+            <ArrowLeftIcon className="size-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
             <span>更早一篇</span>
             <span className="ml-auto tabular-nums text-fg-muted">
               {formatDate(previous.date)}
@@ -37,7 +37,7 @@ export function PostPager({
           </span>
           <div>
             <span className={titleClass}>{previous.title}</span>
-            <p className="mt-1.5 line-clamp-1 text-label text-fg-muted">
+            <p className="mt-1.5 line-clamp-1 text-caption text-fg-secondary">
               {previous.summary}
             </p>
           </div>
@@ -56,12 +56,12 @@ export function PostPager({
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span>更新一篇</span>
-              <ArrowRightIcon className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0.5" />
+              <ArrowRightIcon className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </span>
           </span>
           <div className="md:text-right">
             <span className={titleClass}>{next.title}</span>
-            <p className="mt-1.5 line-clamp-1 text-label text-fg-muted">
+            <p className="mt-1.5 line-clamp-1 text-caption text-fg-secondary">
               {next.summary}
             </p>
           </div>

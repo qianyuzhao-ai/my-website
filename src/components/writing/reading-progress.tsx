@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * 文章页顶部极细滚动进度条：
+ * 文章页顶部晴空蓝滚动进度条：
  * - 支持 scroll-driven animation 的现代浏览器直接走合成器 CSS；
  * - 旧版浏览器回退到轻量被动 scroll 监听更新 scaleX。
  */
@@ -47,7 +47,7 @@ export function ReadingProgress() {
     <div
       ref={barRef}
       aria-hidden="true"
-      className="reading-progress-bar pointer-events-none fixed top-0 left-0 z-50 h-0.5 w-full bg-accent"
+      className="reading-progress-bar pointer-events-none fixed top-0 left-0 z-50 h-[3px] w-full bg-accent shadow-[0_0_12px_var(--accent)]"
     />
   );
 }

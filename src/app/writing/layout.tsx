@@ -1,12 +1,9 @@
 import type { ReactNode } from "react";
 
 /**
- * 写作专栏独立视觉作用域：
- * 仅在 /writing 列表与文章详情页启用「画廊纯白 × 国际钴蓝」瑞士国际主义配色，
- * 避免影响首页 3D 空岛与其他页面的全局语义色。
+ * 写作专栏（/writing 与 /writing/[slug]）统一使用全站 Liquid Glass 清透毛玻璃体系，
+ * 顶部叠加柔和晴空与薄荷光晕层，突出半透明玻璃卡片的通透质感。
  */
 export default function WritingLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="writing-scope min-h-dvh bg-bg text-fg">{children}</div>
-  );
+  return <div className="glass-ambient-bg min-h-dvh text-fg">{children}</div>;
 }

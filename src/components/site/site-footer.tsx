@@ -3,10 +3,13 @@ import { siteConfig } from "@/lib/site-config";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border px-4 pt-8 pb-28 md:px-8 md:pb-12">
+    <footer className="border-t border-border/80 px-4 pt-8 pb-28 md:px-8 md:pb-12">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 text-caption text-fg-muted sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-micro tracking-wider uppercase">
-          <span className="font-semibold text-fg">{siteConfig.name}</span>
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-micro tracking-wider uppercase">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-fg">
+            <span className="size-1.5 rounded-full bg-signal-dot" />
+            {siteConfig.name}
+          </span>
           <span aria-hidden="true">/</span>
           <span>{siteConfig.role}</span>
           <span aria-hidden="true">/</span>
@@ -14,10 +17,10 @@ export function SiteFooter() {
         </div>
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <Link href="/" className="transition-colors hover:text-fg">
-            Index
+          <Link href="/" className="transition-colors hover:text-accent">
+            Island
           </Link>
-          <Link href="/writing" className="transition-colors hover:text-fg">
+          <Link href="/writing" className="transition-colors hover:text-accent">
             Writing
           </Link>
           {siteConfig.socials.map((item) => (
@@ -26,7 +29,7 @@ export function SiteFooter() {
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-fg"
+              className="transition-colors hover:text-accent"
             >
               {item.label.split(" ")[0]}
             </a>

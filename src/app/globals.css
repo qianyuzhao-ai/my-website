@@ -2,73 +2,108 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Editorial AI Lab 设计系统：纸墨杂志 (Light) × 暗房极客 (Dark)
+ * Liquid Glass 清透毛玻璃设计系统：清昼 (Light) × 霜夜 (Dark)
+ * 对应 Figma 变量集「Liquid Glass UI」（fileKey: ietU9mUnJjMIdm5PDfBNbQ）
  * 浅深两套语义色均满足 WCAG AA 正文 ≥ 4.5:1 对比度要求。
  */
 :root {
   color-scheme: light;
-  --bg: #f6f3ec;
-  --surface: #fcfaf6;
-  --surface-elevated: #ece8dd;
-  --border: #dad4c7;
-  --border-strong: #b6ae9d;
-  --fg: #141413;
-  --fg-muted: #5c5851;
-  --accent: #c23b18;
-  --accent-soft: rgb(194 59 24 / 0.1);
-  --signal: #127353;
-  --signal-soft: rgb(18 115 83 / 0.11);
-  --focus: #1d4ed8;
-  --danger: #b91c1c;
-  --backdrop: rgb(20 20 19 / 0.45);
-  --elevation-lg: 0 20px 48px -12px rgb(20 20 19 / 0.14);
+  --bg: #f4f6fa;
+  --surface: rgb(255 255 255 / 0.78);
+  --surface-solid: #ffffff;
+  --surface-elevated: rgb(248 250 253 / 0.76);
+  --surface-recessed: rgb(237 241 247 / 0.86);
+  --border: rgb(226 232 240 / 0.88);
+  --border-glass: rgb(255 255 255 / 0.86);
+  --border-strong: #cbd5e1;
+  --fg: #0f172a;
+  --fg-secondary: #475569;
+  --fg-muted: #5b697d;
+  --ink: #111827;
+  --ink-fg: #ffffff;
+  --accent: #1d6cf6;
+  --accent-hover: #1558d6;
+  --accent-soft: #eaf2ff;
+  --signal: #0a7f58;
+  --signal-dot: #0ea572;
+  --signal-soft: #e7f8f1;
+  --focus: #1d6cf6;
+  --danger: #dc2626;
+  --backdrop: rgb(15 23 42 / 0.34);
+  --code-bg: rgb(15 23 42 / 0.94);
+  --code-surface: rgb(30 41 59 / 0.72);
+  --code-border: rgb(148 163 184 / 0.2);
+  --glass-specular:
+    inset 0 1.5px 0 0 rgb(255 255 255 / 0.92),
+    inset 0 0 0 1px rgb(255 255 255 / 0.38);
+  --elevation-glass:
+    0 18px 44px -14px rgb(15 23 42 / 0.12), 0 4px 16px -4px rgb(15 23 42 / 0.05);
+  --elevation-lg:
+    0 24px 60px -16px rgb(15 23 42 / 0.16), 0 8px 24px -8px rgb(15 23 42 / 0.07);
 
   /* 兼容辅助语义色 */
-  --nav-track: #ece8dd;
-  --nav-selected: #fcfaf6;
-  --pill: #ece8dd;
-  --toggle-track: #ece8dd;
-  --card-blue: #8cc7fe;
-  --card-pink: #febcd0;
-  --card-yellow: #fedd9a;
-  --card-mint: #61caae;
-  --case-stroke: #dad4c7;
+  --nav-track: rgb(237 241 247 / 0.85);
+  --nav-selected: #ffffff;
+  --pill: rgb(237 241 247 / 0.85);
+  --toggle-track: rgb(237 241 247 / 0.85);
+  --card-blue: #eaf2ff;
+  --card-pink: #fce7f3;
+  --card-yellow: #fef3c7;
+  --card-mint: #e7f8f1;
+  --case-stroke: #e2e8f0;
   --social-icon: #ffffff;
-  --map-pin: #8cc7ed;
-  --pulse: #c23b18;
+  --map-pin: #1d6cf6;
+  --pulse: #1d6cf6;
 }
 
 .dark {
   color-scheme: dark;
-  --bg: #090a0d;
-  --surface: #111319;
-  --surface-elevated: #1a1d26;
-  --border: #262a36;
-  --border-strong: #3d4356;
-  --fg: #f3f1ec;
-  --fg-muted: #9499a6;
-  --accent: #ff6438;
-  --accent-soft: rgb(255 100 56 / 0.15);
-  --signal: #34f5a6;
-  --signal-soft: rgb(52 245 166 / 0.13);
-  --focus: #7aa7ff;
+  --bg: #0b0e14;
+  --surface: rgb(22 27 38 / 0.8);
+  --surface-solid: #161b26;
+  --surface-elevated: rgb(30 37 52 / 0.74);
+  --surface-recessed: rgb(35 43 59 / 0.84);
+  --border: rgb(40 50 68 / 0.92);
+  --border-glass: rgb(148 163 184 / 0.22);
+  --border-strong: #475569;
+  --fg: #f8fafc;
+  --fg-secondary: #cbd5e1;
+  --fg-muted: #94a3b8;
+  --ink: #f8fafc;
+  --ink-fg: #0b0e14;
+  --accent: #4f94ff;
+  --accent-hover: #6aa6ff;
+  --accent-soft: rgb(22 38 66 / 0.92);
+  --signal: #34d399;
+  --signal-dot: #34d399;
+  --signal-soft: rgb(18 46 38 / 0.88);
+  --focus: #60a5fa;
   --danger: #f87171;
-  --backdrop: rgb(4 5 8 / 0.72);
-  --elevation-lg: 0 24px 56px -12px rgb(0 0 0 / 0.65);
+  --backdrop: rgb(4 7 12 / 0.64);
+  --code-bg: rgb(11 15 24 / 0.96);
+  --code-surface: rgb(22 30 46 / 0.82);
+  --code-border: rgb(148 163 184 / 0.16);
+  --glass-specular:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  --elevation-glass:
+    0 20px 52px -14px rgb(0 0 0 / 0.52), 0 4px 16px -4px rgb(0 0 0 / 0.28);
+  --elevation-lg:
+    0 28px 68px -16px rgb(0 0 0 / 0.68), 0 8px 24px -8px rgb(0 0 0 / 0.38);
 
   /* 兼容辅助语义色 */
-  --nav-track: #111319;
-  --nav-selected: #1a1d26;
-  --pill: #1a1d26;
-  --toggle-track: #1a1d26;
-  --card-blue: #111319;
-  --card-pink: #111319;
-  --card-yellow: #111319;
-  --card-mint: #111319;
-  --case-stroke: #262a36;
-  --social-icon: #f3f1ec;
-  --map-pin: #406387;
-  --pulse: #ff6438;
+  --nav-track: rgb(30 37 52 / 0.85);
+  --nav-selected: #232b3b;
+  --pill: rgb(35 43 59 / 0.84);
+  --toggle-track: rgb(35 43 59 / 0.84);
+  --card-blue: #162642;
+  --card-pink: #2a1b2b;
+  --card-yellow: #2b2416;
+  --card-mint: #122e26;
+  --case-stroke: #283244;
+  --social-icon: #f8fafc;
+  --map-pin: #4f94ff;
+  --pulse: #4f94ff;
 }
 
 @theme inline {
@@ -78,14 +113,22 @@
   --color-transparent: transparent;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-solid: var(--surface-solid);
   --color-surface-elevated: var(--surface-elevated);
+  --color-surface-recessed: var(--surface-recessed);
   --color-border: var(--border);
+  --color-border-glass: var(--border-glass);
   --color-border-strong: var(--border-strong);
   --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
   --color-fg-muted: var(--fg-muted);
+  --color-ink: var(--ink);
+  --color-ink-fg: var(--ink-fg);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
   --color-signal: var(--signal);
+  --color-signal-dot: var(--signal-dot);
   --color-signal-soft: var(--signal-soft);
   --color-nav-track: var(--nav-track);
   --color-nav-selected: var(--nav-selected);
@@ -101,10 +144,10 @@
   --color-pulse: var(--pulse);
   --color-focus: var(--focus);
   --color-danger: var(--danger);
-  --color-brand-green: #61caae;
+  --color-brand-green: #0ea572;
   --color-brand-yellow: #fedd9a;
-  --color-ink: #141413;
   --shadow-lg: var(--elevation-lg);
+  --shadow-glass: var(--elevation-glass);
 
   --font-sans:
     var(--font-poppins), -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -118,14 +161,14 @@
     ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --spacing: 4px;
   --radius-full: 9999px;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 18px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
   --radius-card-sm: 24px;
   --radius-card: 32px;
 
-  /* 先锋杂志与流式排版字号 */
+  /* 现代排版字号体系 */
   --text-hero: clamp(2.5rem, 6.8vw, 5.6rem);
   --text-hero--line-height: 1.03;
   --text-section: clamp(1.85rem, 4.2vw, 3.35rem);
@@ -134,14 +177,14 @@
   --text-logo--line-height: 50px;
   --text-name: 34px;
   --text-name--line-height: 38px;
-  --text-title: 24px;
-  --text-title--line-height: 32px;
+  --text-title: 22px;
+  --text-title--line-height: 30px;
   --text-body: 16px;
   --text-body--line-height: 26px;
   --text-label: 14px;
   --text-label--line-height: 20px;
-  --text-caption: 12px;
-  --text-caption--line-height: 18px;
+  --text-caption: 13px;
+  --text-caption--line-height: 19px;
   --text-micro: 11px;
   --text-micro--line-height: 16px;
 
@@ -150,14 +193,14 @@
   --text-case-display--line-height: 88px;
   --text-case-heading: 36px;
   --text-case-heading--line-height: 50px;
-  --text-case-title: 20px;
-  --text-case-title--line-height: 30px;
+  --text-case-title: 18px;
+  --text-case-title--line-height: 26px;
   --text-case-small: 14px;
   --text-case-small--line-height: 24px;
   --text-display: 48px;
   --text-display--line-height: 56px;
-  --text-display-sm: 32px;
-  --text-display-sm--line-height: 40px;
+  --text-display-sm: 26px;
+  --text-display-sm--line-height: 34px;
   --text-post-title: 40px;
   --text-post-title--line-height: 52px;
   --text-post-title-sm: 28px;
@@ -173,6 +216,7 @@
 }
 
 html {
+  accent-color: var(--accent);
   @media (prefers-reduced-motion: no-preference) {
     scroll-behavior: smooth;
   }
@@ -208,30 +252,145 @@ summary {
   color: var(--fg);
 }
 
-/* 纸张与暗房胶片颗粒质感层 */
-.editorial-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  opacity: 0.032;
+/* Liquid Glass 液态毛玻璃材质族 */
+.glass-panel {
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--glass-specular), var(--elevation-lg);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
 }
-.dark .editorial-grain {
-  opacity: 0.045;
+
+.glass-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--glass-specular), var(--elevation-glass);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.glass-dock {
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--glass-specular), var(--elevation-glass);
+  backdrop-filter: blur(24px) saturate(175%);
+  -webkit-backdrop-filter: blur(24px) saturate(175%);
+}
+
+/* 深色磨砂终端/代码块：独立暗色作用域（遵循 component-specific-light-dark-theme） */
+.glass-dark-surface {
+  color-scheme: only dark;
+  background: var(--code-bg);
+  color: #e2e8f0;
+  border: 1px solid var(--code-border);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.1),
+    0 16px 36px -14px rgb(15 23 42 / 0.38);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+/* 独立内容页顶部柔和晴空与薄荷光晕（对应 Figma 05 / 06） */
+.glass-ambient-bg {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(
+      62rem 34rem at 14% -4%,
+      rgb(29 108 246 / 0.11),
+      transparent 65%
+    ),
+    radial-gradient(
+      52rem 30rem at 86% 2%,
+      rgb(14 165 114 / 0.09),
+      transparent 62%
+    );
+}
+.dark .glass-ambient-bg {
+  background-image:
+    radial-gradient(
+      62rem 34rem at 14% -4%,
+      rgb(79 148 255 / 0.16),
+      transparent 65%
+    ),
+    radial-gradient(
+      52rem 30rem at 86% 2%,
+      rgb(52 211 153 / 0.11),
+      transparent 62%
+    );
 }
 
 /* 实验台微刻度点阵 */
 .lab-grid {
-  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgb(148 163 184 / 0.26) 1px,
+    transparent 1px
+  );
   background-size: 20px 20px;
 }
 
-/* 原生模态 <dialog> 滚动隔离与顶层遮罩（遵循 modern-web-guidance: dialog） */
+/*
+ * 原生模态 <dialog> 顶层过渡与滚动隔离
+ * 遵循 modern-web-guidance: light-dismiss-a-dialog + animate-to-from-top-layer
+ * 包含 :where(:not([data-closing])) 供 Firefox/Safari 离场过渡回退使用
+ */
 dialog:modal {
   overscroll-behavior: contain;
 }
+
+dialog {
+  opacity: 0;
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-behavior: allow-discrete;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translateY(14px) scale(0.985);
+  }
+}
+
 dialog::backdrop {
   overflow: hidden;
   overscroll-behavior: contain;
-  background-color: var(--backdrop);
-  backdrop-filter: blur(8px);
+  background-color: transparent;
+  backdrop-filter: blur(0px);
+  transition-property: background-color, backdrop-filter, display, overlay;
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-behavior: allow-discrete;
+}
+
+dialog[open]:where(:not([data-closing])) {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translateY(0) scale(1);
+
+    @starting-style {
+      transform: translateY(14px) scale(0.985);
+    }
+  }
+
+  &::backdrop {
+    background-color: var(--backdrop);
+    backdrop-filter: blur(10px);
+
+    @starting-style {
+      background-color: transparent;
+      backdrop-filter: blur(0px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog,
+  dialog::backdrop {
+    transition-duration: 100ms;
+  }
 }
 
 /* 阅读页顶部滚动进度条（遵循 scroll-progress-indicator：animation-timeline 声明在 animation 之后） */
@@ -276,7 +435,7 @@ dialog::backdrop {
 /* View Transitions 仅在允许动画时启用位移过渡 */
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-group(*) {
-    animation-duration: 320ms;
+    animation-duration: 280ms;
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
@@ -302,19 +461,19 @@ dialog::backdrop {
     @apply h-11 px-6;
   }
   .ui-button[data-variant="primary"] {
-    @apply bg-fg text-bg enabled:hover:opacity-90;
+    @apply bg-ink text-ink-fg enabled:hover:opacity-90;
   }
   .ui-button[data-variant="secondary"] {
     @apply border-border bg-surface text-fg enabled:hover:bg-surface-elevated;
   }
   .ui-button[data-variant="ghost"] {
-    @apply bg-transparent text-fg enabled:hover:bg-surface-elevated;
+    @apply bg-transparent text-fg enabled:hover:bg-surface-recessed;
   }
   .ui-input {
     @apply h-11 w-full border-b border-border bg-transparent text-body text-fg placeholder:text-fg-muted disabled:cursor-not-allowed disabled:opacity-50;
   }
   .ui-input:focus {
-    border-color: var(--fg);
+    border-color: var(--accent);
     outline: none;
   }
   .ui-input:focus-visible {
@@ -329,66 +488,6 @@ dialog::backdrop {
   .ui-button[data-size] {
     min-height: 44px;
   }
-}
-
-/*
- * 写作专栏专属主题（/writing 与 /writing/[slug]）：
- * 方案 A「画廊纯白 × 国际钴蓝」瑞士国际主义网格，彻底去米色、去紫色；
- * 仅在存在 .writing-scope 的写作路由生效，不影响首页空岛与其他页面。
- */
-html:has(.writing-scope),
-.writing-scope {
-  color-scheme: light;
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-elevated: #f4f6f9;
-  --border: #dde2ea;
-  --border-strong: #768396;
-  --fg: #0b0f14;
-  --fg-muted: #4b5563;
-  --accent: #0047ff;
-  --accent-soft: rgb(0 71 255 / 0.08);
-  --signal: #047857;
-  --signal-soft: rgb(4 120 87 / 0.1);
-  --focus: #0047ff;
-  --danger: #b91c1c;
-  --backdrop: rgb(11 15 20 / 0.42);
-  --elevation-lg: 0 18px 40px -16px rgb(11 15 20 / 0.12);
-  --nav-track: #f4f6f9;
-  --nav-selected: #ffffff;
-  --pill: #f4f6f9;
-  --toggle-track: #f4f6f9;
-  --pulse: #0047ff;
-}
-
-html.dark:has(.writing-scope),
-.dark .writing-scope {
-  color-scheme: dark;
-  --bg: #0a0d12;
-  --surface: #10151e;
-  --surface-elevated: #171e2b;
-  --border: #232c3d;
-  --border-strong: #52627a;
-  --fg: #f1f5f9;
-  --fg-muted: #94a3b8;
-  --accent: #4d8bff;
-  --accent-soft: rgb(77 139 255 / 0.14);
-  --signal: #34d399;
-  --signal-soft: rgb(52 211 153 / 0.12);
-  --focus: #4d8bff;
-  --danger: #f87171;
-  --backdrop: rgb(4 6 10 / 0.72);
-  --elevation-lg: 0 22px 48px -14px rgb(0 0 0 / 0.6);
-  --nav-track: #10151e;
-  --nav-selected: #171e2b;
-  --pill: #171e2b;
-  --toggle-track: #171e2b;
-  --pulse: #4d8bff;
-}
-
-/* 写作路由隐藏胶片纸纹层，保持纯白画廊表面 */
-body:has(.writing-scope) .editorial-grain {
-  display: none;
 }
 
 /* 移动端水平筛选条隐藏原生滚动条 */
@@ -406,7 +505,8 @@ body:has(.writing-scope) .editorial-grain {
 .writing-toc-link[aria-current="true"],
 .writing-toc-link.target-current {
   border-inline-start-color: var(--accent);
-  color: var(--fg);
+  background: var(--accent-soft);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -454,13 +554,18 @@ body:has(.writing-scope) .editorial-grain {
 
 /* 强对比模式（Windows Forced Colors）兜底状态指示 */
 @media (forced-colors: active) {
+  .glass-panel,
+  .glass-card,
+  .glass-dock {
+    border-color: CanvasText;
+  }
   .writing-toc-link[aria-current="true"],
   .writing-toc-link.target-current {
     border-inline-start-color: Highlight;
     color: Highlight;
   }
   .writing-tab[aria-selected="true"] {
-    border-bottom-color: Highlight;
+    outline: 2px solid Highlight;
     color: Highlight;
   }
 }

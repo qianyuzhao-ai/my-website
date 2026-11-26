@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { ConnectSheet } from "@/components/site/connect-sheet";
@@ -9,7 +9,7 @@ import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-poppins",
 });
@@ -20,6 +20,10 @@ const fraunces = Fraunces({
   display: "swap",
   variable: "--font-fraunces",
 });
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+};
 
 export const metadata: Metadata = {
   title: `${siteConfig.name} — ${siteConfig.role}`,
@@ -43,10 +47,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div
-            aria-hidden="true"
-            className="editorial-grain pointer-events-none fixed inset-0 z-50"
-          />
           <SkipLink />
           <SiteDock />
           {children}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SiteFooter } from "@/components/site/site-footer";
 import { WritingArchive } from "@/components/writing/writing-archive";
-import { getAllTags, getPosts, groupByYear } from "@/lib/posts";
+import { getPosts, groupByYear } from "@/lib/posts";
 import { siteConfig } from "@/lib/site-config";
 
 const description =
@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 
 export default async function WritingPage() {
   const posts = await getPosts();
-  const tags = getAllTags(posts);
   const years = groupByYear(posts);
   const latestYear = years[0]?.[0];
   const earliestYear = years.at(-1)?.[0];
@@ -27,29 +26,40 @@ export default async function WritingPage() {
     <>
       <main
         id="main"
-        className="px-4 pt-10 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-28"
+        className="px-4 pt-10 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-24"
       >
         <div className="mx-auto max-w-6xl">
-          {/* 瑞士国际主义刊头：直接以主标题切入内容，无冗余眉标 */}
+          {/* Liquid Glass 博客刊头 */}
           <header className="grid grid-cols-1 gap-5 pb-8 md:pb-10 lg:grid-cols-12 lg:items-end lg:gap-8">
             <div className="lg:col-span-7">
-              <h1 className="font-serif text-[clamp(2.75rem,6vw,4.5rem)] leading-[0.98] font-bold tracking-[-0.035em] text-fg">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/85 px-3 py-1 font-mono text-micro font-medium tracking-wider text-accent uppercase backdrop-blur-md">
+                <span className="size-1.5 rounded-full bg-signal-dot" />
+                <span>ESSAYS &amp; FIELD NOTES</span>
+              </div>
+              <h1 className="mt-3 text-[clamp(2.5rem,5.8vw,4rem)] leading-[1.02] font-bold tracking-[-0.035em] text-fg">
                 Writing
               </h1>
             </div>
 
-            <div className="flex flex-col gap-2 lg:col-span-5 lg:pb-1">
-              <p className="max-w-[48ch] text-body leading-relaxed text-fg-muted">
+            <div className="flex flex-col gap-3 lg:col-span-5 lg:items-end lg:pb-1 lg:text-right">
+              <p className="max-w-[46ch] text-body leading-relaxed text-fg-secondary">
                 {description}
               </p>
-              <p className="text-label tabular-nums text-fg-muted">
-                共 {posts.length} 篇归档
-                {yearRange ? ` · ${yearRange}` : ""}
-              </p>
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-3.5 py-1.5 font-mono text-caption text-fg-muted tabular-nums backdrop-blur-md">
+                <span className="font-semibold text-fg">
+                  {posts.length} 篇归档
+                </span>
+                {yearRange ? (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{yearRange}</span>
+                  </>
+                ) : null}
+              </div>
             </div>
           </header>
 
-          <WritingArchive posts={posts} tags={tags} />
+          <WritingArchive posts={posts} />
         </div>
       </main>
       <SiteFooter />

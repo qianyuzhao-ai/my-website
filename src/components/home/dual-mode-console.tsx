@@ -24,7 +24,7 @@ type Scenario = {
     prompt: string;
     negative: string;
     moodTitle: string;
-    palette: "vermilion" | "emerald" | "cobalt";
+    palette: "sky" | "mint" | "indigo";
     specs: { k: string; v: string }[];
   };
 };
@@ -58,19 +58,19 @@ const SCENARIOS: Scenario[] = [
         },
         {
           name: "FilmLookLUT",
-          role: "注入 35mm 钨丝灯颗粒映射",
+          role: "注入 35mm 清透光学色调映射",
           state: "READY",
         },
       ],
     },
     aigc: {
-      model: "FLUX.1-Dev + Editorial-LoRA",
+      model: "FLUX.1-Dev + GlassOptics-LoRA",
       seed: "SEED #40921",
       prompt:
-        "35mm cinema still, lone architect at brutalist concrete console, warm vermilion rim light piercing darkroom haze, tactile film grain",
-      negative: "flat lighting, plastic skin, oversaturated neon, CGI gloss",
-      moodTitle: "SOLARIS DARKROOM // 35MM",
-      palette: "vermilion",
+        "35mm cinema still, translucent frosted acrylic console in daylight studio, crisp sky-blue rim refraction, calm architectural shadows",
+      negative: "flat lighting, plastic skin, oversaturated neon, harsh noise",
+      moodTitle: "FROSTED OPTICS // 35MM",
+      palette: "sky",
       specs: [
         { k: "CFG", v: "3.5" },
         { k: "DEPTH", v: "0.82" },
@@ -101,8 +101,12 @@ const SCENARIOS: Scenario[] = [
       outputTitle: "RSC Island Partition",
       outputStatus: "AA CONTRAST PASS",
       nodes: [
-        { name: "TokenGraph", role: "双主题语义色对比度校验", state: "4.5:1+" },
-        { name: "ServerShell", role: "静态杂志排版零水合直出", state: "RSC" },
+        {
+          name: "TokenGraph",
+          role: "清昼/霜夜双主题对比度校验",
+          state: "4.5:1+",
+        },
+        { name: "ServerShell", role: "静态排版骨架零水合直出", state: "RSC" },
         {
           name: "MotionIsland",
           role: "精细隔离客户端手势与动效",
@@ -111,13 +115,13 @@ const SCENARIOS: Scenario[] = [
       ],
     },
     aigc: {
-      model: "SDXL-Control + SwissGrid-v2",
+      model: "SDXL-Control + LiquidGlass-v2",
       seed: "SEED #88204",
       prompt:
-        " Editorial tactile hardware synthesizer, anodized obsidian aluminum, emerald phosphor oscilloscope, macro paper specimen backdrop",
+        "Tactile anodized aluminum synthesizer with frosted liquid glass bezel, mint phosphor oscilloscope glow, soft daylight laboratory backdrop",
       negative: "blurry text, crooked gridlines, low contrast",
-      moodTitle: "MODULAR INSTRUMENT // LAB",
-      palette: "emerald",
+      moodTitle: "LIQUID INSTRUMENT // LAB",
+      palette: "mint",
       specs: [
         { k: "CFG", v: "4.0" },
         { k: "CANNY", v: "0.90" },
@@ -129,14 +133,14 @@ const SCENARIOS: Scenario[] = [
     id: "kinetic-zine",
     label: "03 · 动态视觉",
     code: {
-      file: "shaders/latent-grain.glsl.ts",
+      file: "shaders/liquid-refraction.glsl.ts",
       metricLabel: "FRAME",
       metricValue: "16.6ms · GPU",
       lines: [
         { num: "01", text: "const field = curlNoise(uv * 2.4, uTime * 0.2);" },
         {
           num: "02",
-          text: "const ink = mix(paperTone, accentInk, field);",
+          text: "const tint = mix(frostedGlass, skyAccent, field);",
           highlight: true,
         },
         { num: "03", text: "compositor.commit({ transform, opacity: 1 });" },
@@ -145,19 +149,19 @@ const SCENARIOS: Scenario[] = [
       outputTitle: "Compositor Telemetry",
       outputStatus: "ZERO LAYOUT THRASH",
       nodes: [
-        { name: "NoiseField", role: "生成纸墨纤维与光斑折射场", state: "GPU" },
-        { name: "MaskReveal", role: "裁切路径驱动文字入场节奏", state: "SYNC" },
+        { name: "NoiseField", role: "生成液态玻璃折射与光晕场", state: "GPU" },
+        { name: "MaskReveal", role: "裁切路径驱动界面入场节奏", state: "SYNC" },
         { name: "A11yGuard", role: "自动响应系统减弱动态偏好", state: "SAFE" },
       ],
     },
     aigc: {
-      model: "Krea-Realtime + Halide-Film",
+      model: "Krea-Realtime + Prism-Shader",
       seed: "SEED #19073",
       prompt:
-        "Kinetic typography poster, refracted cobalt prism over archival warm cotton paper, ink bleed edges, studio strobe shadow",
+        "Refracted cobalt glass prism suspended over soft silver mist, crisp specular edge highlight, minimal studio typography",
       negative: "watermark, banding artifacts, clipped highlights",
-      moodTitle: "PRISM OVER INK // EDITION",
-      palette: "cobalt",
+      moodTitle: "SKY PRISM // EDITION",
+      palette: "indigo",
       specs: [
         { k: "CFG", v: "3.2" },
         { k: "DENOISE", v: "0.68" },
@@ -170,7 +174,7 @@ const SCENARIOS: Scenario[] = [
 const DENOISE_STEPS = [
   { step: 8, label: "STEP 08 · 潜空间构图" },
   { step: 20, label: "STEP 20 · 光影体块" },
-  { step: 32, label: "STEP 32 · 胶片成片" },
+  { step: 32, label: "STEP 32 · 成片输出" },
 ] as const;
 
 export function DualModeConsole() {
@@ -190,8 +194,8 @@ export function DualModeConsole() {
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       gsap.fromTo(
         el,
-        { opacity: 0.4, y: 6 },
-        { opacity: 1, y: 0, duration: 0.32, ease: "power2.out" },
+        { opacity: 0.45, y: 6 },
+        { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" },
       );
     });
     return () => mm.revert();
@@ -200,22 +204,24 @@ export function DualModeConsole() {
   return (
     <section
       aria-label="双模造物实验台"
-      className="rounded-card-sm border border-border bg-surface p-3.5 shadow-lg sm:p-5 md:rounded-card"
+      className="glass-card rounded-2xl p-4 sm:rounded-3xl sm:p-5"
     >
       {/* 顶部拨杆栏：Code 工程态 ↔ AIGC 生成态 */}
-      <div className="flex flex-col gap-3 border-b border-border pb-3.5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-b border-border/80 pb-3.5 sm:flex-row sm:items-center sm:justify-between">
         <div
           role="tablist"
           aria-label="工作台模式切换"
-          className="grid grid-cols-2 gap-1 rounded-full border border-border bg-surface-elevated p-1 sm:inline-flex"
+          className="grid grid-cols-2 gap-1 rounded-full border border-border/80 bg-surface-recessed p-1 sm:inline-flex"
         >
           <button
             type="button"
             role="tab"
             aria-selected={mode === "code"}
             onClick={() => setMode("code")}
-            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 font-mono text-caption font-medium transition-colors ${
-              mode === "code" ? "bg-fg text-bg" : "text-fg-muted hover:text-fg"
+            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 font-mono text-caption font-medium transition-all sm:min-h-9 ${
+              mode === "code"
+                ? "bg-ink text-ink-fg shadow-xs"
+                : "text-fg-secondary hover:text-fg"
             }`}
           >
             <TerminalIcon className="size-4" />
@@ -227,10 +233,10 @@ export function DualModeConsole() {
             role="tab"
             aria-selected={mode === "aigc"}
             onClick={() => setMode("aigc")}
-            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 font-mono text-caption font-medium transition-colors ${
+            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 font-mono text-caption font-medium transition-all sm:min-h-9 ${
               mode === "aigc"
-                ? "bg-accent text-white"
-                : "text-fg-muted hover:text-fg"
+                ? "bg-accent text-white shadow-xs"
+                : "text-fg-secondary hover:text-fg"
             }`}
           >
             <SparklesIcon className="size-4" />
@@ -251,10 +257,10 @@ export function DualModeConsole() {
                 type="button"
                 onClick={() => setScenarioIndex(idx)}
                 aria-pressed={selected}
-                className={`min-h-11 rounded-full border px-3 font-mono text-micro transition-colors sm:min-h-9 ${
+                className={`min-h-11 rounded-full border px-3 font-mono text-micro transition-all sm:min-h-9 ${
                   selected
-                    ? "border-fg bg-fg/8 font-semibold text-fg"
-                    : "border-border bg-transparent text-fg-muted hover:border-border-strong hover:text-fg"
+                    ? "border-accent/45 bg-accent-soft font-semibold text-accent"
+                    : "border-border bg-surface-solid/60 text-fg-secondary hover:border-border-strong hover:text-fg"
                 }`}
               >
                 {item.label}
@@ -271,11 +277,13 @@ export function DualModeConsole() {
       >
         {mode === "code" ? (
           <>
-            {/* 左侧：代码管线切片 */}
-            <div className="flex flex-col justify-between rounded-xl border border-border bg-surface-elevated/55 p-4 lg:col-span-7">
-              <div className="flex items-center justify-between gap-2 border-b border-border pb-2.5 font-mono text-micro text-fg-muted">
-                <span className="truncate text-fg">{active.code.file}</span>
-                <span className="shrink-0 rounded-full bg-signal-soft px-2.5 py-0.5 text-signal">
+            {/* 左侧：深色液态玻璃代码终端 */}
+            <div className="glass-dark-surface flex flex-col justify-between rounded-2xl p-4 lg:col-span-7">
+              <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5 font-mono text-micro">
+                <span className="truncate text-[#f8fafc]">
+                  {active.code.file}
+                </span>
+                <span className="shrink-0 rounded-full bg-[#34d399]/18 px-2.5 py-0.5 text-[#34d399]">
                   {active.code.metricValue}
                 </span>
               </div>
@@ -284,13 +292,13 @@ export function DualModeConsole() {
                 {active.code.lines.map((line) => (
                   <div
                     key={line.num}
-                    className={`flex items-start gap-3 rounded-md px-2.5 py-1.5 ${
+                    className={`flex items-start gap-3 rounded-lg px-2.5 py-1.5 ${
                       line.highlight
-                        ? "border-l-2 border-accent bg-accent-soft text-fg"
-                        : "text-fg-muted"
+                        ? "border-l-2 border-[#4f94ff] bg-[#4f94ff]/16 text-[#f8fafc]"
+                        : "text-[#94a3b8]"
                     }`}
                   >
-                    <span className="select-none text-micro opacity-65">
+                    <span className="select-none text-micro text-[#64748b]">
                       {line.num}
                     </span>
                     <code className="whitespace-pre">{line.text}</code>
@@ -298,12 +306,12 @@ export function DualModeConsole() {
                 ))}
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5 font-mono text-micro text-fg-muted">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-2.5 font-mono text-micro text-[#94a3b8]">
                 <span>MODE {"//"} DETERMINISTIC ENGINEERING</span>
                 <button
                   type="button"
                   onClick={() => setMode("aigc")}
-                  className="font-medium text-accent underline underline-offset-4 hover:opacity-80"
+                  className="font-medium text-[#7dd3fc] underline underline-offset-4 hover:text-white"
                 >
                   切换查看同一场景的 AIGC 潜空间态 →
                 </button>
@@ -311,13 +319,13 @@ export function DualModeConsole() {
             </div>
 
             {/* 右侧：实时执行拓扑节点 */}
-            <div className="lab-grid flex flex-col justify-between rounded-xl border border-border bg-surface p-4 lg:col-span-5">
+            <div className="lab-grid flex flex-col justify-between rounded-2xl border border-border/80 bg-surface-solid/65 p-4 lg:col-span-5">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-micro tracking-wider text-fg-muted uppercase">
+                <span className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
                   {active.code.outputTitle}
                 </span>
                 <span className="inline-flex items-center gap-1.5 font-mono text-micro font-medium text-signal">
-                  <span className="size-1.5 rounded-full bg-signal signal-dot" />
+                  <span className="size-1.5 rounded-full bg-signal-dot signal-dot" />
                   {active.code.outputStatus}
                 </span>
               </div>
@@ -326,17 +334,17 @@ export function DualModeConsole() {
                 {active.code.nodes.map((node, index) => (
                   <li
                     key={node.name}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface/95 px-3 py-2.5"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-border/85 bg-surface-solid/90 px-3.5 py-2.5 shadow-xs"
                   >
                     <div className="min-w-0">
                       <p className="font-mono text-caption font-semibold text-fg">
                         0{index + 1}. {node.name}
                       </p>
-                      <p className="truncate text-caption text-fg-muted">
+                      <p className="truncate text-caption text-fg-secondary">
                         {node.role}
                       </p>
                     </div>
-                    <span className="shrink-0 rounded-sm border border-border bg-surface-elevated px-2 py-0.5 font-mono text-micro text-fg">
+                    <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-0.5 font-mono text-micro font-medium text-accent">
                       {node.state}
                     </span>
                   </li>
@@ -351,10 +359,10 @@ export function DualModeConsole() {
         ) : (
           <>
             {/* 左侧：结构化 Prompt 配方与采样控制 */}
-            <div className="flex flex-col justify-between rounded-xl border border-border bg-surface-elevated/55 p-4 lg:col-span-6">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2.5 font-mono text-micro">
-                <span className="text-fg">{active.aigc.model}</span>
-                <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-accent">
+            <div className="flex flex-col justify-between rounded-2xl border border-border/85 bg-surface-solid/70 p-4 lg:col-span-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-2.5 font-mono text-micro">
+                <span className="font-medium text-fg">{active.aigc.model}</span>
+                <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-medium text-accent">
                   {active.aigc.seed}
                 </span>
               </div>
@@ -364,7 +372,7 @@ export function DualModeConsole() {
                   <p className="font-mono text-micro tracking-wider text-fg-muted uppercase">
                     Positive Conditioning
                   </p>
-                  <p className="mt-1 rounded-lg border border-border bg-surface p-3 font-mono text-caption text-fg">
+                  <p className="mt-1.5 rounded-xl border border-border/80 bg-surface-recessed/70 p-3 font-mono text-caption leading-relaxed text-fg">
                     {active.aigc.prompt}
                   </p>
                 </div>
@@ -380,10 +388,10 @@ export function DualModeConsole() {
                         type="button"
                         onClick={() => setDenoiseStep(item.step)}
                         aria-pressed={denoiseStep === item.step}
-                        className={`min-h-11 rounded-lg border px-2 py-1.5 font-mono text-micro transition-colors ${
+                        className={`min-h-11 rounded-xl border px-2 py-1.5 font-mono text-micro transition-all ${
                           denoiseStep === item.step
-                            ? "border-accent bg-accent-soft font-semibold text-fg"
-                            : "border-border bg-surface text-fg-muted hover:text-fg"
+                            ? "border-accent bg-accent-soft font-semibold text-accent"
+                            : "border-border bg-surface-solid/80 text-fg-secondary hover:text-fg"
                         }`}
                       >
                         {item.label}
@@ -393,7 +401,7 @@ export function DualModeConsole() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5 font-mono text-micro text-fg-muted">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/80 pt-2.5 font-mono text-micro text-fg-muted">
                 <div className="flex gap-3">
                   {active.aigc.specs.map((spec) => (
                     <span key={spec.k}>
@@ -404,16 +412,15 @@ export function DualModeConsole() {
                 <button
                   type="button"
                   onClick={() => setMode("code")}
-                  className="font-medium text-fg underline underline-offset-4 hover:text-accent"
+                  className="font-medium text-accent underline underline-offset-4 hover:opacity-80"
                 >
                   查看底层工程代码 →
                 </button>
               </div>
             </div>
 
-            {/* 右侧：潜空间实时视觉画布（随采样步数与场景演化） */}
-            <div className="relative flex min-h-64 flex-col justify-between overflow-hidden rounded-xl border border-border bg-ink p-4 text-white lg:col-span-6">
-              {/* 程序化光影层 */}
+            {/* 右侧：深色光学折射实时视觉画布 */}
+            <div className="glass-dark-surface relative flex min-h-64 flex-col justify-between overflow-hidden rounded-2xl p-4 text-white lg:col-span-6">
               <svg
                 viewBox="0 0 480 280"
                 aria-hidden="true"
@@ -424,34 +431,33 @@ export function DualModeConsole() {
                     <stop
                       offset="0%"
                       stopColor={
-                        active.aigc.palette === "vermilion"
-                          ? "#ff6438"
-                          : active.aigc.palette === "emerald"
-                            ? "#34f5a6"
-                            : "#6b9eff"
+                        active.aigc.palette === "sky"
+                          ? "#4f94ff"
+                          : active.aigc.palette === "mint"
+                            ? "#34d399"
+                            : "#818cf8"
                       }
                       stopOpacity={
                         denoiseStep === 8
-                          ? "0.32"
+                          ? "0.34"
                           : denoiseStep === 20
                             ? "0.62"
-                            : "0.88"
+                            : "0.86"
                       }
                     />
-                    <stop offset="55%" stopColor="#1b1924" stopOpacity="0.65" />
-                    <stop offset="100%" stopColor="#090a0d" stopOpacity="1" />
+                    <stop offset="55%" stopColor="#162238" stopOpacity="0.65" />
+                    <stop offset="100%" stopColor="#0b0e14" stopOpacity="1" />
                   </radialGradient>
                 </defs>
                 <rect width="480" height="280" fill="url(#orb-primary)" />
 
-                {/* 构图参考网格：低步数明显，高步数收敛为成片几何 */}
                 <g
                   stroke="#ffffff"
                   strokeOpacity={
                     denoiseStep === 8
-                      ? "0.38"
+                      ? "0.35"
                       : denoiseStep === 20
-                        ? "0.2"
+                        ? "0.18"
                         : "0.09"
                   }
                   strokeDasharray={denoiseStep === 32 ? "none" : "4 4"}
@@ -462,7 +468,6 @@ export function DualModeConsole() {
                   <line x1="320" y1="0" x2="320" y2="280" />
                 </g>
 
-                {/* 主体几何雕塑层 */}
                 <circle
                   cx="292"
                   cy="128"
@@ -489,7 +494,7 @@ export function DualModeConsole() {
                   d="M68 228 L188 116 L276 178 L412 74"
                   fill="none"
                   stroke={
-                    active.aigc.palette === "emerald" ? "#34f5a6" : "#ff8d6b"
+                    active.aigc.palette === "mint" ? "#34d399" : "#7dd3fc"
                   }
                   strokeWidth={denoiseStep === 32 ? "2.2" : "1.2"}
                   strokeOpacity={denoiseStep === 8 ? "0.45" : "0.9"}
@@ -497,7 +502,7 @@ export function DualModeConsole() {
               </svg>
 
               <div className="relative z-10 flex items-center justify-between font-mono text-micro tracking-widest uppercase">
-                <span className="rounded-full border border-white/20 bg-black/45 px-2.5 py-1 backdrop-blur-xs">
+                <span className="rounded-full border border-white/20 bg-black/40 px-2.5 py-1 backdrop-blur-xs">
                   {active.aigc.moodTitle}
                 </span>
                 <span className="rounded-full bg-white/15 px-2.5 py-1">
@@ -506,12 +511,12 @@ export function DualModeConsole() {
               </div>
 
               <div className="relative z-10 mt-24 border-t border-white/15 pt-3">
-                <p className="font-serif text-title font-semibold tracking-tight">
+                <p className="text-title font-semibold tracking-tight">
                   {denoiseStep === 8 && "Latent Noise · 骨架锚定阶段"}
-                  {denoiseStep === 20 && "Volumetric Pass · 光影体块成型"}
-                  {denoiseStep === 32 && "Final Master · 胶片级高一致输出"}
+                  {denoiseStep === 20 && "Volumetric Pass · 折射光影成型"}
+                  {denoiseStep === 32 && "Final Master · 清透光学高一致输出"}
                 </p>
-                <p className="mt-0.5 font-mono text-micro text-white/70">
+                <p className="mt-0.5 font-mono text-micro text-white/75">
                   NEGATIVE {"//"} {active.aigc.negative}
                 </p>
               </div>
