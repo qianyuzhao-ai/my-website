@@ -570,6 +570,27 @@ dialog[open]:where(:not([data-closing])) {
   }
 }
 
+/* 三维线条加载页原生 <progress> 建筑细线进度轴（遵循 modern-web-guidance: progress） */
+progress.wireframe-progress {
+  appearance: none;
+  border: 0 solid;
+  overflow: clip;
+  border-radius: 1e5px;
+  background: var(--border);
+}
+progress.wireframe-progress::-webkit-progress-bar {
+  background: transparent;
+}
+progress.wireframe-progress::-webkit-progress-value {
+  border-radius: 1e5px;
+  background: linear-gradient(90deg, var(--accent), var(--signal-dot));
+  transition: inline-size 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+progress.wireframe-progress::-moz-progress-bar {
+  border-radius: 1e5px;
+  background: linear-gradient(90deg, var(--accent), var(--signal-dot));
+}
+
 /* 保留预览组件色值，兼容尚未手动删除的旧组件文件 */
 :root,
 .dark {
