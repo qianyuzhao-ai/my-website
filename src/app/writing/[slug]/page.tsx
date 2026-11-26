@@ -47,7 +47,7 @@ export default async function PostPage({ params }: Props) {
       <ReadingProgress />
       <main
         id="main"
-        className="px-4 pt-8 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-24"
+        className="px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
       >
         <div className="mx-auto max-w-6xl">
           {/* 移动端顶部返回毛玻璃胶囊 */}

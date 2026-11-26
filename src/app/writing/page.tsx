@@ -26,7 +26,7 @@ export default async function WritingPage() {
     <>
       <main
         id="main"
-        className="px-4 pt-10 pb-20 sm:px-6 md:px-8 md:pt-28 md:pb-24"
+        className="px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
       >
         <div className="mx-auto max-w-6xl">
           {/* Liquid Glass 博客刊头 */}

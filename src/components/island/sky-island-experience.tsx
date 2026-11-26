@@ -1,15 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  MoonIcon,
-  SparklesIcon,
-  SunIcon,
-  VolumeOffIcon,
-  VolumeOnIcon,
-} from "@/components/home/icons";
+import { SparklesIcon } from "@/components/home/icons";
 import { ShrineModal } from "@/components/island/shrine-panels";
 import {
   type IslandEngineHandle,
@@ -34,7 +27,6 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
     "writing" | "works" | "about" | null
   >(null);
   const [vistaMode, setVistaMode] = useState(false);
-  const [muted, setMuted] = useState(false);
   const [toastText, setToastText] = useState<string | null>(null);
   const potIndexRef = useRef(0);
   const [pressedDirs, setPressedDirs] = useState<Record<DirectionKey, boolean>>(
@@ -67,14 +59,24 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
     }, 3000);
   }, []);
 
-  // 监听复制邮箱事件，同步放飞南崖码头的左纳乌滑翔翼！
+  // 监听复制邮箱与全局导航主题切换事件，同步放飞滑翔翼与展示昼夜提示
   useEffect(() => {
     const onGlider = () => {
       engineRef.current?.launchGlider();
       showToast("🕊 传信左纳乌滑翔翼已载着信号飞向云海！");
     };
+    const onThemeToast = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail;
+      if (typeof detail === "string" && detail) {
+        showToast(detail);
+      }
+    };
     window.addEventListener("qianyu:glider-launch", onGlider);
-    return () => window.removeEventListener("qianyu:glider-launch", onGlider);
+    window.addEventListener("qianyu:theme-toast", onThemeToast);
+    return () => {
+      window.removeEventListener("qianyu:glider-launch", onGlider);
+      window.removeEventListener("qianyu:theme-toast", onThemeToast);
+    };
   }, [showToast]);
 
   const isNight =
@@ -90,15 +92,6 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
         : "☀ 时之日晷：晨光破晓 · 暖阳洒满黄金银杏林",
     );
   }, [resolvedTheme, setTheme, showToast]);
-
-  const toggleMute = useCallback(() => {
-    setMuted((prev) => {
-      const next = !prev;
-      skyAudio.muted = next;
-      if (!next) skyAudio.playCookingChime();
-      return next;
-    });
-  }, []);
 
   const handleActivateShrine = useCallback(
     (id: ShrineId) => {
@@ -236,82 +229,7 @@ export function SkyIslandExperience({ posts }: { posts: Post[] }) {
         })}
       </section>
 
-      {/* 顶部快捷栏（含空灵音效静音开关与昼夜切换，严格适配 320px 窄屏） */}
-      <header
-        style={{
-          paddingTop: "max(0.75rem, env(safe-area-inset-top, 0px))",
-        }}
-        className="pointer-events-none fixed inset-x-0 top-0 z-30 flex justify-center px-2 sm:px-5"
-      >
-        <nav
-          aria-label="空岛快捷传送与设置"
-          className="pointer-events-auto flex max-w-full items-center gap-0.5 rounded-full border border-border bg-surface/86 p-1 shadow-lg backdrop-blur-md sm:gap-1.5 sm:px-2"
-        >
-          <span className="hidden items-center gap-1.5 px-2.5 font-serif text-label font-bold text-fg md:inline-flex">
-            <span className="size-2 rounded-full bg-signal signal-dot" />
-            {siteConfig.name}
-          </span>
-
-          <button
-            type="button"
-            onClick={() => handleQuickVisit("writing")}
-            className="inline-flex min-h-11 items-center rounded-full px-2 text-caption font-medium text-fg transition-colors hover:bg-surface-elevated sm:px-3.5 sm:text-label"
-          >
-            手稿
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickVisit("works")}
-            className="inline-flex min-h-11 items-center rounded-full px-2 text-caption font-medium text-fg transition-colors hover:bg-surface-elevated sm:px-3.5 sm:text-label"
-          >
-            造物
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickVisit("connect")}
-            className="inline-flex min-h-11 items-center rounded-full px-2 text-caption font-medium text-fg transition-colors hover:bg-surface-elevated sm:px-3.5 sm:text-label"
-          >
-            联系
-          </button>
-
-          <Link
-            href="/writing"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface-elevated/80 px-2 font-mono text-micro font-medium text-fg transition-colors hover:border-accent hover:text-accent sm:px-3 sm:text-caption"
-          >
-            博客↗
-          </Link>
-
-          <button
-            type="button"
-            onClick={toggleMute}
-            aria-label={muted ? "开启空岛音效" : "静音空岛音效"}
-            aria-pressed={!muted}
-            className="inline-flex min-h-11 min-w-10 items-center justify-center rounded-full text-fg transition-colors hover:bg-surface-elevated sm:min-w-11"
-          >
-            {muted ? (
-              <VolumeOffIcon className="size-4.5 text-fg-muted" />
-            ) : (
-              <VolumeOnIcon className="size-4.5 text-signal" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleDayNight}
-            aria-label="切换空岛昼夜与全站主题"
-            className="inline-flex min-h-11 min-w-10 items-center justify-center rounded-full text-fg transition-colors hover:bg-surface-elevated sm:min-w-11"
-          >
-            <SunIcon className="size-4.5 dark:hidden" />
-            <MoonIcon className="hidden size-4.5 dark:block" />
-          </button>
-        </nav>
-      </header>
-
-      {/* 动态事件与料理锅气泡提示 */}
+      {/* 顶部已统一交由全局 SiteDock 渲染；此处仅保留动态事件与料理锅气泡提示 */}
       {toastText ? (
         <div
           aria-live="polite"

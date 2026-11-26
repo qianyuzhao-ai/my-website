@@ -3,7 +3,7 @@ import { siteConfig } from "@/lib/site-config";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/80 px-4 pt-8 pb-28 md:px-8 md:pb-12">
+    <footer className="border-t border-border/80 px-4 py-10 md:px-8 md:py-12">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 text-caption text-fg-muted sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-micro tracking-wider uppercase">
           <span className="inline-flex items-center gap-1.5 font-semibold text-fg">
@@ -18,10 +18,16 @@ export function SiteFooter() {
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <Link href="/" className="transition-colors hover:text-accent">
-            Island
+            空岛
+          </Link>
+          <Link href="/works" className="transition-colors hover:text-accent">
+            作品
           </Link>
           <Link href="/writing" className="transition-colors hover:text-accent">
-            Writing
+            博客
+          </Link>
+          <Link href="/about" className="transition-colors hover:text-accent">
+            关于
           </Link>
           {siteConfig.socials.map((item) => (
             <a
