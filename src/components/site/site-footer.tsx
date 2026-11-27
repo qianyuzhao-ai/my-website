@@ -101,22 +101,6 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
-                  href="/writing/aigc-flow-retrospective"
-                  className="transition-colors hover:text-fg"
-                >
-                  Latent Storyboard
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/writing/agent-design-workflow"
-                  className="transition-colors hover:text-fg"
-                >
-                  Agentic Compiler
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/island"
                   className="transition-colors hover:text-fg"
                 >

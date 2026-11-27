@@ -140,41 +140,59 @@ export default async function WorksPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
-              {dict.works.items.map((work) => (
-                <Link
-                  key={work.id}
-                  href={work.href}
-                  className="group flex flex-col gap-3"
-                >
-                  <div className="flex items-center justify-between gap-2 font-mono text-micro text-fg-muted">
-                    <span className="font-medium text-fg">
-                      {work.index} · {work.kind.toUpperCase()}
-                    </span>
-                    <span className="tabular-nums">{work.year}</span>
-                  </div>
-
-                  <div className="flex aspect-[16/10] w-full items-center justify-center bg-surface px-4 py-3 transition-colors group-hover:bg-surface-recessed">
-                    <WorkArtwork work={work} />
-                  </div>
-
-                  <h3 className="text-case-title font-bold tracking-[-0.01em] text-fg underline-offset-4 group-hover:underline">
-                    {work.title}
-                  </h3>
-
-                  <p className="line-clamp-3 text-label leading-[1.6] text-fg-secondary">
-                    {work.summary}
-                  </p>
-
-                  <div className="mt-auto flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 font-mono text-micro text-fg-muted">
-                    {work.metrics.map((m) => (
-                      <span key={m.label}>
-                        {m.label}:{" "}
-                        <strong className="text-fg">{m.value}</strong>
+              {dict.works.items.map((work) => {
+                const cardBody = (
+                  <>
+                    <div className="flex items-center justify-between gap-2 font-mono text-micro text-fg-muted">
+                      <span className="font-medium text-fg">
+                        {work.index} · {work.kind.toUpperCase()}
                       </span>
-                    ))}
-                  </div>
-                </Link>
-              ))}
+                      <span className="tabular-nums">{work.year}</span>
+                    </div>
+
+                    <div className="flex aspect-[16/10] w-full items-center justify-center bg-surface px-4 py-3 transition-colors group-hover:bg-surface-recessed">
+                      <WorkArtwork work={work} />
+                    </div>
+
+                    <h3
+                      className={`text-case-title font-bold tracking-[-0.01em] text-fg ${
+                        work.href
+                          ? "underline-offset-4 group-hover:underline"
+                          : ""
+                      }`}
+                    >
+                      {work.title}
+                    </h3>
+
+                    <p className="line-clamp-3 text-label leading-[1.6] text-fg-secondary">
+                      {work.summary}
+                    </p>
+
+                    <div className="mt-auto flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 font-mono text-micro text-fg-muted">
+                      {work.metrics.map((m) => (
+                        <span key={m.label}>
+                          {m.label}:{" "}
+                          <strong className="text-fg">{m.value}</strong>
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                );
+
+                return work.href ? (
+                  <Link
+                    key={work.id}
+                    href={work.href}
+                    className="group flex flex-col gap-3"
+                  >
+                    {cardBody}
+                  </Link>
+                ) : (
+                  <article key={work.id} className="flex flex-col gap-3">
+                    {cardBody}
+                  </article>
+                );
+              })}
             </div>
           </section>
 

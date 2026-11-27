@@ -18,7 +18,7 @@ export type WorkCardEntry = {
   title: string;
   subtitle: string;
   summary: string;
-  href: string;
+  href?: string;
   metrics: { label: string; value: string }[];
 };
 
@@ -266,38 +266,7 @@ const zh: Dictionary = {
     heroCta: "阅读项目复盘",
     storiesHeading: "精选阅读与项目",
     storiesSubtitle: "来自 QianYu 工作室的工程实践、设计思考与 AIGC 笔记",
-    stories: [
-      {
-        id: "agent-workflow",
-        category: "Agent 工程",
-        date: "2026-09-28",
-        title: "用 Agent 重做我的设计工作流",
-        excerpt:
-          "从 Figma 稿到代码的往返里，哪些环节适合交给 Agent，哪些仍然必须由设计师自己把关。",
-        href: "/writing/agent-design-workflow",
-        art: "agent",
-      },
-      {
-        id: "latent-storyboard",
-        category: "AIGC 工作流",
-        date: "2026-08-20",
-        title: "Latent Storyboard Engine",
-        excerpt:
-          "告别抽卡式随机生成：通过分镜锚点控制构图骨架、光影色温与角色连续性，稳定放大视觉序列。",
-        href: "/works",
-        art: "storyboard",
-      },
-      {
-        id: "aigc-flow",
-        category: "产品设计",
-        date: "2026-08-14",
-        title: "AIGC-FLOW 复盘：三代流程的取舍",
-        excerpt:
-          "从节点连线到分镜表，三次推倒重来背后的判断依据：用户关心的不是怎么连，而是下一步做什么。",
-        href: "/writing/aigc-flow-retrospective",
-        art: "architecture",
-      },
-    ],
+    stories: [],
     topicEyebrow: "按主题探索",
     topicHeading: "深入 Agent 工程与 AIGC 生产系统",
     topicCta: "浏览全部项目 →",
@@ -385,7 +354,6 @@ const zh: Dictionary = {
         subtitle: "从结构化分镜脚本到高一致性胶片成片的生成式管线",
         summary:
           "告别抽卡式随机生成：通过分镜锚点控制构图骨架、光影色温与角色连续性，将单次灵感稳定放大为叙事级视觉序列。",
-        href: "/writing/aigc-flow-retrospective",
         metrics: [
           { label: "角色一致性", value: "94.2%" },
           { label: "单镜迭代", value: "18s" },
@@ -401,7 +369,6 @@ const zh: Dictionary = {
           "连接设计语义 Token 与生产级 React Server Components 的多步代理",
         summary:
           "把「生成骨架」交给确定性工具链，把「交互审美与边界判断」留给创作者。自动完成响应式断点拆解与无障碍焦点审计。",
-        href: "/writing/agent-design-workflow",
         metrics: [
           { label: "移动端还原", value: "100%" },
           { label: "自动走查", value: "24 项" },
@@ -416,7 +383,6 @@ const zh: Dictionary = {
         subtitle: "当先锋平面排版遇上实时扩散纹理与程序化微动效",
         summary:
           "将 AIGC 生成的高精度材质切片注入 Web 排版系统，让静态海报成为可随视口滚动呼吸、交互折射的数字独立出版物。",
-        href: "/writing/from-design-to-fullstack",
         metrics: [
           { label: "首屏帧率", value: "60 FPS" },
           { label: "纹理体积", value: "< 48KB" },
@@ -562,38 +528,7 @@ const en: Dictionary = {
     heroCta: "Read Case Study",
     storiesHeading: "Stories worth your time",
     storiesSubtitle: "picks from QianYu's studio — engineering, design & AIGC",
-    stories: [
-      {
-        id: "agent-workflow",
-        category: "Agent Engineering",
-        date: "2026-09-28",
-        title: "Rebuilding My Design Workflow with Agents",
-        excerpt:
-          "In the round-trip between Figma and production code, which steps belong to agents and where must human taste hold the line?",
-        href: "/writing/agent-design-workflow",
-        art: "agent",
-      },
-      {
-        id: "latent-storyboard",
-        category: "AIGC Workflow",
-        date: "2026-08-20",
-        title: "Latent Storyboard Engine",
-        excerpt:
-          "Moving beyond gacha prompting: anchoring framing, lighting temperature, and character continuity across full visual sequences.",
-        href: "/works",
-        art: "storyboard",
-      },
-      {
-        id: "aigc-flow",
-        category: "Product Design",
-        date: "2026-08-14",
-        title: "AIGC-FLOW Retrospective: Three Generations of Trade-offs",
-        excerpt:
-          "From node graphs to structured storyboards—why every rebuild came back to what creators actually care about next.",
-        href: "/writing/aigc-flow-retrospective",
-        art: "architecture",
-      },
-    ],
+    stories: [],
     topicEyebrow: "EXPLORE BY TOPIC",
     topicHeading: "Insights on Agent Engineering & AIGC Systems",
     topicCta: "Explore Works →",
@@ -679,7 +614,6 @@ const en: Dictionary = {
           "Generative pipeline from structured scripts to consistent film sequences",
         summary:
           "Moves past random prompting by locking composition, lighting temperature, and character consistency through storyboard anchors.",
-        href: "/writing/aigc-flow-retrospective",
         metrics: [
           { label: "Consistency", value: "94.2%" },
           { label: "Iteration", value: "18s" },
@@ -695,7 +629,6 @@ const en: Dictionary = {
           "Multi-step agent bridging semantic design tokens to React Server Components",
         summary:
           "Hands deterministic scaffolding to tooling while keeping layout taste and edge-case judgment with the creator.",
-        href: "/writing/agent-design-workflow",
         metrics: [
           { label: "Mobile Fidelity", value: "100%" },
           { label: "Auto Audits", value: "24 Rules" },
@@ -711,7 +644,6 @@ const en: Dictionary = {
           "Editorial typography fused with procedural diffusion textures and micro-motion",
         summary:
           "Injects high-resolution generative material slices into responsive web typography for living digital publications.",
-        href: "/writing/from-design-to-fullstack",
         metrics: [
           { label: "Frame Rate", value: "60 FPS" },
           { label: "Texture Size", value: "< 48KB" },

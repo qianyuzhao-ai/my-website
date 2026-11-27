@@ -66,7 +66,7 @@ export function SearchProvider({
       id: `work-${w.id}`,
       title: w.title,
       excerpt: `${w.subtitle} ${w.summary}`,
-      href: w.href,
+      href: w.href ?? "/works",
       keywords: `${w.title} ${w.subtitle} ${w.summary} ${w.kind}`,
     }));
 

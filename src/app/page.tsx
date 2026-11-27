@@ -1,26 +1,11 @@
 import Link from "next/link";
 import { MorePostsIndex } from "@/components/editorial/more-posts-index";
-import {
-  AgentWorkflowArt,
-  ArchitectureLayersArt,
-  OpenFlowIsometricArt,
-  StoryboardGridArt,
-} from "@/components/editorial/wireframe-art";
+import { OpenFlowIsometricArt } from "@/components/editorial/wireframe-art";
 import { SearchPill } from "@/components/site/search-dialog";
 import { SiteFooter } from "@/components/site/site-footer";
-import { getDictionary, type StoryCardEntry } from "@/lib/i18n/dictionaries";
+import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getServerLocale } from "@/lib/i18n/server";
 import { getPosts } from "@/lib/posts";
-
-function StoryArt({ kind }: { kind: StoryCardEntry["art"] }) {
-  if (kind === "agent") {
-    return <AgentWorkflowArt className="h-auto w-full max-w-[300px]" />;
-  }
-  if (kind === "storyboard") {
-    return <StoryboardGridArt className="h-auto w-full max-w-[300px]" />;
-  }
-  return <ArchitectureLayersArt className="h-auto w-full max-w-[300px]" />;
-}
 
 export default async function Home() {
   const locale = await getServerLocale();
@@ -105,59 +90,7 @@ export default async function Home() {
             </div>
           </section>
 
-          {/* 3. Editorial 3-Column Grid */}
-          <section
-            aria-labelledby="stories-heading"
-            className="flex flex-col gap-6"
-          >
-            <div className="flex flex-col gap-1">
-              <h2
-                id="stories-heading"
-                className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-fg md:text-[26px]"
-              >
-                {dict.home.storiesHeading}
-              </h2>
-              <p className="text-label text-fg-muted md:text-[15px]">
-                {dict.home.storiesSubtitle}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-              {dict.home.stories.map((story) => (
-                <Link
-                  key={story.id}
-                  href={story.href}
-                  className="group flex flex-col gap-3"
-                >
-                  <div className="flex items-center justify-between gap-2 text-micro">
-                    <span className="font-medium text-fg">
-                      {story.category}
-                    </span>
-                    <time
-                      dateTime={story.date}
-                      className="font-mono text-fg-muted tabular-nums"
-                    >
-                      {story.date}
-                    </time>
-                  </div>
-
-                  <div className="flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-surface px-4 py-3 transition-colors group-hover:bg-surface-recessed">
-                    <StoryArt kind={story.art} />
-                  </div>
-
-                  <h3 className="text-case-title font-bold tracking-[-0.01em] text-fg underline-offset-4 group-hover:underline">
-                    {story.title}
-                  </h3>
-
-                  <p className="line-clamp-3 text-label leading-[1.6] text-fg-secondary">
-                    {story.excerpt}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          {/* 4. More posts 细线归档列表 */}
+          {/* 3. More posts 细线归档列表 */}
           <MorePostsIndex posts={posts} />
 
           {/* 5. Explore by topic 宽幅平面横幅 */}

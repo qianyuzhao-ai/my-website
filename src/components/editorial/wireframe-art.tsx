@@ -649,14 +649,5 @@ export function PostHeroArt({
   if (slug === "agent-ux-design") {
     return <AgentUxDesignArt className={className} />;
   }
-  if (slug === "agent-design-workflow") {
-    return <AgentWorkflowArt className={className} />;
-  }
-  if (slug === "aigc-flow-retrospective") {
-    return <StoryboardGridArt className={className} />;
-  }
-  if (slug === "bento-layout-notes") {
-    return <OpenFlowIsometricArt className={className} />;
-  }
   return <ArchitectureLayersArt className={className} />;
 }
