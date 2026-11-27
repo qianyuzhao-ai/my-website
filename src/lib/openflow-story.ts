@@ -1,5 +1,15 @@
 // OpenFlow 叙事项目页结构化文案与数据（源自飞书项目实战复盘文档，后续可按需独立调整内容）
 
+export type PainStoryStage = {
+  id: "multi-platform" | "unified-loop";
+  index: string;
+  stageLabel: string;
+  title: string;
+  narrative: string;
+  painSummary: string;
+  highlights: string[];
+};
+
 export type PainPointItem = {
   id: "serial" | "transfer" | "timeout" | "manual";
   index: string;
@@ -38,9 +48,21 @@ export type ImpactMetric = {
 export const openflowStory = {
   hero: {
     title: "OpenFlow",
-    subtitle: "用 AI Agent 从 0 到 1，打造 12 人团队的 AIGC 无限画布生产平台",
+    subtitle: "面向 12 人产运团队的 AIGC 无限画布生产工作流平台",
     lead: "面向 AI 视频播客生产与多模态评测一线场景，以需求拆解驱动 Coding Agent 全栈落地，将单条 4–5 分钟的串行等待重构为全员复用的并发工作流。",
     version: "v1.4.0 · macOS & Windows",
+    role: {
+      label: "我的角色",
+      headline: "独立发起 · 产品拆解与全栈落地",
+      detail:
+        "不依赖研发排期，从一线业务卡点出发独立完成产品拆解，驱动 Claude Code（Vibe Coding）从原型迭代至 v1.4.0，并搭建双端自动打包流水线分发给 12 位同事日常使用。",
+    },
+    goal: {
+      label: "项目目标",
+      headline: "以无限画布与 1→N 并发重构视频生产",
+      detail:
+        "彻底消除原平台 4–5 分钟串行排队、素材反复下载上传、长连接断连丢片与手工拆镜统计痛点，稳定支撑多轮模型评测与 8 个合作 IP 共 14 期 AI 视频播客交付。",
+    },
   },
 
   chapters: [
@@ -55,6 +77,110 @@ export const openflowStory = {
     lead: "在负责 AI 视频播客全链路评测（单轮 20–40 组×3 机位出图、Seedance 与自研 R1 视频对比）以及 9 人协作的 Showcase 交付时，原有内部 API 平台让团队把大量时间消耗在排队、重复上传与手工拆镜上。",
     premise:
       "不等排期，直接从真实产运一线出发：把业务瓶颈拆解成清晰的产品模块，通过 Claude Code（Vibe Coding）从原型一路迭代至 v1.4.0 桌面端应用，分发给 12 位同事日常使用。",
+  },
+
+  painStory: {
+    heading: "真实业务场景下的痛点",
+    lead: "回到一条 AI 视频诞生的真实过程，看看一线产运每天是如何被工具割裂与单线程表单拖垮的。",
+    platforms: [
+      {
+        id: "chatgpt",
+        name: "ChatGPT",
+        cost: "$20 / 月",
+        role: "脚本与 Prompt 扩写",
+        action: "写完分镜台词 → 手动复制 Prompt",
+        artifact: "script_seg01.txt",
+      },
+      {
+        id: "midjourney",
+        name: "Midjourney",
+        cost: "$30 / 月",
+        role: "视觉参考与定调",
+        action: "生成风格底图 → 手动下载到本地",
+        artifact: "style_ref_v2.png",
+      },
+      {
+        id: "gemini",
+        name: "Gemini",
+        cost: "$20 / 月",
+        role: "多模态出图与改图",
+        action: "上传参考图调整角色 → 再次下载",
+        artifact: "host_portrait.png",
+      },
+      {
+        id: "jimeng",
+        name: "即梦",
+        cost: "独立会员",
+        role: "人像与场景融合",
+        action: "重新上传人像与背景 → 下载融合图",
+        artifact: "scene_mix_01.png",
+      },
+      {
+        id: "keling",
+        name: "可灵",
+        cost: "独立会员",
+        role: "图生视频成片",
+        action: "第三次上传融合图 → 等待出片再下载",
+        artifact: "clip_seg01.mp4",
+      },
+    ],
+    loopSteps: [
+      {
+        step: "01",
+        label: "选择模型",
+        detail: "在下拉框切换图像 / 视频模型",
+      },
+      {
+        step: "02",
+        label: "选择参数",
+        detail: "重填画幅、时长、清晰度与 Prompt",
+      },
+      {
+        step: "03",
+        label: "上传素材",
+        detail: "从本地文件夹再次点选上一步刚下载的图",
+      },
+      {
+        step: "04",
+        label: "串行生成",
+        detail: "单次仅支持 1 条任务，干等 4–5 分钟",
+      },
+      {
+        step: "05",
+        label: "下载素材",
+        detail: "保存到本地文件夹，立刻回到第 ① 步重来",
+      },
+    ],
+    stages: [
+      {
+        id: "multi-platform",
+        index: "01",
+        stageLabel: "第一幕 · 多平台会员割裂",
+        title: "五个平台五份账单，在标签页间人肉搬运素材",
+        narrative:
+          "为了做一条完整的 AI 视频，你同时订阅了 ChatGPT、Gemini、Midjourney、即梦、可灵。每个平台都要单独交一份会员费，更重要的是，从脚本、出图、融图到视频生成，你不得不在 5 个浏览器标签页之间反复切换——上一步刚生成的图先下载到本地，切去下一个标签页再手动上传。",
+        painSummary: "重复付费 × 跨标签页高频搬运 × 极易配错中间版本",
+        highlights: [
+          "5 个模型平台各自订阅付费，账单与额度分散管理",
+          "中间资产全靠浏览器「下载 → 切标签 → 再上传」手工接力",
+          "任意一步抽卡不满意，整条跨平台搬运链路就得重走一遍",
+        ],
+      },
+      {
+        id: "unified-loop",
+        index: "02",
+        stageLabel: "第二幕 · 统一 API 后的单线程死循环",
+        title: "API 统一了，却被锁死在「选模型 → 生成 → 下载」循环里",
+        narrative:
+          "后来，公司统一采购了主流图像与视频模型的 API，并提供了一个内部统一使用网站。不用再交五份会员费了，但真正投入批量生产才发现：这个页面的逻辑依然是单表单串行操作——选择模型、选择参数、上传素材、等待生成、手动下载，然后再从头开始下一轮循环。",
+        painSummary: "无法并发生成多资产 × 资产仍需不停下载再上传",
+        highlights: [
+          "单表单严格串行：没有办法同时提交多个资产并发生成",
+          "上下游资产依然断链：刚生完的图必须先下载到本地，再手动上传给视频模型",
+          "批量评测与播客交付动辄几十个镜头，全天时间耗在机械重复循环里",
+        ],
+      },
+    ] satisfies PainStoryStage[],
   },
 
   painPoints: [

@@ -43,7 +43,7 @@ export function InfiniteCanvasTrack({
 
       <div
         ref={viewportRef}
-        className="relative flex flex-col justify-between py-14 lg:min-h-[100dvh] lg:pt-24 lg:pb-10"
+        className="relative flex flex-col justify-between py-12 lg:min-h-[calc(100dvh-4rem)] lg:py-8"
       >
         {/* 顶栏固定画布坐标与标题 */}
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 md:px-8">

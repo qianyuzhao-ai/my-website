@@ -10,15 +10,6 @@ import { CanvasHero } from "@/components/openflow/canvas-hero";
 import { InfiniteCanvasTrack } from "@/components/openflow/infinite-canvas-track";
 import { openflowStory } from "@/lib/openflow-story";
 
-type ChapterId = (typeof openflowStory.chapters)[number]["id"];
-
-function formatClock(totalSeconds: number) {
-  const clamped = Math.max(0, Math.round(totalSeconds));
-  const mins = Math.floor(clamped / 60);
-  const secs = clamped % 60;
-  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-}
-
 export function OpenFlowStory() {
   const rootRef = useRef<HTMLDivElement>(null);
   const painSectionRef = useRef<HTMLDivElement>(null);
@@ -28,11 +19,16 @@ export function OpenFlowStory() {
   const canvasTrackRef = useRef<HTMLDivElement>(null);
   const canvasTriggerRef = useRef<ScrollTrigger | null>(null);
 
-  const [activePainIndex, setActivePainIndex] = useState(0);
+  const [activePainStage, setActivePainStage] = useState(0);
+  const [activePlatformIndex, setActivePlatformIndex] = useState(0);
+  const [activeLoopIndex, setActiveLoopIndex] = useState(0);
+  const [loopCycleCount, setLoopCycleCount] = useState(1);
+
   const [activeStation, setActiveStation] = useState(0);
   const [isPinnedDesktop, setIsPinnedDesktop] = useState(false);
 
-  const painCount = openflowStory.painPoints.length;
+  const platformCount = openflowStory.painStory.platforms.length;
+  const loopStepCount = openflowStory.painStory.loopSteps.length;
   const stationCount = openflowStory.buildChapters.length;
 
   useEffect(() => {
@@ -42,15 +38,15 @@ export function OpenFlowStory() {
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia();
 
-    // 1. 全视口温和入场、指标滚动计数与章节进度跟踪（尊重减弱动画）
+    // 1. 全视口温和入场与指标计数（尊重减弱动画）
     mm.add(
       "(prefers-reduced-motion: no-preference)",
       () => {
         gsap.from(root.querySelectorAll(".openflow-hero-reveal"), {
-          y: 26,
+          y: 24,
           opacity: 0,
-          duration: 0.78,
-          stagger: 0.09,
+          duration: 0.72,
+          stagger: 0.08,
           ease: "power3.out",
           clearProps: "transform,opacity",
         });
@@ -62,9 +58,9 @@ export function OpenFlowStory() {
           {
             scale: 0.92,
             opacity: 0,
-            duration: 0.85,
+            duration: 0.8,
             stagger: 0.08,
-            delay: 0.2,
+            delay: 0.18,
             ease: "power2.out",
             clearProps: "opacity",
           },
@@ -116,7 +112,7 @@ export function OpenFlowStory() {
       root,
     );
 
-    // 2. 桌面端核心 GSAP 沉浸式电影编排（首屏空间散景 + 暗房痛点剧场 + 横向无限画布漫游）
+    // 2. 桌面端核心 GSAP 沉浸式滚动编排（贴合 64px 顶栏固定）
     mm.add(
       {
         desktopMotion:
@@ -128,14 +124,14 @@ export function OpenFlowStory() {
         setIsPinnedDesktop(enablePin);
         if (!enablePin) return;
 
-        // A. 首屏空间退景散开（向下滚动时四周悬浮画布节点向画外退散）
-        const originSection =
-          root.querySelector<HTMLElement>("#openflow-origin");
-        if (originSection) {
+        // A. 第一屏空间退景散开
+        const heroScreen =
+          root.querySelector<HTMLElement>("[data-hero-screen]");
+        if (heroScreen) {
           const heroTl = gsap.timeline({
             scrollTrigger: {
-              trigger: originSection,
-              start: "top top",
+              trigger: heroScreen,
+              start: "top 64px",
               end: "bottom top",
               scrub: 0.6,
             },
@@ -144,86 +140,91 @@ export function OpenFlowStory() {
           heroTl
             .to(
               ".hero-float-tl",
-              { x: -90, y: -56, opacity: 0.15, ease: "none" },
+              { x: -90, y: -48, opacity: 0.15, ease: "none" },
               0,
             )
             .to(
               ".hero-float-tr",
-              { x: 90, y: -56, opacity: 0.15, ease: "none" },
+              { x: 90, y: -48, opacity: 0.15, ease: "none" },
               0,
             )
             .to(
               ".hero-float-bl",
-              { x: -84, y: 48, opacity: 0.15, ease: "none" },
+              { x: -84, y: 42, opacity: 0.15, ease: "none" },
               0,
             )
             .to(
               ".hero-float-br",
-              { x: 84, y: 48, opacity: 0.15, ease: "none" },
+              { x: 84, y: 42, opacity: 0.15, ease: "none" },
               0,
             )
             .to(".hero-wire", { opacity: 0, ease: "none" }, 0)
-            .to(".hero-center-core", { y: -28, scale: 0.95, ease: "none" }, 0);
+            .to(".hero-center-core", { y: -24, scale: 0.96, ease: "none" }, 0);
         }
 
-        // B. 第一幕：暗房痛点固定舞台（含串行时钟实时跳动 + 4 幕连续切换）
+        // B. 板块 02：两幕真实业务痛点情景模拟器（Pin 在 64px 顶栏正下方）
         const painSection = painSectionRef.current;
         if (painSection) {
           const scrubBar =
             painSection.querySelector<HTMLElement>(".pain-scrub-bar");
-          const clockEl = painSection.querySelector<HTMLElement>(".pain-clock");
-          const serialBar1 =
-            painSection.querySelector<HTMLElement>(".pain-serial-bar-1");
-          const serialBar2 =
-            painSection.querySelector<HTMLElement>(".pain-serial-bar-2");
-          const serialBar3 =
-            painSection.querySelector<HTMLElement>(".pain-serial-bar-3");
-          const serialBar4 =
-            painSection.querySelector<HTMLElement>(".pain-serial-bar-4");
 
-          let prevPain = 0;
+          let prevStage = 0;
+          let prevPlatform = 0;
+          let prevLoop = 0;
+          let prevCycle = 1;
+
           painTriggerRef.current = ScrollTrigger.create({
             trigger: painSection,
             pin: true,
-            scrub: 0.6,
+            scrub: 0.5,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            start: "top top",
-            end: () => `+=${Math.round(window.innerHeight * 2.6)}`,
+            start: "top 64px",
+            end: () => `+=${Math.round(window.innerHeight * 2.8)}`,
             onUpdate: (self) => {
               const p = self.progress;
               if (scrubBar) {
                 scrubBar.style.transform = `scaleX(${p})`;
               }
 
-              // 在第 1 幕痛点区间 (0 ~ 0.28) 内把滚动实时映射成 00:00 -> 19:48 串行耗时与逐条爬行进度
-              const serialRatio = Math.min(1, p / 0.25);
-              if (clockEl) {
-                clockEl.textContent = formatClock(serialRatio * (19 * 60 + 48));
-              }
-              if (serialBar1) {
-                serialBar1.style.transform = `scaleX(${Math.min(1, serialRatio * 2.2)})`;
-              }
-              if (serialBar2) {
-                serialBar2.style.transform = `scaleX(${Math.max(0.08, Math.min(1, (serialRatio - 0.35) * 2))})`;
-              }
-              if (serialBar3) {
-                serialBar3.style.transform = `scaleX(${Math.max(0.08, Math.min(1, (serialRatio - 0.65) * 2.2))})`;
-              }
-              if (serialBar4) {
-                serialBar4.style.transform = `scaleX(${Math.max(0.06, Math.min(1, (serialRatio - 0.82) * 3))})`;
-              }
+              // 前半段 (0 ~ 0.52)：情景一 · 5 个付费平台依次切标签搬运
+              if (p < 0.52) {
+                if (prevStage !== 0) {
+                  prevStage = 0;
+                  setActivePainStage(0);
+                }
+                const ratio1 = Math.min(0.999, p / 0.52);
+                const nextPlatform = Math.floor(ratio1 * platformCount);
+                if (nextPlatform !== prevPlatform) {
+                  prevPlatform = nextPlatform;
+                  setActivePlatformIndex(nextPlatform);
+                }
+              } else {
+                // 后半段 (0.52 ~ 1.0)：情景二 · 公司统一 API 单线程死循环（滚动期间跑 3 整圈，直观感受无休止循环）
+                if (prevStage !== 1) {
+                  prevStage = 1;
+                  setActivePainStage(1);
+                }
+                const ratio2 = Math.min(0.999, (p - 0.52) / 0.48);
+                const totalSteps = loopStepCount * 3;
+                const stepCursor = Math.floor(ratio2 * totalSteps);
+                const nextLoop = stepCursor % loopStepCount;
+                const nextCycle = Math.floor(stepCursor / loopStepCount) + 1;
 
-              const next = Math.min(painCount - 1, Math.floor(p * painCount));
-              if (next !== prevPain) {
-                prevPain = next;
-                setActivePainIndex(next);
+                if (nextLoop !== prevLoop) {
+                  prevLoop = nextLoop;
+                  setActiveLoopIndex(nextLoop);
+                }
+                if (nextCycle !== prevCycle) {
+                  prevCycle = nextCycle;
+                  setLoopCycleCount(nextCycle);
+                }
               }
             },
           });
         }
 
-        // C. 第二幕：横向无限画布镜头漫游（垂直滚动 -> 横向平推 4 站 + SVG 电缆绘制 + 6 路并发爆发）
+        // C. 板块 03：横向无限画布镜头漫游（Pin 在 64px 顶栏正下方）
         const viewport = canvasViewportRef.current;
         const track = canvasTrackRef.current;
         if (viewport && track) {
@@ -255,7 +256,7 @@ export function OpenFlowStory() {
               scrub: 0.7,
               anticipatePin: 1,
               invalidateOnRefresh: true,
-              start: "top top",
+              start: "top 64px",
               end: () =>
                 `+=${Math.max(Math.round(window.innerHeight * 2.6), Math.round(getTravel() * 1.05))}`,
               onUpdate: (self) => {
@@ -274,7 +275,6 @@ export function OpenFlowStory() {
             },
           });
 
-          // 横向镜头平推
           panTl.to(
             track,
             {
@@ -285,7 +285,6 @@ export function OpenFlowStory() {
             0,
           );
 
-          // SVG 电缆脊线同步点亮贯穿 4 站
           if (spineGlow && spineLen > 0) {
             panTl.to(
               spineGlow,
@@ -298,7 +297,6 @@ export function OpenFlowStory() {
             );
           }
 
-          // 镜头经过第 2 站时，6 路并行视频条同时爆发冲刺
           if (parallelBars.length > 0) {
             panTl.to(
               parallelBars,
@@ -335,21 +333,24 @@ export function OpenFlowStory() {
       mounted = false;
       mm.revert();
     };
-  }, [painCount, stationCount]);
+  }, [platformCount, loopStepCount, stationCount]);
 
-  function scrollToChapter(id: ChapterId) {
-    const el = rootRef.current?.querySelector<HTMLElement>(`#openflow-${id}`);
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function handleSelectPain(index: number) {
+  // 移动端或非 Pin 模式下，定时柔和演示当前情景内的步骤推进？不自动循环（尊重 WCAG 2.2.2），改为点击切换阶段即展示清晰代表态
+  function handleSelectPainStage(index: number) {
     const st = painTriggerRef.current;
     if (st && isPinnedDesktop) {
-      const target =
-        st.start + ((index + 0.35) / painCount) * (st.end - st.start);
+      const targetProgress = index === 0 ? 0.25 : 0.72;
+      const target = st.start + targetProgress * (st.end - st.start);
       window.scrollTo({ top: target, behavior: "smooth" });
+    } else {
+      setActivePainStage(index);
+      if (index === 0) {
+        setActivePlatformIndex(platformCount - 1);
+      } else {
+        setActiveLoopIndex(3);
+        setLoopCycleCount(3);
+      }
     }
-    setActivePainIndex(index);
   }
 
   function handleSelectStation(index: number) {
@@ -370,18 +371,27 @@ export function OpenFlowStory() {
         className="reading-progress-bar fixed inset-x-0 top-0 z-50 h-0.5 bg-accent"
       />
 
-      {/* 第 0 幕：全幅无限画布入口 */}
-      <CanvasHero onStartStory={() => scrollToChapter("pain")} />
-
-      {/* 第 1 幕：暗房痛点剧场（Pin + Scrub 物理动态演绎） */}
-      <BottleneckStage
-        sectionRef={painSectionRef}
-        activeIndex={activePainIndex}
-        isPinnedDesktop={isPinnedDesktop}
-        onSelect={handleSelectPain}
+      {/* 板块 01（第一屏）：项目名称 · 我的角色 · 项目目标 */}
+      <CanvasHero
+        onStartStory={() => {
+          const el =
+            rootRef.current?.querySelector<HTMLElement>("#openflow-pain");
+          el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
       />
 
-      {/* 第 2 幕：横向无限画布镜头漫游（Pin + Horizontal Pan + SVG 数据脊线点亮） */}
+      {/* 板块 02：真实业务场景下的痛点（两幕情景故事模拟） */}
+      <BottleneckStage
+        sectionRef={painSectionRef}
+        activeStageIndex={activePainStage}
+        activePlatformIndex={activePlatformIndex}
+        activeLoopIndex={activeLoopIndex}
+        loopCycleCount={loopCycleCount}
+        isPinnedDesktop={isPinnedDesktop}
+        onSelectStage={handleSelectPainStage}
+      />
+
+      {/* 板块 03：横向无限画布镜头漫游（我是怎么做的） */}
       <InfiniteCanvasTrack
         viewportRef={canvasViewportRef}
         trackRef={canvasTrackRef}
@@ -390,7 +400,7 @@ export function OpenFlowStory() {
         onSelectStation={handleSelectStation}
       />
 
-      {/* 第 3 幕：大字排印成果墙 + 响应式前后对比表 + 案例收束 */}
+      {/* 板块 04：大字排印成果墙 + 响应式前后对比表 + 案例收束 */}
       <section
         id="openflow-outcome"
         aria-labelledby="outcome-heading"
@@ -409,7 +419,7 @@ export function OpenFlowStory() {
           </p>
         </div>
 
-        {/* 建筑级纯排印量化成果带（用细线分隔取代平庸卡片阵列） */}
+        {/* 建筑级纯排印量化成果带 */}
         <div
           data-reveal
           className="mt-12 grid grid-cols-1 divide-y divide-border/80 border-y border-border/80 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x"
@@ -439,7 +449,7 @@ export function OpenFlowStory() {
           ))}
         </div>
 
-        {/* 使用前后核心环节对比表（遵循 modern-web-guidance: responsive-table @container 堆叠方案） */}
+        {/* 使用前后核心环节对比表 */}
         <div data-reveal className="mt-16 md:mt-20">
           <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
             <h3
