@@ -47,7 +47,7 @@ export function InfiniteCanvasTrack({
                 id="build-heading"
                 className="text-[24px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[32px]"
               >
-                我是怎么做的：穿行 OpenFlow 画布
+                确定形态之后：穿行 OpenFlow 无限画布
               </h2>
               <p className="mt-2 max-w-2xl text-balance text-label leading-relaxed text-fg-secondary md:text-[15px]">
                 需求拆解驱动 Claude Code（Vibe

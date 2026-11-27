@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowIcon } from "@/components/home/icons";
 import { BottleneckStage } from "@/components/openflow/bottleneck-stage";
 import { CanvasHero } from "@/components/openflow/canvas-hero";
+import { DecisionStage } from "@/components/openflow/decision-stage";
 import { InfiniteCanvasTrack } from "@/components/openflow/infinite-canvas-track";
 import { openflowStory } from "@/lib/openflow-story";
 
@@ -76,6 +77,31 @@ export function OpenFlowStory() {
             scrollTrigger: {
               trigger: el,
               start: "top 86%",
+              once: true,
+            },
+          });
+        }
+
+        // 板块 03 上篇：无限画布对比图的 SVG 贝塞尔连线随进入视口依次绘制
+        const decisionWires = Array.from(
+          root.querySelectorAll<SVGPathElement>(".decision-canvas-wire"),
+        );
+        if (decisionWires.length > 0) {
+          for (const wire of decisionWires) {
+            const len = wire.getTotalLength();
+            gsap.set(wire, {
+              strokeDasharray: len,
+              strokeDashoffset: len,
+            });
+          }
+          gsap.to(decisionWires, {
+            strokeDashoffset: 0,
+            duration: 0.85,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: decisionWires[0],
+              start: "top 84%",
               once: true,
             },
           });
@@ -518,7 +544,10 @@ export function OpenFlowStory() {
         onSelectStage={handleSelectPainStage}
       />
 
-      {/* 板块 03：横向无限画布镜头漫游（我是怎么做的） */}
+      {/* 板块 03 上篇：我是怎么做的——自己动手、竞品调研与「对话框 vs 无限画布」形态取舍 */}
+      <DecisionStage />
+
+      {/* 板块 03 下篇：横向无限画布镜头漫游（确定无限画布形态后的 4 阶段工程落地） */}
       <InfiniteCanvasTrack
         viewportRef={canvasViewportRef}
         trackRef={canvasTrackRef}
