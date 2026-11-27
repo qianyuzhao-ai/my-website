@@ -1,17 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Poppins } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { ConnectSheet } from "@/components/site/connect-sheet";
-import { SiteDock } from "@/components/site/site-dock";
+import { EditorialShell } from "@/components/site/editorial-shell";
+import { LocaleProvider } from "@/components/site/locale-provider";
+import { SearchProvider } from "@/components/site/search-dialog";
 import { SkipLink } from "@/components/site/skip-link";
-import { siteConfig } from "@/lib/site-config";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getServerLocale } from "@/lib/i18n/server";
+import { getPosts } from "@/lib/posts";
 import "./globals.css";
 
-const poppins = Poppins({
+const geistSans = Geist({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-poppins",
+  variable: "--font-geist-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-geist-mono",
 });
 
 const fraunces = Fraunces({
@@ -25,18 +36,26 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
-export const metadata: Metadata = {
-  title: `${siteConfig.name} — ${siteConfig.role}`,
-  description: `${siteConfig.name} 的个人网站：${siteConfig.tagline}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: dict.meta.siteTitle,
+    description: dict.meta.siteDescription,
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  const posts = await getPosts(locale);
+
   return (
     <html
-      lang="zh-CN"
-      className={`${poppins.variable} ${fraunces.variable}`}
+      lang={dict.htmlLang}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable}`}
       suppressHydrationWarning
     >
       <body>
@@ -47,10 +66,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SkipLink />
-          <SiteDock />
-          {children}
-          <ConnectSheet />
+          <LocaleProvider initialLocale={locale}>
+            <SearchProvider posts={posts}>
+              <SkipLink />
+              <EditorialShell>{children}</EditorialShell>
+              <ConnectSheet />
+            </SearchProvider>
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>

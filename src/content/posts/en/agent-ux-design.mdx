@@ -1,0 +1,353 @@
+import {
+  AsyncLongTaskDemo,
+  CostQuotaDemo,
+  CrossCuttingTable,
+  DeliveryVerifiabilityDemo,
+  DiscoverabilityDemo,
+  ErrorRecoveryDemo,
+  ExecutionTransparencyDemo,
+  ExpectationAlignmentDemo,
+  ExperienceMetricsDemo,
+  FeedbackReuseDemo,
+  HumanInTheLoopDemo,
+  IntentContextDemo,
+  IterativeRefinementDemo,
+  MainLineTable,
+  MemoryPersonalizationDemo,
+  MultiAgentHandoffDemo,
+  MultimodalCrossDeviceDemo,
+  PersonaToneDemo,
+  ProactiveAssistanceDemo,
+  SafetyPrivacyDemo,
+} from "@/components/writing/agent-ux";
+
+export const metadata = {
+  title: "User Experience Design for AI Agent Products",
+  summary:
+    "A practical framework breaking agent UX into 12 longitudinal workflow steps and 6 cross-cutting topics, paired with 18 live interactive demos.",
+  date: "2026-11-27",
+  tags: ["Agent", "UX Design", "AIGC"],
+};
+
+Designing an AI agent product means designing the entire arc of **handing a real task to AI—from first intent to finished outcome**. You can audit it along two axes:
+
+- **The vertical workflow**: the **12 steps** a user moves through from delegation to long-term reuse.
+- **The horizontal lenses**: **6 cross-cutting topics**—safety, multi-agent handoffs, tone, form factors, quota, and metrics—that apply across every step rather than sitting at one point in the flow.
+
+Picture a matrix: walk down the 12 steps first, then scan across with the 6 lenses to catch blind spots. Throughout this guide, we use a single running scenario—*“plan a 5-day Tokyo trip”*—with a clickable interactive demo embedded at every design point.
+
+## Agent vs. Chatbot: What Actually Changes
+
+A chatbot is turn-based: one question, one answer in a few seconds; if it misses, you ask again. An agent takes on a whole job—researching options, comparing prices, mapping routes, booking tickets—running for minutes or hours while calling real external tools.
+
+Longer runtimes, more steps, and real-world side effects create three new anxieties for users: **I can’t see what it’s doing, I can’t stop it if it goes wrong, and I can’t tell if the final output is right.** All 18 patterns below exist to resolve those three fears.
+
+Every pattern serves four core goals:
+
+- **Explainable**: users understand what the agent is doing and why
+- **Controllable**: users can steer, pause, or take over at any time
+- **Predictable**: users have a clear mental model of what happens next
+- **Recoverable**: mistakes leave checkpoints intact instead of forcing a restart
+
+> Together, these four properties calibrate user trust to the AI’s actual capability: users feel confident when it performs well and catch mistakes when it slips. In practice, this is **Trust Calibration**.
+
+## Phase 1: Before the Task
+
+Help users discover the capability, express intent effortlessly, and align on direction before work begins.
+
+### 01 Discoverability & Entry
+
+**User friction**: Users don’t realize the product can execute end-to-end tasks, or can’t tell when to switch modes.
+
+**How to design it**:
+
+1. Decide where the entry lives: a prominent dedicated mode or an on-demand transition inside chat
+2. Let the system classify task complexity—answer simple queries directly and suggest Task Mode for multi-step goals (**Routing**)
+3. Explain in one sentence what Task Mode will do next, and leave the final choice to the user
+
+Try both example pills in the demo below—*“Weather in Shanghai tomorrow?”* vs. *“Plan a 5-day Tokyo trip with flights & hotel”*—or type your own request. The exact same input box handles both differently so users never have to hunt for a hidden toggle.
+
+Make the entry too loud and users burn slow, expensive runs on weather lookups; bury it too deep and no one finds it. Automatic routing covers both ends.
+
+<DiscoverabilityDemo />
+
+### 02 Intent & Context
+
+**User friction**: Staring at a blank text box without knowing what to write or how detailed to be (**Cold Start** paralysis).
+
+**How to design it**:
+
+1. Offer clickable starter templates that work out of the box
+2. Turn key constraints (origin, days, travelers, budget) into structured slots
+3. Allow attaching files or connecting calendars and booking emails so the agent reads context directly
+
+Click a template below, adjust the slots and budget tier, and toggle connected sources. Notice the structured payload at the bottom: without typing a single prompt sentence, the user has already handed the agent everything required to plan the trip.
+
+Most people don’t want to write prompts. Turning “what should I type?” into “pick and adjust” lowers the bar from essay writing to multiple choice.
+
+<IntentContextDemo />
+
+### 03 Expectation Alignment
+
+**User friction**: Waiting ten minutes only to realize the agent misunderstood—yet getting interrogated before every tiny task feels equally exhausting.
+
+**How to design it**:
+
+1. Set a clear threshold for asking upfront: complexity, cost of getting it wrong, and reversibility
+2. When alignment is warranted, show an editable step-by-step plan users can uncheck or tweak
+3. Pair sensible defaults with a countdown so users who don’t want to review aren’t blocked
+
+In the demo below, the agent proposes four steps with checkboxes and a 10-second auto-start progress bar. Uncheck any step (editing pauses the timer) or let it run automatically. The countdown turns confirmation into an opt-in affordance.
+
+Confirmation has a UX cost. Skip it for simple requests; for complex ones, combine an editable plan with auto-start so careful users can steer and busy users keep moving.
+
+<ExpectationAlignmentDemo />
+
+## Phase 2: During the Task
+
+These four patterns are unique to agents—you rarely encounter them in conventional apps. They are the clearest litmus test of real agent design experience.
+
+### 04 Execution Transparency
+
+**User friction**: Staring at an opaque loading spinner with no idea what the agent is doing, whether it’s stuck, or how long remains.
+
+**How to design it**:
+
+1. Break the task into visible stages showing current progress
+2. Translate technical tool calls into plain human language (*“Searching flights”*, not `call_flight_api_v2`)
+3. Show a one-line summary by default and reveal deeper traces on demand (**Progressive Disclosure**)
+
+Run the trace below and toggle **Expand details** to compare the two layers of density: the default view reassures users on progress, while the expanded layer satisfies anyone auditing which platforms and filters were checked.
+
+Hide everything and users feel blind; dump every log and they get overwhelmed. Layered disclosure serves both audiences cleanly.
+
+<ExecutionTransparencyDemo />
+
+### 05 Human-in-the-Loop
+
+**User friction**: Full autonomy feels risky when real money is involved; approving every minor click triggers **Confirmation Fatigue**.
+
+**How to design it**:
+
+1. Classify actions by risk: reversible reads are low risk; spending, sending, and deleting are high risk
+2. Let users pick their preferred autonomy tier—ask every step, ask on risk, or full auto (**Levels of Autonomy**)
+3. Always keep a visible **Pause & take over** escape hatch
+
+Switch across the three autonomy tabs below and watch both the per-action badges and total confirmation count respond. In *Ask on risk*, only booking the hotel and paying for flights pause for approval.
+
+Save confirmations for irreversible moments. When interruptions only happen where stakes are real, users actually read them.
+
+<HumanInTheLoopDemo />
+
+### 06 Async & Long-running Tasks
+
+**User friction**: Nobody wants to stare at a progress bar for twenty minutes.
+
+**How to design it**:
+
+1. Allow long tasks to move smoothly into the background
+2. Provide a Task Center to monitor multiple running jobs in one place
+3. Notify users when a job finishes—or hits a blocker—so they can resume immediately
+
+Click **Run in background & notify me** below. The card collapses into a compact Task Center bar, fast-forwards to completion, and calls you back with a ready-to-open result. Notice the button label makes two promises at once: *you can leave now, and I’ll alert you when it’s done.*
+
+Once tasks run long, the mental model shifts from *waiting* to *delegating*. The design goal becomes letting users walk away with confidence and pick back up without friction.
+
+<AsyncLongTaskDemo />
+
+### 07 Error Handling & Recovery
+
+**User friction**: Seeing a vague *“Something went wrong”* with no clue what broke—and losing all prior progress.
+
+**How to design it**:
+
+1. Categorize failures (misunderstood intent, broken tool, weak output) and handle each specifically
+2. Tell the user which step failed, why it happened, and whose fault it is
+3. Offer concrete recovery paths—retry, switch source, or skip—while preserving completed steps (**Checkpoint Resume**)
+
+Below, steps 1 and 2 are saved as checkpoints while step 3 hits a third-party hotel timeout (*“this is not your fault”*). Try any of the three recovery buttons—none of them forces a restart from step 1.
+
+Errors are normal with AI. Users forgive failures; what they don’t forgive is being left in the dark with no way forward.
+
+<ErrorRecoveryDemo />
+
+## Phase 3: After the Task
+
+Help users verify the output, refine only what needs changing, and turn great runs into repeatable assets.
+
+### 08 Delivery & Verifiability
+
+**User friction**: The output reads fluently, yet there is no quick way to verify whether facts and prices are real.
+
+**How to design it**:
+
+1. Attach clickable inline sources directly beside factual claims (**Citations**)
+2. Present deliverables in a dedicated artifact area with built-in export and sharing
+3. Highlight AI-generated edits so changes are scannable at a glance (**Diff**)
+
+Click the inline `[1]` and `[2]` badges in the Tokyo itinerary below to verify each claim in place, or toggle **Highlight edits** and test Export / Share. Putting sources inline means users check claims right where they read them—footnotes buried at the bottom rarely get opened.
+
+<DeliveryVerifiabilityDemo />
+
+### 09 Iterative Refinement
+
+**User friction**: Asking to tweak Day 2 causes the agent to rewrite all five days, wiping out parts the user already loved.
+
+**How to design it**:
+
+1. Scope revisions to the selected block (**Targeted Edit**)
+2. Support direct human edits alongside AI-assisted revisions
+3. Keep version history so any edit can be rolled back cleanly
+
+Click **Edit only this day** on Day 2 below. Only Day 2 updates to `v2` (with instant rollback to `v1`), while Days 1 and 3 stay visibly untouched. The real value of the pattern lies in what *doesn’t* change.
+
+AI outputs rarely nail everything on the first pass. Smooth iteration is what keeps users collaborating until the result is truly right.
+
+<IterativeRefinementDemo />
+
+### 10 Feedback & Reuse
+
+**User friction**: Great workflows have to be re-explained next time; bad results offer no structured way to say why.
+
+**How to design it**:
+
+1. Offer thumbs-up / thumbs-down, and follow a dislike with quick reason tags
+2. Let users save successful runs as reusable templates or **Skills**
+3. Feed structured reasons back into product evaluation and iteration
+
+Try both **Helpful** and **Not satisfied** below. Each button takes one deliberate next step: dislikes capture actionable causes, while likes offer to package the workflow into a reusable Skill.
+
+A bare upvote or downvote doesn’t tell the team what to fix. One extra step turns feedback into signal—and turns one-off wins into lasting leverage.
+
+<FeedbackReuseDemo />
+
+## Phase 4: Long-Term
+
+Make the product feel smoother over time while keeping the user unmistakably in charge.
+
+### 11 Memory & Personalization
+
+**User friction**: Repeating preferences like dietary restrictions every session—or feeling unsettled when AI remembers things silently.
+
+**How to design it**:
+
+1. Remember stable preferences and apply them automatically
+2. Surface everything the agent remembers in a plain-language list
+3. Make every entry individually deletable, with a master off-switch
+
+Inspect the memory list below: delete individual items or toggle the master switch off to pause personal recall immediately.
+
+Memory you can inspect and delete feels thoughtful. Invisible memory—no matter how accurate—feels like surveillance.
+
+<MemoryPersonalizationDemo />
+
+### 12 Proactive Assistance
+
+**User friction**: Valuable moments slip by unless users remember to ask—yet overly eager alerts quickly feel spammy.
+
+**How to design it**:
+
+1. Trigger proactively only at high-leverage moments (such as 24 hours before flight check-in)
+2. Make every suggestion one-tap to accept and one-tap to dismiss
+3. Give users direct control over notification frequency and Do Not Disturb
+
+Accept or decline the check-in nudge below, then switch across *Normal*, *Important only*, and *Do not disturb*. Proactive help is what separates an agent from a passive tool—right timing feels magical, wrong timing feels intrusive, so frequency control must belong to the user.
+
+<ProactiveAssistanceDemo />
+
+## Six Cross-Cutting Topics
+
+These six lenses don’t belong to any single phase; check every stage of your product against them horizontally.
+
+### A Safety & Privacy
+
+**User friction**: Worrying that the agent will peek at private data, spend money unexpectedly, or delete something irreversible.
+
+**How to design it**:
+
+1. Split permissions by purpose and state clearly what each one is used for
+2. Enforce two-step confirmation for irreversible actions like payments and deletion
+3. Let users inspect and clear their data whenever they choose
+
+Toggle the scoped permissions below, notice the one-line purpose statement under each switch, and click **Clear trip data** to experience the two-step erase guard. Clear boundaries paradoxically increase trust—the more granular and honest the consent, the more comfortable users feel delegating.
+
+<SafetyPrivacyDemo />
+
+### B Multi-Agent & Ecosystem
+
+**User friction**: Switching to a specialist agent forces the user to repeat everything and muddies who is currently responding.
+
+**How to design it**:
+
+1. Pass structured context forward automatically during transitions (**Handoff**)
+2. State explicitly who took over and exactly what context was carried over
+3. Keep interaction patterns consistent across primary and third-party agents
+
+Click **Hand off to Hotel Expert** below and watch the explicit handoff divider list the carried-over dates, party size, and budget—so the specialist opens with tailored picks instead of re-asking basic questions. Orchestrating multiple agents is an internal detail; to the user, it should feel like one continuous service.
+
+<MultiAgentHandoffDemo />
+
+### C Persona & Tone
+
+**User friction**: Overly robotic copy feels cold; overly human copy feels fake—and cute apologies during failures actively frustrate users.
+
+**How to design it**:
+
+1. Define the product’s role upfront: assistant, advisor, or partner
+2. Write tone guidelines with dedicated rules for error states
+3. Compare multiple rewrites of the exact same message side-by-side before shipping
+
+Switch across the three tones for the same booking-site outage below. The balanced version hits all three essentials: **what happened, what the agent is doing, and what the user can choose next**.
+
+<PersonaToneDemo />
+
+### D Multimodal & Cross-device
+
+**User friction**: Starting a task on mobile only to lose it on desktop, or getting read a wall of text while walking hands-free.
+
+**How to design it**:
+
+1. Keep task state synced continuously across devices
+2. Reshape the exact same data to fit each device: action cards on mobile, full timelines on desktop, one crisp sentence on voice
+3. Support voice and camera inputs alongside typing
+
+Toggle between **Phone**, **Desktop**, and **Voice** below for the exact same stop (*Day 2: Meiji Shrine*). Notice how information density shifts dramatically while the underlying synced state stays identical.
+
+<MultimodalCrossDeviceDemo />
+
+### E Cost & Quota
+
+**User friction**: Hitting sudden opaque limits or silent throttling with zero explanation.
+
+**How to design it**:
+
+1. Show remaining quota transparently before the user clicks Start
+2. Route simple requests to fast, cheap modes by default; save deep runs for complex tasks
+3. When quota runs out, offer clear exits: queue for later, switch to Quick mode, or upgrade
+
+Run Deep mode below until you hit `5 / 5` to experience transparent metering and the three clear fallback options when exhausted. Explain limits clearly and users understand; hide them and users assume your product is broken.
+
+<CostQuotaDemo />
+
+### F Experience Metrics
+
+**Team friction**: Shipping a redesign without knowing whether real agent quality actually improved.
+
+**How to design it**:
+
+1. Define what “job done” means per task type—flight lookup and 5-day planning aren’t judged the same way
+2. Track 1–2 concrete metrics across five layers: **Outcome, Process, Trust, Recovery, and Value**
+3. Triangulate three signals: behavioral telemetry, direct user verdicts, and fixed evaluation benchmarks
+4. Review failure clusters regularly, fix root causes, and turn bad cases into regression tests
+
+Answer **“Did this get the job done?”** below to see how direct user verdicts pair with the five behavioral layers. Because AI outputs vary every run, clicks alone aren’t enough—you have to measure output quality and calibrated trust.
+
+<ExperienceMetricsDemo />
+
+## Complete Framework Matrix
+
+Use these two reference matrices during design reviews: walk down the 12 workflow steps, then audit across the 6 lenses. Click any row to jump directly back to its interactive demo.
+
+<MainLineTable />
+
+<CrossCuttingTable />

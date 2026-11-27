@@ -1,10 +1,11 @@
-// 文章数据：读取 src/content/posts/*.mdx，元信息来自每篇文件里的 `export const metadata`。
+// 文章数据：读取 src/content/posts/*.mdx（默认中文）与 src/content/posts/en/*.mdx（按需英文，缺省自动回退中文）。
 
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import type { MDXContent } from "mdx/types";
 import { cache } from "react";
 import { slugifyHeading } from "@/lib/heading-slug";
+import type { Locale } from "@/lib/i18n/config";
 import type { Post, PostHeading, PostMeta } from "@/lib/post-shared";
 
 export {
@@ -18,9 +19,26 @@ export {
 } from "@/lib/post-shared";
 
 const POSTS_DIR = path.join(process.cwd(), "src/content/posts");
+const EN_POSTS_DIR = path.join(POSTS_DIR, "en");
 
-function importPost(slug: string) {
+async function fileExists(filePath: string) {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function importZhPost(slug: string) {
   return import(`@/content/posts/${slug}.mdx`) as Promise<{
+    default: MDXContent;
+    metadata?: Partial<PostMeta>;
+  }>;
+}
+
+function importEnPost(slug: string) {
+  return import(`@/content/posts/en/${slug}.mdx`) as Promise<{
     default: MDXContent;
     metadata?: Partial<PostMeta>;
   }>;
@@ -69,42 +87,63 @@ function extractHeadings(source: string): PostHeading[] {
   return headings;
 }
 
-/** 全部已发布文章，按日期从新到旧 */
-export const getPosts = cache(async (): Promise<Post[]> => {
-  const files = (await readdir(POSTS_DIR)).filter((file) =>
-    file.endsWith(".mdx"),
-  );
-  const posts = await Promise.all(
-    files.map(async (file) => {
-      const slug = file.slice(0, -".mdx".length);
-      const [{ metadata }, source] = await Promise.all([
-        importPost(slug),
-        readFile(path.join(POSTS_DIR, file), "utf8"),
+async function resolvePostSource(slug: string, locale: Locale) {
+  if (locale === "en") {
+    const enPath = path.join(EN_POSTS_DIR, `${slug}.mdx`);
+    if (await fileExists(enPath)) {
+      const [mod, source] = await Promise.all([
+        importEnPost(slug),
+        readFile(enPath, "utf8"),
       ]);
-      return {
-        ...assertMeta(slug, metadata),
-        slug,
-        readingMinutes: readingMinutes(source),
-      };
-    }),
-  );
-  return posts
-    .filter((post) => !post.draft || process.env.NODE_ENV === "development")
-    .sort((a, b) => b.date.localeCompare(a.date));
-});
+      return { mod, source, isFallback: false };
+    }
+    const [mod, source] = await Promise.all([
+      importZhPost(slug),
+      readFile(path.join(POSTS_DIR, `${slug}.mdx`), "utf8"),
+    ]);
+    return { mod, source, isFallback: true };
+  }
 
-export async function getPost(slug: string) {
-  const posts = await getPosts();
-  const index = posts.findIndex((post) => post.slug === slug);
-  if (index === -1) return null;
-  const [{ default: Content }, source] = await Promise.all([
-    importPost(slug),
+  const [mod, source] = await Promise.all([
+    importZhPost(slug),
     readFile(path.join(POSTS_DIR, `${slug}.mdx`), "utf8"),
   ]);
+  return { mod, source, isFallback: false };
+}
+
+/** 全部已发布文章，按日期从新到旧（按语言加载，英文缺省自动回退中文） */
+export const getPosts = cache(
+  async (locale: Locale = "zh"): Promise<Post[]> => {
+    const files = (await readdir(POSTS_DIR)).filter((file) =>
+      file.endsWith(".mdx"),
+    );
+    const posts = await Promise.all(
+      files.map(async (file) => {
+        const slug = file.slice(0, -".mdx".length);
+        const { mod, source } = await resolvePostSource(slug, locale);
+        return {
+          ...assertMeta(slug, mod.metadata),
+          slug,
+          readingMinutes: readingMinutes(source),
+        };
+      }),
+    );
+    return posts
+      .filter((post) => !post.draft || process.env.NODE_ENV === "development")
+      .sort((a, b) => b.date.localeCompare(a.date));
+  },
+);
+
+export async function getPost(slug: string, locale: Locale = "zh") {
+  const posts = await getPosts(locale);
+  const index = posts.findIndex((post) => post.slug === slug);
+  if (index === -1) return null;
+  const { mod, source, isFallback } = await resolvePostSource(slug, locale);
   return {
     post: posts[index],
-    Content,
+    Content: mod.default,
     headings: extractHeadings(source),
+    isFallback,
     /** 更早的一篇 */
     previous: posts[index + 1] ?? null,
     /** 更新的一篇 */

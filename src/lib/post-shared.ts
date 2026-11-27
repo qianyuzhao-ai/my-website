@@ -53,3 +53,38 @@ export function formatDate(date: string) {
 export function formatMonthDay(date: string) {
   return date.slice(5).replace("-", ".");
 }
+
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
+
+/** 2026-09-28 → { weekday: "Monday,", rest: "September 28, 2026" }（纯 UTC 计算避免时区偏移） */
+export function formatEditorialDate(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  if (!y || !m || !d) return { weekday: "", rest: date };
+  const utc = new Date(Date.UTC(y, m - 1, d));
+  const weekday = `${WEEKDAYS[utc.getUTCDay()]},`;
+  const rest = `${MONTHS[utc.getUTCMonth()]} ${d}, ${y}`;
+  return { weekday, rest };
+}
