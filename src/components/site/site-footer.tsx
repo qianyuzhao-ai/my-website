@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { EditorialWordmark } from "@/components/site/editorial-wordmark";
 import { LanguageToggle, useLocale } from "@/components/site/locale-provider";
 import { siteConfig } from "@/lib/site-config";
 
@@ -188,12 +189,8 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* 标志性通栏空心描边字标（QIANYU.AI） */}
-        <div aria-hidden="true" className="mt-8 pb-4 text-center">
-          <p className="editorial-wordmark font-sans text-[clamp(3.2rem,11.6vw,9.75rem)] leading-[0.9] font-bold tracking-[-0.035em] whitespace-nowrap">
-            QIANYU.AI
-          </p>
-        </div>
+        {/* 标志性通栏双层图纸印刷视差字标（QIANYU.AI） */}
+        <EditorialWordmark />
       </div>
     </footer>
   );

@@ -348,11 +348,37 @@ summary {
   background-size: 20px 20px;
 }
 
-/* 页脚通栏空心描边字标（致敬 blog.x.com 的 X.COM 描边底标） */
+/* 页脚通栏空心描边字标 + 双层图纸印刷视差错位（遵循 modern-web-guidance: motion & individual-transform-properties） */
 .editorial-wordmark {
   color: transparent;
   -webkit-text-stroke: 1.4px var(--border-strong);
   user-select: none;
+}
+
+.editorial-wordmark-stage {
+  --wm-x: 0;
+  --wm-y: 0;
+}
+
+.wordmark-layer-back,
+.wordmark-layer-mid,
+.wordmark-layer-front {
+  /* 基础态显式声明恒等变换，避免交互时产生层叠上下文跳变 */
+  translate: 0px 0px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wordmark-layer-back {
+    translate: calc(var(--wm-x) * -10px) calc(var(--wm-y) * -7px);
+  }
+
+  .wordmark-layer-mid {
+    translate: calc(var(--wm-x) * -3px) calc(var(--wm-y) * -2px);
+  }
+
+  .wordmark-layer-front {
+    translate: calc(var(--wm-x) * 8px) calc(var(--wm-y) * 5px);
+  }
 }
 
 /*
