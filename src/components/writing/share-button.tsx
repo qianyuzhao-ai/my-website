@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowIcon, CheckIcon } from "@/components/home/icons";
+import { useLocale } from "@/components/site/locale-provider";
 
 export function ShareButton({
   title,
@@ -10,6 +11,7 @@ export function ShareButton({
   title: string;
   fullWidth?: boolean;
 }) {
+  const { dict } = useLocale();
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -39,17 +41,17 @@ export function ShareButton({
         {copied ? (
           <>
             <CheckIcon className="size-3.5" />
-            <span>Link copied</span>
+            <span>{dict.article.linkCopied}</span>
           </>
         ) : (
           <>
-            <span>Share this post</span>
+            <span>{dict.article.share}</span>
             <ArrowIcon className="size-3.5" />
           </>
         )}
       </button>
       <p aria-live="polite" className="sr-only">
-        {copied ? "文章链接已复制到剪贴板" : ""}
+        {copied ? dict.article.linkCopiedSr : ""}
       </p>
     </>
   );

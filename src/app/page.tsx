@@ -8,62 +8,11 @@ import {
 } from "@/components/editorial/wireframe-art";
 import { SearchPill } from "@/components/site/search-dialog";
 import { SiteFooter } from "@/components/site/site-footer";
+import { getDictionary, type StoryCardEntry } from "@/lib/i18n/dictionaries";
+import { getServerLocale } from "@/lib/i18n/server";
 import { getPosts } from "@/lib/posts";
 
-const FEATURED_STORIES = [
-  {
-    id: "agent-workflow",
-    category: "Agent Engineering",
-    date: "2026-09-28",
-    title: "用 Agent 重做我的设计工作流",
-    excerpt:
-      "从 Figma 稿到代码的往返里，哪些环节适合交给 Agent，哪些仍然必须由设计师自己把关。",
-    href: "/writing/agent-design-workflow",
-    art: "agent",
-  },
-  {
-    id: "latent-storyboard",
-    category: "AIGC Workflow",
-    date: "2026-08-20",
-    title: "Latent Storyboard Engine",
-    excerpt:
-      "告别抽卡式随机生成：通过分镜锚点控制构图骨架、光影色温与角色连续性，稳定放大视觉序列。",
-    href: "/works",
-    art: "storyboard",
-  },
-  {
-    id: "aigc-flow",
-    category: "Product Design",
-    date: "2026-08-14",
-    title: "AIGC-FLOW 复盘：三代流程的取舍",
-    excerpt:
-      "从节点连线到分镜表，三次推倒重来背后的判断依据：用户关心的不是怎么连，而是下一步做什么。",
-    href: "/writing/aigc-flow-retrospective",
-    art: "architecture",
-  },
-] as const;
-
-const TOPIC_LINKS = [
-  { label: "Agent Engineering", href: "/writing?tag=Agent", active: true },
-  { label: "AIGC Workflow", href: "/writing?tag=AIGC", active: false },
-  {
-    label: "Full-Stack UI",
-    href: "/writing?tag=%E5%89%8D%E7%AB%AF",
-    active: false,
-  },
-  {
-    label: "Design Systems",
-    href: "/writing?tag=%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B",
-    active: false,
-  },
-  { label: "Sky Island 3D", href: "/island", active: false },
-] as const;
-
-function StoryArt({
-  kind,
-}: {
-  kind: (typeof FEATURED_STORIES)[number]["art"];
-}) {
+function StoryArt({ kind }: { kind: StoryCardEntry["art"] }) {
   if (kind === "agent") {
     return <AgentWorkflowArt className="h-auto w-full max-w-[300px]" />;
   }
@@ -74,7 +23,9 @@ function StoryArt({
 }
 
 export default async function Home() {
-  const posts = await getPosts();
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  const posts = await getPosts(locale);
 
   return (
     <>
@@ -83,26 +34,25 @@ export default async function Home() {
         className="flex-1 px-4 pt-6 sm:px-6 md:px-10 md:pt-8 lg:px-12"
       >
         <div className="mx-auto flex max-w-[1120px] flex-col gap-10 md:gap-14">
-          {/* 1. 顶部刊头与桌面端 ⌘K 搜索胶囊 */}
+          {/* 1. 顶部刊头与桌面端 ⌘K 内联搜索框 */}
           <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <h1 className="text-[28px] leading-[1.18] font-semibold tracking-[-0.025em] text-fg md:text-[38px] md:leading-[1.14]">
-              Insights &amp; Works from QianYu
+              {dict.home.title}
             </h1>
             <SearchPill className="hidden lg:block" />
           </header>
 
-          {/* 2. Featured Hero Split Banner（0px 直角平面块 + 等距线框插图 + 实心胶囊按钮） */}
+          {/* 2. Featured Hero Split Banner */}
           <section
             aria-labelledby="featured-hero-title"
             className="bg-surface p-5 sm:p-7 lg:p-10"
           >
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch lg:gap-8">
-              {/* 移动端先展示视觉线框，桌面端左文右图 */}
               <div className="order-2 flex flex-col justify-between gap-6 lg:order-1 lg:col-span-6">
                 <div className="hidden items-center gap-2.5 font-mono text-micro text-fg-muted lg:flex">
                   <span aria-hidden="true" className="size-1.5 bg-fg" />
                   <span className="font-medium tracking-wider text-fg uppercase">
-                    FEATURED CASE STUDY
+                    {dict.home.heroBadge}
                   </span>
                   <span aria-hidden="true">·</span>
                   <span>2026 · v1.4.0</span>
@@ -113,34 +63,32 @@ export default async function Home() {
                     id="featured-hero-title"
                     className="text-[22px] leading-[1.32] font-bold tracking-[-0.02em] text-fg sm:text-[28px] lg:text-[30px] lg:leading-[1.34]"
                   >
-                    OpenFlow：面向 12 人团队的 AIGC 无限画布生产平台
+                    {dict.home.heroTitle}
                   </h2>
                   <p className="mt-3.5 max-w-[46ch] text-label leading-[1.65] text-fg-secondary md:text-[15px]">
-                    面向 AI 视频播客与多模态评测一线场景，以需求拆解驱动 Coding
-                    Agent 全栈落地，将单条 5 分钟串行等待重构为并发工作流。
+                    {dict.home.heroDesc}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <div className="hidden items-center gap-3 font-mono text-micro tracking-wider text-fg-muted uppercase lg:flex">
-                    <span>MACOS &amp; WINDOWS</span>
+                    <span>{dict.home.heroSpecs[0]}</span>
                     <span aria-hidden="true">/</span>
-                    <span>ELECTRON + REACT FLOW</span>
+                    <span>{dict.home.heroSpecs[1]}</span>
                   </div>
 
                   <Link
                     href="/works/openflow"
                     className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-5 text-caption font-medium text-ink-fg transition-opacity hover:opacity-85 lg:hidden"
                   >
-                    Read Case Study
+                    {dict.home.heroCta}
                   </Link>
                 </div>
               </div>
 
-              {/* 右侧等距建筑线框插图 + 桌面端右下角胶囊按钮 */}
               <div className="order-1 flex flex-col justify-between gap-4 lg:order-2 lg:col-span-6 lg:items-end">
                 <p className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase lg:hidden">
-                  FEATURED WORK · 2026
+                  {dict.home.heroMobileBadge}
                 </p>
 
                 <div className="flex w-full items-center justify-center py-1 lg:flex-1">
@@ -151,13 +99,13 @@ export default async function Home() {
                   href="/works/openflow"
                   className="hidden h-9 items-center justify-center rounded-full bg-ink px-5 text-caption font-medium text-ink-fg transition-opacity hover:opacity-85 lg:inline-flex"
                 >
-                  Read Case Study
+                  {dict.home.heroCta}
                 </Link>
               </div>
             </div>
           </section>
 
-          {/* 3. Editorial 3-Column Grid（Stories worth your time） */}
+          {/* 3. Editorial 3-Column Grid */}
           <section
             aria-labelledby="stories-heading"
             className="flex flex-col gap-6"
@@ -167,15 +115,15 @@ export default async function Home() {
                 id="stories-heading"
                 className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-fg md:text-[26px]"
               >
-                Stories worth your time
+                {dict.home.storiesHeading}
               </h2>
               <p className="text-label text-fg-muted md:text-[15px]">
-                picks from QianYu&apos;s studio — engineering, design &amp; AIGC
+                {dict.home.storiesSubtitle}
               </p>
             </div>
 
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-              {FEATURED_STORIES.map((story) => (
+              {dict.home.stories.map((story) => (
                 <Link
                   key={story.id}
                   href={story.href}
@@ -219,16 +167,16 @@ export default async function Home() {
           >
             <div className="flex flex-col gap-3">
               <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-                EXPLORE BY TOPIC
+                {dict.home.topicEyebrow}
               </p>
               <h2
                 id="topic-explorer-heading"
                 className="text-[20px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[24px]"
               >
-                Insights on Agent Engineering &amp; AIGC Systems
+                {dict.home.topicHeading}
               </h2>
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-                {TOPIC_LINKS.map((item) => (
+                {dict.home.topicLinks.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
@@ -248,7 +196,7 @@ export default async function Home() {
               href="/works"
               className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-ink px-5 text-caption font-medium text-ink-fg transition-opacity hover:opacity-85 md:min-h-9 md:w-auto"
             >
-              Explore Works →
+              {dict.home.topicCta}
             </Link>
           </section>
         </div>

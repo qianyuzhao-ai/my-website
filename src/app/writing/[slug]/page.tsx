@@ -8,22 +8,21 @@ import { PostPager } from "@/components/writing/post-pager";
 import { PostToc } from "@/components/writing/post-toc";
 import { ReadingProgress } from "@/components/writing/reading-progress";
 import { ShareButton } from "@/components/writing/share-button";
-import { formatEditorialDate } from "@/lib/post-shared";
+import { formatLocalizedDate, getDictionary } from "@/lib/i18n/dictionaries";
+import { getServerLocale } from "@/lib/i18n/server";
 import { getPost, getPosts } from "@/lib/posts";
 import { siteConfig } from "@/lib/site-config";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const posts = await getPosts();
+  const posts = await getPosts("zh");
   return posts.map(({ slug }) => ({ slug }));
 }
 
-export const dynamicParams = false;
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const result = await getPost(slug);
+  const [{ slug }, locale] = await Promise.all([params, getServerLocale()]);
+  const result = await getPost(slug, locale);
   if (!result) return {};
   const { title, summary, date, tags } = result.post;
   return {
@@ -40,12 +39,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PostPage({ params }: Props) {
-  const { slug } = await params;
-  const result = await getPost(slug);
+  const [{ slug }, locale] = await Promise.all([params, getServerLocale()]);
+  const dict = getDictionary(locale);
+  const result = await getPost(slug, locale);
   if (!result) notFound();
-  const { post, Content, headings, previous, next } = result;
+  const { post, Content, headings, isFallback, previous, next } = result;
   const primaryTag = post.tags?.[0] ?? "Essay";
-  const editorialDate = formatEditorialDate(post.date);
+  const localizedDate = formatLocalizedDate(post.date, locale);
 
   return (
     <>
@@ -55,18 +55,16 @@ export default async function PostPage({ params }: Props) {
         className="flex-1 px-4 pt-5 sm:px-6 md:px-10 md:pt-8 lg:px-12"
       >
         <div className="mx-auto max-w-[1120px]">
-          {/* 三栏阅读架构（外壳提供左侧 220px 栏，此处为居中 760px 正文列 + 右侧 260px 粘性元信息栏） */}
           <div className="grid grid-cols-1 gap-10 xl:grid-cols-[minmax(0,760px)_260px] xl:items-start xl:justify-between xl:gap-16">
             {/* 中间专注阅读列 */}
             <article className="min-w-0">
-              {/* 面包屑与圆形返回钮 */}
               <nav
-                aria-label="文章位置"
+                aria-label={dict.article.breadcrumbRoot}
                 className="mb-6 flex items-center gap-3 text-caption text-fg-muted"
               >
                 <Link
                   href="/writing"
-                  aria-label="返回文章列表"
+                  aria-label={dict.article.backToList}
                   className="inline-flex size-9 items-center justify-center rounded-full border border-border text-fg transition-colors hover:border-border-strong hover:bg-surface sm:size-8"
                 >
                   <ArrowLeftIcon className="size-3.5" />
@@ -75,7 +73,7 @@ export default async function PostPage({ params }: Props) {
                   href="/writing"
                   className="transition-colors hover:text-fg"
                 >
-                  Writing
+                  {dict.article.breadcrumbRoot}
                 </Link>
                 <span aria-hidden="true">/</span>
                 <Link
@@ -86,7 +84,13 @@ export default async function PostPage({ params }: Props) {
                 </Link>
               </nav>
 
-              {/* 标题与摘要 */}
+              {/* 若英文版暂缺，显示极简提示条并回退展示中文原文 */}
+              {isFallback ? (
+                <div className="mb-6 border border-border bg-surface px-4 py-3 text-caption text-fg-secondary">
+                  {dict.article.fallbackNotice}
+                </div>
+              ) : null}
+
               <header className="flex flex-col gap-3.5">
                 <h1 className="text-[26px] leading-[1.32] font-bold tracking-[-0.02em] text-fg sm:text-[34px] md:text-[38px] md:leading-[1.24]">
                   {post.title}
@@ -95,10 +99,9 @@ export default async function PostPage({ params }: Props) {
                   {post.summary}
                 </p>
 
-                {/* 移动端/平板端紧凑元信息条 */}
                 <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-1 text-caption text-fg-muted xl:hidden">
                   <span className="font-medium text-fg">
-                    By {siteConfig.name}
+                    {dict.article.by} {siteConfig.name}
                   </span>
                   <span aria-hidden="true">·</span>
                   <time dateTime={post.date} className="font-mono tabular-nums">
@@ -106,12 +109,11 @@ export default async function PostPage({ params }: Props) {
                   </time>
                   <span aria-hidden="true">·</span>
                   <span className="font-mono tabular-nums">
-                    {post.readingMinutes} min read
+                    {post.readingMinutes} {dict.article.minRead}
                   </span>
                 </div>
               </header>
 
-              {/* 0px 直角单色架构线框主图 + 1px 细线等宽图注 */}
               <figure className="mt-7 bg-surface">
                 <div className="flex min-h-[200px] items-center justify-center px-6 py-8 sm:min-h-[280px]">
                   <PostHeroArt
@@ -127,38 +129,32 @@ export default async function PostPage({ params }: Props) {
                 </figcaption>
               </figure>
 
-              {/* 桌面端署名行 */}
               <div className="mt-6 hidden items-center gap-1.5 text-label text-fg-muted xl:flex">
-                <span>By</span>
+                <span>{dict.article.by}</span>
                 <Link
                   href="/about"
                   className="font-medium text-fg underline underline-offset-4"
                 >
                   {siteConfig.name}
                 </Link>
-                <span>
-                  , {siteConfig.role} · {siteConfig.location.split(" ")[0]}
-                </span>
+                <span>, {dict.article.roleLocation}</span>
               </div>
 
-              {/* 移动端可展开胶囊目录 */}
               {headings.length > 0 ? (
                 <div className="mt-6 xl:hidden">
                   <PostToc headings={headings} variant="mobile" />
                 </div>
               ) : null}
 
-              {/* MDX 正文 */}
               <div className="mt-7 flex flex-col gap-6 text-body leading-[1.84]">
                 <Content />
               </div>
 
-              {/* 移动端底部标签与分享 */}
               <div className="mt-10 flex flex-col gap-5 border-t border-border pt-6 xl:hidden">
                 {post.tags?.length ? (
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-caption">
                     <span className="font-mono text-micro text-fg-muted uppercase">
-                      Tags
+                      {dict.article.tags}
                     </span>
                     {post.tags.map((tag) => (
                       <Link
@@ -174,7 +170,6 @@ export default async function PostPage({ params }: Props) {
                 <ShareButton title={post.title} fullWidth />
               </div>
 
-              {/* 上一篇 / 下一篇 */}
               {previous || next ? (
                 <div className="mt-12 border-t border-border pt-8">
                   <PostPager previous={previous} next={next} />
@@ -182,14 +177,15 @@ export default async function PostPage({ params }: Props) {
               ) : null}
             </article>
 
-            {/* 桌面端右侧粘性元信息栏（严格对齐 Figma StickyMetaRail） */}
+            {/* 桌面端右侧粘性元信息栏 */}
             <aside
-              aria-label="文章元信息"
+              aria-label={dict.article.author}
               className="hidden xl:sticky xl:top-10 xl:flex xl:flex-col xl:gap-7 xl:pt-12"
             >
-              {/* Author */}
               <div className="flex flex-col gap-2.5">
-                <p className="text-micro text-fg-muted">Author</p>
+                <p className="text-micro text-fg-muted">
+                  {dict.article.author}
+                </p>
                 <Link href="/about" className="group flex items-center gap-3">
                   <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface font-mono text-micro font-medium text-fg">
                     QY
@@ -199,30 +195,30 @@ export default async function PostPage({ params }: Props) {
                       {siteConfig.name}
                     </span>
                     <span className="text-micro text-fg-muted">
-                      {siteConfig.role} · {siteConfig.location.split(" ")[0]}
+                      {dict.article.roleLocation}
                     </span>
                   </span>
                 </Link>
               </div>
 
-              {/* Date（星期加粗 + 日期柔和灰，致敬 blog.x.com） */}
               <div className="flex flex-col gap-1.5">
-                <p className="text-micro text-fg-muted">Date</p>
+                <p className="text-micro text-fg-muted">{dict.article.date}</p>
                 <time dateTime={post.date} className="text-caption">
                   <span className="font-semibold text-fg">
-                    {editorialDate.weekday}
+                    {localizedDate.lead}
                   </span>{" "}
-                  <span className="text-fg-muted">{editorialDate.rest}</span>
+                  <span className="text-fg-muted">{localizedDate.rest}</span>
                 </time>
                 <p className="font-mono text-micro text-fg-muted tabular-nums">
-                  {post.readingMinutes} min read
+                  {post.readingMinutes} {dict.article.minRead}
                 </p>
               </div>
 
-              {/* Tags（纯文本链接，不套重型边框） */}
               {post.tags?.length ? (
                 <div className="flex flex-col gap-2">
-                  <p className="text-micro text-fg-muted">Tags</p>
+                  <p className="text-micro text-fg-muted">
+                    {dict.article.tags}
+                  </p>
                   <div className="flex flex-wrap gap-x-3.5 gap-y-1.5 text-caption">
                     {post.tags.map((tag) => (
                       <Link
@@ -237,10 +233,8 @@ export default async function PostPage({ params }: Props) {
                 </div>
               ) : null}
 
-              {/* ON THIS PAGE 极简左线目录 */}
               <PostToc headings={headings} variant="desktop" />
 
-              {/* Share 胶囊 */}
               <div className="pt-2">
                 <ShareButton title={post.title} />
               </div>

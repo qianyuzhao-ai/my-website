@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocale } from "@/components/site/locale-provider";
 import type { PostHeading } from "@/lib/post-shared";
 
 export function PostToc({
@@ -10,6 +11,7 @@ export function PostToc({
   headings: PostHeading[];
   variant: "mobile" | "desktop";
 }) {
+  const { dict } = useLocale();
   const navRef = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState<string>(headings[0]?.id ?? "");
   const [usesNativeScrollspy, setUsesNativeScrollspy] = useState(false);
@@ -80,13 +82,13 @@ export function PostToc({
     return (
       <details className="writing-toc-details overflow-hidden rounded-[22px] border border-border bg-bg xl:hidden">
         <summary className="flex min-h-11 items-center gap-2 px-4 text-caption font-medium text-fg">
-          <span>On this page</span>
+          <span>{dict.article.onThisPage}</span>
           <span className="font-mono text-micro text-fg-muted tabular-nums">
-            · {headings.length} sections
+            · {headings.length} {dict.article.sectionsUnit}
           </span>
         </summary>
         <nav
-          aria-label="移动端文章目录"
+          aria-label={dict.article.onThisPage}
           className="border-t border-border px-4 py-3"
         >
           <ul className="flex flex-col gap-1">
@@ -112,11 +114,11 @@ export function PostToc({
   return (
     <div className="border-t border-border pt-6">
       <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-        ON THIS PAGE
+        {dict.article.onThisPage}
       </p>
       <nav
         ref={navRef}
-        aria-label="文章章节目录"
+        aria-label={dict.article.onThisPage}
         className="writing-toc-nav mt-3"
       >
         <ul className="flex flex-col gap-1 border-l border-border">

@@ -15,17 +15,10 @@ import {
   VolumeOnIcon,
 } from "@/components/home/icons";
 import { openConnectDialog } from "@/components/site/connect-sheet";
+import { LanguageToggle, useLocale } from "@/components/site/locale-provider";
 import { SearchIcon, SearchPill } from "@/components/site/search-dialog";
 import { siteConfig } from "@/lib/site-config";
 import { skyAudio } from "@/lib/sky-audio";
-
-const PRIMARY_NAV = [
-  { label: "首页", href: "/" },
-  { label: "项目", href: "/works" },
-  { label: "写作", href: "/writing" },
-  { label: "关于", href: "/about" },
-  { label: "3D岛", href: "/island" },
-] as const;
 
 function NavLinkList({
   pathname,
@@ -34,6 +27,15 @@ function NavLinkList({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  const { dict } = useLocale();
+  const items = [
+    { label: dict.nav.home, href: "/" },
+    { label: dict.nav.works, href: "/works" },
+    { label: dict.nav.writing, href: "/writing" },
+    { label: dict.nav.about, href: "/about" },
+    { label: dict.nav.island, href: "/island" },
+  ] as const;
+
   function isItemActive(href: string) {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -41,7 +43,7 @@ function NavLinkList({
 
   return (
     <ul className="flex flex-col gap-1.5">
-      {PRIMARY_NAV.map((item) => {
+      {items.map((item) => {
         const active = isItemActive(item.href);
         return (
           <li key={item.href}>
@@ -66,6 +68,7 @@ function NavLinkList({
 
 /** 3D 空岛全屏页面的极简黑白悬浮返回与控制条 */
 function IslandFloatingBar() {
+  const { dict } = useLocale();
   const { resolvedTheme, setTheme } = useTheme();
   const [muted, setMuted] = useState(false);
 
@@ -103,14 +106,14 @@ function IslandFloatingBar() {
         className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg/92 px-4 text-caption font-medium text-fg backdrop-blur-sm transition-colors hover:border-border-strong"
       >
         <ArrowLeftIcon className="size-3.5" />
-        <span>返回 {siteConfig.name}</span>
+        <span>{dict.nav.backToSite}</span>
       </Link>
 
       <div className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-border bg-bg/92 p-1 backdrop-blur-sm">
         <button
           type="button"
           onClick={handleToggleTheme}
-          aria-label="切换昼夜主题"
+          aria-label={dict.nav.toggleTheme}
           className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-fg-secondary transition-colors hover:bg-surface hover:text-fg"
         >
           <SunIcon className="size-4 dark:hidden" />
@@ -119,7 +122,7 @@ function IslandFloatingBar() {
         <button
           type="button"
           onClick={handleToggleMute}
-          aria-label={muted ? "开启空岛音效" : "静音空岛音效"}
+          aria-label={muted ? dict.nav.unmuteAudio : dict.nav.muteAudio}
           aria-pressed={!muted}
           className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-fg-secondary transition-colors hover:bg-surface hover:text-fg"
         >
@@ -140,14 +143,41 @@ function IslandFloatingBar() {
  * - 其余路由：桌面端左侧固定 220px 导航栏（首页 / 项目 / 写作 / 关于 / 3D岛）+ 移动端 60px 顶栏（内联搜索展开 + 滑动抽屉）。
  */
 export function EditorialShell({ children }: { children: ReactNode }) {
+  const { dict } = useLocale();
   const pathname = usePathname();
   const isIsland = pathname === "/island";
 
   const drawerRef = useRef<HTMLDialogElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLElement>(null);
+  const desktopAsideRef = useRef<HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  // 阻止鼠标/触控板悬停在左侧固定栏时的滚轮穿透与顶底回弹
+  useEffect(() => {
+    if (isIsland) return;
+    const aside = desktopAsideRef.current;
+    if (!aside) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      const canScroll = aside.scrollHeight > aside.clientHeight + 1;
+      if (!canScroll) {
+        event.preventDefault();
+        return;
+      }
+      const atTop = aside.scrollTop <= 0 && event.deltaY < 0;
+      const atBottom =
+        aside.scrollTop + aside.clientHeight >= aside.scrollHeight - 1 &&
+        event.deltaY > 0;
+      if (atTop || atBottom) {
+        event.preventDefault();
+      }
+    };
+
+    aside.addEventListener("wheel", handleWheel, { passive: false });
+    return () => aside.removeEventListener("wheel", handleWheel);
+  }, [isIsland]);
 
   const openDrawer = useCallback(async () => {
     const drawer = drawerRef.current;
@@ -264,7 +294,7 @@ export function EditorialShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-dvh bg-bg text-fg lg:flex">
+    <div className="min-h-dvh bg-bg text-fg">
       {/* 移动端与平板端顶部导航条（60px + 内联展开搜索，非弹窗） */}
       <header className="sticky top-0 z-30 border-b border-border bg-bg/95 backdrop-blur-sm lg:hidden">
         <div className="flex h-[60px] items-center justify-between px-4 sm:px-6">
@@ -280,7 +310,11 @@ export function EditorialShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => setMobileSearchOpen((prev) => !prev)}
-              aria-label={mobileSearchOpen ? "收起搜索栏" : "展开搜索栏"}
+              aria-label={
+                mobileSearchOpen
+                  ? dict.nav.collapseSearch
+                  : dict.nav.expandSearch
+              }
               aria-expanded={mobileSearchOpen}
               className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors ${
                 mobileSearchOpen
@@ -302,7 +336,7 @@ export function EditorialShell({ children }: { children: ReactNode }) {
               aria-controls="mobile-editorial-drawer"
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-border px-4 text-caption font-medium text-fg transition-colors hover:border-border-strong hover:bg-surface"
             >
-              Menu
+              {dict.nav.menu}
             </button>
           </div>
         </div>
@@ -324,13 +358,13 @@ export function EditorialShell({ children }: { children: ReactNode }) {
       <dialog
         ref={drawerRef}
         id="mobile-editorial-drawer"
-        aria-label="主导航抽屉"
+        aria-label={dict.nav.menu}
         className="editorial-drawer lg:hidden"
       >
         <div ref={scrollerRef} className="editorial-drawer-scroller">
           <nav
             ref={sheetRef}
-            aria-label="移动端主导航"
+            aria-label={dict.nav.menu}
             className="editorial-drawer-sheet px-6 py-6"
           >
             <div className="flex flex-col gap-8">
@@ -351,7 +385,7 @@ export function EditorialShell({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={closeDrawer}
-                  aria-label="关闭导航菜单"
+                  aria-label={dict.nav.closeMenu}
                   className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border text-fg-secondary transition-colors hover:text-fg"
                 >
                   <CloseIcon className="size-4" />
@@ -361,7 +395,7 @@ export function EditorialShell({ children }: { children: ReactNode }) {
               <NavLinkList pathname={pathname} onNavigate={closeDrawer} />
             </div>
 
-            <div className="pt-6">
+            <div className="flex items-center gap-2 pt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -369,19 +403,21 @@ export function EditorialShell({ children }: { children: ReactNode }) {
                   openConnectDialog();
                 }}
                 aria-haspopup="dialog"
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-border-strong bg-bg px-4 text-caption font-medium text-fg transition-colors hover:bg-surface"
+                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-border-strong bg-bg px-4 text-caption font-medium text-fg transition-colors hover:bg-surface"
               >
-                Connect
+                {dict.nav.connect}
               </button>
+              <LanguageToggle variant="compact" />
             </div>
           </nav>
         </div>
       </dialog>
 
-      {/* 桌面端固定 220px 左侧导航栏（首页 / 项目 / 写作 / 关于 / 3D岛） */}
+      {/* 桌面端固定 220px 左侧导航栏（fixed 钉死视口，悬停其上不穿透滚动也不触发回弹） */}
       <aside
-        aria-label="主侧边导航"
-        className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-[220px] lg:shrink-0 lg:flex-col lg:justify-between lg:border-r lg:border-border lg:bg-bg lg:px-6 lg:py-7"
+        ref={desktopAsideRef}
+        aria-label={dict.nav.menu}
+        className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-20 lg:flex lg:w-[220px] lg:flex-col lg:justify-between lg:overflow-y-auto lg:overscroll-none lg:border-r lg:border-border lg:bg-bg lg:px-6 lg:py-7"
       >
         <div className="flex flex-col gap-9">
           <Link
@@ -393,23 +429,28 @@ export function EditorialShell({ children }: { children: ReactNode }) {
             <span>{siteConfig.name}</span>
           </Link>
 
-          <nav aria-label="桌面主导航">
+          <nav aria-label={dict.nav.menu}>
             <NavLinkList pathname={pathname} />
           </nav>
         </div>
 
-        <button
-          type="button"
-          onClick={openConnectDialog}
-          aria-haspopup="dialog"
-          className="inline-flex h-9 w-fit items-center justify-center rounded-full border border-border-strong bg-bg px-5 text-caption font-medium text-fg transition-colors hover:bg-surface"
-        >
-          Connect
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={openConnectDialog}
+            aria-haspopup="dialog"
+            className="inline-flex h-9 items-center justify-center rounded-full border border-border-strong bg-bg px-4 text-caption font-medium text-fg transition-colors hover:bg-surface"
+          >
+            {dict.nav.connect}
+          </button>
+          <LanguageToggle variant="compact" />
+        </div>
       </aside>
 
-      {/* 右侧主画布区 */}
-      <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+      {/* 右侧主画布区（保留原生文档滚动与顶底回弹反馈） */}
+      <div className="flex min-h-dvh min-w-0 flex-col lg:pl-[220px]">
+        {children}
+      </div>
     </div>
   );
 }

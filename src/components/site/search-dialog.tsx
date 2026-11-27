@@ -12,8 +12,8 @@ import {
   useState,
 } from "react";
 import { CloseIcon } from "@/components/home/icons";
+import { useLocale } from "@/components/site/locale-provider";
 import type { Post } from "@/lib/post-shared";
-import { featuredWorks } from "@/lib/works";
 
 export function SearchIcon({ className }: { className?: string }) {
   return (
@@ -42,34 +42,7 @@ type SearchEntry = {
   keywords: string;
 };
 
-const STATIC_ENTRIES: SearchEntry[] = [
-  {
-    id: "work-openflow",
-    title: "OpenFlow：面向 12 人团队的 AIGC 无限画布生产平台",
-    excerpt:
-      "面向 AI 视频播客生产与多模态评测一线场景，以需求拆解驱动 Coding Agent 全栈落地，将单条 5 分钟串行等待重构为并发工作流。",
-    href: "/works/openflow",
-    keywords: "openflow electron react flow aigc 项目 work 作品 并发画布",
-  },
-  {
-    id: "page-island",
-    title: "3D岛 · Sky Island 云上庭园",
-    excerpt:
-      "基于 Three.js 构建的可漫游 3D 空岛交互实验——包含昼夜日晷、机关解谜与彩蛋飞岛。",
-    href: "/island",
-    keywords: "3d 3d岛 sky island game 空岛 three webgl 交互游戏",
-  },
-  {
-    id: "page-about",
-    title: "守岛人手记 · About & Now",
-    excerpt:
-      "QianYu，常驻北京的 AI Builder。专注 Agentic 工作流、全栈交互工程与 AIGC 视觉创作。",
-    href: "/about",
-    keywords: "about 关于 个人简介 now arsenal contact",
-  },
-];
-
-const SearchEntriesContext = createContext<SearchEntry[]>(STATIC_ENTRIES);
+const SearchEntriesContext = createContext<SearchEntry[]>([]);
 
 export function SearchProvider({
   posts,
@@ -78,6 +51,8 @@ export function SearchProvider({
   posts: Post[];
   children: ReactNode;
 }) {
+  const { dict } = useLocale();
+
   const entries = useMemo<SearchEntry[]>(() => {
     const postEntries: SearchEntry[] = posts.map((p) => ({
       id: `post-${p.slug}`,
@@ -87,16 +62,16 @@ export function SearchProvider({
       keywords: `${p.title} ${p.summary} ${(p.tags ?? []).join(" ")}`,
     }));
 
-    const workEntries: SearchEntry[] = featuredWorks.map((w) => ({
+    const workEntries: SearchEntry[] = dict.works.items.map((w) => ({
       id: `work-${w.id}`,
       title: w.title,
       excerpt: `${w.subtitle} ${w.summary}`,
       href: w.href,
-      keywords: `${w.title} ${w.subtitle} ${w.summary} ${w.categoryLabel} ${w.stack.join(" ")}`,
+      keywords: `${w.title} ${w.subtitle} ${w.summary} ${w.kind}`,
     }));
 
-    return [...postEntries, ...STATIC_ENTRIES, ...workEntries];
-  }, [posts]);
+    return [...postEntries, ...dict.search.staticEntries, ...workEntries];
+  }, [posts, dict]);
 
   return (
     <SearchEntriesContext.Provider value={entries}>
@@ -131,9 +106,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
 }
 
 /**
- * 内联胶囊搜索框 + 正下方锚定结果下拉（参考 blog.x.com，非居中弹窗）：
- * - 直接在胶囊内输入，实时下拉展示匹配条目并加粗命中词
- * - 支持 ⌘K / Ctrl+K 聚焦输入框、↑/↓ 切换结果、Enter 跳转、Esc 或点击外部收起
+ * 内联胶囊搜索框 + 正下方锚定结果下拉（参考 blog.x.com，非居中弹窗）
  */
 export function SearchPill({
   className,
@@ -146,6 +119,7 @@ export function SearchPill({
   align?: "left" | "right";
   onNavigate?: () => void;
 }) {
+  const { dict } = useLocale();
   const router = useRouter();
   const entries = useContext(SearchEntriesContext);
   const listboxId = useId();
@@ -169,7 +143,6 @@ export function SearchPill({
   const safeIndex =
     results.length > 0 ? Math.min(activeIndex, results.length - 1) : -1;
 
-  // 移动端展开时自动聚焦输入框
   useEffect(() => {
     if (!autoFocus) return;
     const frame = requestAnimationFrame(() => {
@@ -179,7 +152,6 @@ export function SearchPill({
     return () => cancelAnimationFrame(frame);
   }, [autoFocus]);
 
-  // ⌘K / Ctrl+K 直接聚焦当前可见的内联搜索框（不弹新窗口）
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -194,7 +166,6 @@ export function SearchPill({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // 点击搜索组件外部时收起下拉列表
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
@@ -264,12 +235,12 @@ export function SearchPill({
           type="text"
           role="combobox"
           value={query}
-          aria-label="搜索文章与项目"
+          aria-label={dict.search.ariaLabel}
           aria-expanded={showDropdown}
           aria-controls={listboxId}
           aria-autocomplete="list"
           aria-activedescendant={activeOptionId}
-          placeholder="Search"
+          placeholder={dict.search.placeholder}
           onFocus={() => setOpen(true)}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -288,7 +259,7 @@ export function SearchPill({
               setActiveIndex(0);
               inputRef.current?.focus();
             }}
-            aria-label="清空搜索词"
+            aria-label={dict.search.clearLabel}
             className="inline-flex size-6 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-surface hover:text-fg"
           >
             <CloseIcon className="size-3" />
@@ -308,18 +279,22 @@ export function SearchPill({
         <div
           id={listboxId}
           role="listbox"
-          aria-label="搜索结果"
+          aria-label={dict.search.resultsHeading}
           className={`absolute top-full z-50 mt-2 w-full overflow-hidden rounded-2xl border border-border bg-bg shadow-lg sm:w-[400px] ${
             align === "right" ? "right-0" : "left-0"
           }`}
         >
           <div className="px-4 pt-3.5 pb-1.5 text-caption text-fg-muted">
-            {query.trim() ? "Search results" : "Quick navigation"}
+            {query.trim()
+              ? dict.search.resultsHeading
+              : dict.search.quickHeading}
           </div>
 
           {results.length === 0 ? (
             <p className="px-4 py-8 text-center text-label text-fg-muted">
-              未找到与「{query}」相关的内容
+              {dict.search.emptyPrefix}
+              {query}
+              {dict.search.emptySuffix}
             </p>
           ) : (
             <div className="flex max-h-[400px] flex-col overflow-y-auto px-2 pb-2">

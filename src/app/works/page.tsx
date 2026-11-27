@@ -8,19 +8,20 @@ import {
 } from "@/components/editorial/wireframe-art";
 import { SearchPill } from "@/components/site/search-dialog";
 import { SiteFooter } from "@/components/site/site-footer";
+import { getDictionary, type WorkCardEntry } from "@/lib/i18n/dictionaries";
+import { getServerLocale } from "@/lib/i18n/server";
 import { openflowStory } from "@/lib/openflow-story";
-import { siteConfig } from "@/lib/site-config";
-import { featuredWorks, type WorkItem } from "@/lib/works";
 
-const description =
-  "AI Agent 工程架构、全栈交互工具链与高可控 AIGC 视觉工作流代表作及 3D 交互实验。";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: dict.meta.worksTitle,
+    description: dict.meta.worksDescription,
+  };
+}
 
-export const metadata: Metadata = {
-  title: `Works · ${siteConfig.name}`,
-  description,
-};
-
-function WorkArtwork({ work }: { work: WorkItem }) {
+function WorkArtwork({ work }: { work: WorkCardEntry }) {
   if (work.id === "aigc-storyboard-studio") {
     return <StoryboardGridArt className="h-auto w-full max-w-[290px]" />;
   }
@@ -30,7 +31,10 @@ function WorkArtwork({ work }: { work: WorkItem }) {
   return <ArchitectureLayersArt className="h-auto w-full max-w-[290px]" />;
 }
 
-export default function WorksPage() {
+export default async function WorksPage() {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+
   return (
     <>
       <main
@@ -42,13 +46,13 @@ export default function WorksPage() {
           <header className="flex flex-col gap-5 border-b border-border pb-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="flex flex-col gap-2">
               <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-                WORKS &amp; INTERACTIVE LAB
+                {dict.works.eyebrow}
               </p>
               <h1 className="text-[30px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[42px] md:leading-[1.12]">
-                Works
+                {dict.works.title}
               </h1>
               <p className="mt-1 max-w-[56ch] text-label leading-relaxed text-fg-secondary md:text-[15px]">
-                {description}
+                {dict.works.description}
               </p>
             </div>
             <SearchPill className="hidden lg:block" />
@@ -64,7 +68,7 @@ export default function WorksPage() {
                 id="featured-openflow-heading"
                 className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase"
               >
-                01 {"//"} FEATURED CASE STUDY
+                01 {"//"} {dict.works.featuredEyebrow}
               </h2>
               <span className="font-mono text-micro text-fg-muted">
                 {openflowStory.hero.version}
@@ -80,7 +84,7 @@ export default function WorksPage() {
                       OPENFLOW
                     </span>
                     <span aria-hidden="true">·</span>
-                    <span>DESKTOP PLATFORM</span>
+                    <span>{dict.works.featuredType}</span>
                   </div>
 
                   <div>
@@ -88,10 +92,10 @@ export default function WorksPage() {
                       {openflowStory.hero.title}
                     </h3>
                     <p className="mt-2 text-body font-medium text-fg-secondary">
-                      {openflowStory.hero.subtitle}
+                      {dict.works.openflowSubtitle}
                     </p>
                     <p className="mt-3 max-w-[52ch] text-label leading-relaxed text-fg-muted">
-                      {openflowStory.hero.lead}
+                      {dict.works.openflowLead}
                     </p>
                   </div>
 
@@ -106,7 +110,7 @@ export default function WorksPage() {
                       href="/works/openflow"
                       className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-5 text-caption font-medium text-ink-fg transition-opacity hover:opacity-85 sm:w-fit md:min-h-9"
                     >
-                      Read Full Story →
+                      {dict.works.featuredCta}
                     </Link>
                   </div>
                 </div>
@@ -128,15 +132,15 @@ export default function WorksPage() {
                 id="selected-works-heading"
                 className="text-[22px] font-semibold tracking-[-0.02em] text-fg md:text-[26px]"
               >
-                Selected systems &amp; prototypes
+                {dict.works.selectedHeading}
               </h2>
               <span className="font-mono text-micro text-fg-muted">
-                {featuredWorks.length} ITEMS
+                {dict.works.items.length} {dict.works.itemsUnit}
               </span>
             </div>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
-              {featuredWorks.map((work) => (
+              {dict.works.items.map((work) => (
                 <Link
                   key={work.id}
                   href={work.href}
@@ -162,7 +166,7 @@ export default function WorksPage() {
                   </p>
 
                   <div className="mt-auto flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 font-mono text-micro text-fg-muted">
-                    {work.metrics.slice(0, 2).map((m) => (
+                    {work.metrics.map((m) => (
                       <span key={m.label}>
                         {m.label}:{" "}
                         <strong className="text-fg">{m.value}</strong>
@@ -174,24 +178,23 @@ export default function WorksPage() {
             </div>
           </section>
 
-          {/* 03 · 保留的 3D Sky Island 实验子页入口 */}
+          {/* 03 · 3D岛实验子页入口 */}
           <section
             aria-labelledby="sky-island-heading"
             className="flex flex-col gap-5 bg-surface p-6 sm:p-8 md:flex-row md:items-center md:justify-between md:px-10"
           >
             <div className="flex flex-col gap-2">
               <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-                03 {"//"} INTERACTIVE 3D SANDBOX
+                03 {"//"} {dict.works.islandEyebrow}
               </p>
               <h2
                 id="sky-island-heading"
                 className="text-[20px] font-semibold tracking-[-0.02em] text-fg md:text-[24px]"
               >
-                Sky Island · 3D 云上庭园
+                {dict.works.islandTitle}
               </h2>
               <p className="max-w-[54ch] text-label text-fg-secondary">
-                基于 Three.js 构建的可漫游 3D
-                空岛交互实验——包含昼夜日晷、机关解谜与彩蛋飞岛，现已独立收录为侧边栏子页面。
+                {dict.works.islandDesc}
               </p>
             </div>
 
@@ -199,7 +202,7 @@ export default function WorksPage() {
               href="/island"
               className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg px-5 text-caption font-medium text-fg transition-colors hover:bg-surface-recessed md:min-h-9 md:w-auto"
             >
-              Enter Sky Island 3D →
+              {dict.works.islandCta}
             </Link>
           </section>
         </div>

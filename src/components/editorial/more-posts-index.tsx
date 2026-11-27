@@ -3,50 +3,63 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CategoryGlyph } from "@/components/editorial/wireframe-art";
+import { useLocale } from "@/components/site/locale-provider";
 import type { Post } from "@/lib/post-shared";
-
-const TOPIC_PRESETS = [
-  { id: "all", label: "All topics" },
-  { id: "Agent", label: "Agent" },
-  { id: "AIGC", label: "AIGC" },
-  { id: "前端", label: "Frontend" },
-] as const;
 
 type SortMode = "newest" | "oldest";
 
+/** 将前端 / Frontend 等中英同义标签映射到同一筛选组，避免切换语言后筛空 */
+function matchesTagFilter(postTags: string[] | undefined, filterId: string) {
+  if (filterId === "all") return true;
+  const tags = (postTags ?? []).map((t) => t.toLowerCase());
+  const normalized = filterId.toLowerCase();
+  if (normalized === "frontend" || normalized === "前端") {
+    return tags.includes("frontend") || tags.includes("前端");
+  }
+  return tags.includes(normalized);
+}
+
 export function MorePostsIndex({
   posts,
-  heading = "More posts",
+  heading,
   initialTag,
 }: {
   posts: Post[];
   heading?: string;
   initialTag?: string;
 }) {
-  const [activeTag, setActiveTag] = useState<string>(() => {
-    if (!initialTag) return "all";
-    return initialTag;
-  });
+  const { locale, dict } = useLocale();
+  const [activeTag, setActiveTag] = useState<string>(() => initialTag || "all");
   const [sortMode, setSortMode] = useState<SortMode>("newest");
 
-  // 合并预设主题与 URL 传入的自定义 tag（确保 sidebar 或详情页跳转任意标签都能高亮）
   const filterOptions = useMemo(() => {
-    const presetIds = new Set<string>(TOPIC_PRESETS.map((t) => t.id));
-    if (activeTag !== "all" && !presetIds.has(activeTag)) {
-      return [...TOPIC_PRESETS, { id: activeTag, label: activeTag }];
+    const presets = [
+      { id: "all", label: dict.archive.allTopics },
+      { id: "Agent", label: dict.archive.filterAgent },
+      { id: "AIGC", label: dict.archive.filterAigc },
+      {
+        id: locale === "zh" ? "前端" : "Frontend",
+        label: dict.archive.filterFrontend,
+      },
+    ];
+    const presetIds = new Set(presets.map((p) => p.id.toLowerCase()));
+    if (
+      activeTag !== "all" &&
+      !presetIds.has(activeTag.toLowerCase()) &&
+      !(
+        (activeTag === "前端" || activeTag.toLowerCase() === "frontend") &&
+        (presetIds.has("前端") || presetIds.has("frontend"))
+      )
+    ) {
+      return [...presets, { id: activeTag, label: activeTag }];
     }
-    return [...TOPIC_PRESETS];
-  }, [activeTag]);
+    return presets;
+  }, [activeTag, dict, locale]);
 
   const visiblePosts = useMemo(() => {
-    const filtered =
-      activeTag === "all"
-        ? posts
-        : posts.filter((post) =>
-            (post.tags ?? []).some(
-              (tag) => tag.toLowerCase() === activeTag.toLowerCase(),
-            ),
-          );
+    const filtered = posts.filter((post) =>
+      matchesTagFilter(post.tags, activeTag),
+    );
     return sortMode === "newest" ? filtered : [...filtered].reverse();
   }, [posts, activeTag, sortMode]);
 
@@ -59,6 +72,8 @@ export function MorePostsIndex({
       : (latest ?? "");
   }, [posts]);
 
+  const resolvedHeading = heading ?? dict.archive.morePosts;
+
   return (
     <section
       aria-labelledby="more-posts-heading"
@@ -70,12 +85,16 @@ export function MorePostsIndex({
           id="more-posts-heading"
           className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-fg md:text-[26px]"
         >
-          {heading}
+          {resolvedHeading}
         </h2>
 
         <div className="writing-tab-strip -mx-4 flex items-center gap-2 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
           {filterOptions.map((item) => {
-            const isSelected = activeTag === item.id;
+            const isSelected =
+              activeTag.toLowerCase() === item.id.toLowerCase() ||
+              ((activeTag === "前端" ||
+                activeTag.toLowerCase() === "frontend") &&
+                (item.id === "前端" || item.id.toLowerCase() === "frontend"));
             return (
               <button
                 key={item.id}
@@ -100,13 +119,15 @@ export function MorePostsIndex({
             }
             aria-label={
               sortMode === "newest"
-                ? "当前按最新排序，点击切换最早优先"
-                : "当前按最早排序，点击切换最新优先"
+                ? dict.archive.sortToggleToOldest
+                : dict.archive.sortToggleToNewest
             }
             className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-border bg-bg px-4 text-caption font-medium text-fg transition-colors hover:border-border-strong hover:bg-surface md:min-h-8 md:px-3.5"
           >
             <span>
-              {sortMode === "newest" ? "Sort: Newest" : "Sort: Oldest"}
+              {sortMode === "newest"
+                ? dict.archive.sortNewest
+                : dict.archive.sortOldest}
             </span>
             <span aria-hidden="true" className="text-fg-muted">
               ▾
@@ -115,11 +136,11 @@ export function MorePostsIndex({
         </div>
       </div>
 
-      {/* 1px 细线分隔的编辑部归档表格（非卡片） */}
+      {/* 1px 细线分隔的编辑部归档表格 */}
       <div className="border-t border-border">
         {visiblePosts.length === 0 ? (
           <div className="border-b border-border py-12 text-center text-label text-fg-muted">
-            当前主题下暂无已发布文章。
+            {dict.archive.empty}
           </div>
         ) : (
           <ul className="divide-y divide-border border-b border-border">
@@ -134,7 +155,6 @@ export function MorePostsIndex({
                     href={`/writing/${post.slug}`}
                     className="group flex flex-col gap-1.5 py-4 transition-colors hover:bg-surface/70 md:flex-row md:items-center md:gap-6 md:px-2 md:py-5"
                   >
-                    {/* 移动端元信息行 / 桌面端左侧分类列 */}
                     <div className="flex items-center justify-between gap-2 md:w-[200px] md:shrink-0 md:justify-start">
                       <span className="inline-flex items-center gap-2 text-caption text-fg-secondary">
                         <CategoryGlyph className="hidden size-3.5 shrink-0 text-fg-muted md:block" />
@@ -148,12 +168,10 @@ export function MorePostsIndex({
                       </time>
                     </div>
 
-                    {/* 标题主列 */}
                     <span className="min-w-0 flex-1 text-[15px] leading-snug font-medium text-fg underline-offset-4 group-hover:underline md:text-body">
                       {post.title}
                     </span>
 
-                    {/* 桌面端右对齐日期 */}
                     <time
                       dateTime={post.date}
                       className="hidden w-[110px] shrink-0 text-right font-mono text-caption text-fg-muted tabular-nums md:block"
@@ -170,9 +188,9 @@ export function MorePostsIndex({
 
       {/* 底部页码统计条 */}
       <div className="flex items-center justify-between font-mono text-micro text-fg-muted tabular-nums">
-        <span>‹ &nbsp; Page 1 of 1 &nbsp; ›</span>
+        <span>‹ &nbsp; {dict.archive.pageLabel} &nbsp; ›</span>
         <span>
-          {visiblePosts.length} archived essays
+          {visiblePosts.length} {dict.archive.archivedEssays}
           {years ? ` · ${years}` : ""}
         </span>
       </div>

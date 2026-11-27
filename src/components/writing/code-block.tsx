@@ -3,6 +3,7 @@
 import type { ComponentProps, ReactElement } from "react";
 import { isValidElement, useRef, useState } from "react";
 import { CheckIcon, CopyIcon } from "@/components/home/icons";
+import { useLocale } from "@/components/site/locale-provider";
 
 function extractLanguage(children: ComponentProps<"pre">["children"]): string {
   if (!isValidElement(children)) return "";
@@ -11,8 +12,9 @@ function extractLanguage(children: ComponentProps<"pre">["children"]): string {
   return match ? match[1] : "";
 }
 
-/** 极简黑白平面代码块（0px 直角、1px 细线顶栏与复制胶囊，对齐 Figma 设计稿） */
+/** 极简黑白平面代码块（0px 直角、1px 细线顶栏与复制胶囊） */
 export function CodeBlock(props: ComponentProps<"pre">) {
+  const { dict } = useLocale();
   const preRef = useRef<HTMLPreElement>(null);
   const [copied, setCopied] = useState(false);
   const lang = extractLanguage(props.children);
@@ -39,25 +41,27 @@ export function CodeBlock(props: ComponentProps<"pre">) {
         <button
           type="button"
           onClick={handleCopy}
-          aria-label={copied ? "代码已复制" : "复制代码"}
+          aria-label={
+            copied ? dict.article.copiedCodeAria : dict.article.copyCodeAria
+          }
           className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-bg px-3 text-micro font-medium text-fg-secondary transition-colors hover:border-border-strong hover:text-fg sm:min-h-7"
         >
           {copied ? (
             <>
               <CheckIcon className="size-3.5 text-fg" />
-              <span className="text-fg">Copied</span>
+              <span className="text-fg">{dict.article.copiedCode}</span>
             </>
           ) : (
             <>
               <CopyIcon className="size-3.5" />
-              <span>Copy</span>
+              <span>{dict.article.copyCode}</span>
             </>
           )}
         </button>
       </div>
 
       <p aria-live="polite" className="sr-only">
-        {copied ? "代码已复制到剪贴板" : ""}
+        {copied ? dict.article.copiedCodeAria : ""}
       </p>
 
       <pre

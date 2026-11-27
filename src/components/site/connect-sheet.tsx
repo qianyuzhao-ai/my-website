@@ -11,6 +11,7 @@ import {
   SparklesIcon,
   XIcon,
 } from "@/components/home/icons";
+import { useLocale } from "@/components/site/locale-provider";
 import { closeDialogSmoothly, supportsTopLayerExit } from "@/lib/dialog-motion";
 import { type SocialChannel, siteConfig } from "@/lib/site-config";
 
@@ -31,6 +32,7 @@ function ChannelIcon({ id }: { id: SocialChannel["id"] }) {
 }
 
 export function ConnectSheet() {
+  const { dict } = useLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -108,20 +110,20 @@ export function ConnectSheet() {
         <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
           <div className="min-w-0">
             <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-              DIRECT LINE · {siteConfig.location}
+              {dict.connect.eyebrow}
             </p>
             <h2
               id="connect-dialog-title"
               className="mt-2 text-title font-bold tracking-[-0.025em] text-fg sm:text-display-sm"
             >
-              Connect with {siteConfig.name}
+              {dict.connect.title}
             </h2>
           </div>
 
           <button
             type="button"
             onClick={handleDismiss}
-            aria-label="关闭联系面板"
+            aria-label={dict.connect.closeAria}
             className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border bg-bg text-fg-secondary transition-colors hover:border-border-strong hover:text-fg"
           >
             <CloseIcon className="size-4" />
@@ -129,15 +131,15 @@ export function ConnectSheet() {
         </div>
 
         <p className="mt-4 text-label leading-relaxed text-fg-secondary">
-          欢迎交流 AI Agent 工程架构、AIGC 工作流共创、独立产品想法或合作机会。
+          {dict.connect.lead}
         </p>
 
-        {/* 邮箱直连平面块（0px 直角） */}
+        {/* 邮箱直连平面块 */}
         <div className="mt-5 border border-border bg-surface p-4">
           <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <p className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
-                Electronic Mail
+                {dict.connect.emailLabel}
               </p>
               <p className="mt-0.5 truncate font-mono text-body font-semibold text-fg">
                 {siteConfig.email}
@@ -153,19 +155,19 @@ export function ConnectSheet() {
                 {copied ? (
                   <>
                     <CheckIcon className="size-3.5" />
-                    <span>已复制地址</span>
+                    <span>{dict.connect.copiedEmail}</span>
                   </>
                 ) : (
                   <>
                     <CopyIcon className="size-3.5" />
-                    <span>复制邮箱</span>
+                    <span>{dict.connect.copyEmail}</span>
                   </>
                 )}
               </button>
 
               <a
                 href={`mailto:${siteConfig.email}`}
-                aria-label={`发送邮件至 ${siteConfig.email}`}
+                aria-label={`${dict.connect.mailToAria} ${siteConfig.email}`}
                 className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg text-fg transition-colors hover:bg-surface-recessed"
               >
                 <MailIcon className="size-4" />
@@ -173,14 +175,14 @@ export function ConnectSheet() {
             </div>
           </div>
           <p aria-live="polite" className="sr-only">
-            {copied ? `已将邮箱 ${siteConfig.email} 复制到剪贴板` : ""}
+            {copied ? dict.connect.copiedEmailSr : ""}
           </p>
         </div>
 
         {/* 社交渠道细线列表 */}
         <div className="mt-5">
           <p className="mb-2 font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-            Social Channels
+            {dict.connect.channelsLabel}
           </p>
           <ul className="divide-y divide-border border-y border-border">
             {siteConfig.socials.map((item) => (
@@ -205,7 +207,7 @@ export function ConnectSheet() {
                         </span>
                       </div>
                       <p className="truncate text-caption text-fg-secondary">
-                        {item.description}
+                        {dict.about.socialDescriptions[item.id]}
                       </p>
                     </div>
                   </div>

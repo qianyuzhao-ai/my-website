@@ -3,15 +3,11 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { LanguageToggle, useLocale } from "@/components/site/locale-provider";
 import { siteConfig } from "@/lib/site-config";
 
-const THEME_OPTIONS = [
-  { value: "system", label: "System" },
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-] as const;
-
 export function SiteFooter() {
+  const { dict } = useLocale();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -21,22 +17,30 @@ export function SiteFooter() {
 
   const activeTheme = mounted ? (theme ?? "system") : "system";
 
+  const themeOptions = [
+    { value: "system", label: dict.footer.themeSystem },
+    { value: "light", label: dict.footer.themeLight },
+    { value: "dark", label: dict.footer.themeDark },
+  ] as const;
+
   return (
     <footer className="mt-16 overflow-hidden px-4 pt-0 sm:px-6 md:px-10 lg:px-12">
       <div className="mx-auto max-w-[1120px] border-t border-border pt-12">
-        {/* 4 列结构化链接矩阵（严格对齐 Figma EditorialFooter） */}
+        {/* 4 列结构化链接矩阵 */}
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="flex flex-col gap-2.5">
-            <h2 className="text-caption font-semibold text-fg">Explore</h2>
+            <h2 className="text-caption font-semibold text-fg">
+              {dict.footer.explore}
+            </h2>
             <ul className="flex flex-col gap-2 text-caption text-fg-muted">
               <li>
                 <Link href="/" className="transition-colors hover:text-fg">
-                  Home
+                  {dict.nav.home}
                 </Link>
               </li>
               <li>
                 <Link href="/works" className="transition-colors hover:text-fg">
-                  Works
+                  {dict.nav.works}
                 </Link>
               </li>
               <li>
@@ -44,12 +48,12 @@ export function SiteFooter() {
                   href="/writing"
                   className="transition-colors hover:text-fg"
                 >
-                  Writing
+                  {dict.nav.writing}
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="transition-colors hover:text-fg">
-                  About
+                  {dict.nav.about}
                 </Link>
               </li>
               <li>
@@ -57,52 +61,34 @@ export function SiteFooter() {
                   href="/island"
                   className="transition-colors hover:text-fg"
                 >
-                  Sky Island 3D
+                  {dict.nav.island}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div className="flex flex-col gap-2.5">
-            <h2 className="text-caption font-semibold text-fg">Topics</h2>
+            <h2 className="text-caption font-semibold text-fg">
+              {dict.footer.topics}
+            </h2>
             <ul className="flex flex-col gap-2 text-caption text-fg-muted">
-              <li>
-                <Link
-                  href="/writing?tag=Agent"
-                  className="transition-colors hover:text-fg"
-                >
-                  Agent Engineering
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/writing?tag=AIGC"
-                  className="transition-colors hover:text-fg"
-                >
-                  AIGC Workflows
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/writing?tag=%E5%89%8D%E7%AB%AF"
-                  className="transition-colors hover:text-fg"
-                >
-                  Full-Stack UI
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/writing?tag=%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B"
-                  className="transition-colors hover:text-fg"
-                >
-                  Design Systems
-                </Link>
-              </li>
+              {dict.home.topicLinks.slice(0, 4).map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="transition-colors hover:text-fg"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div className="flex flex-col gap-2.5">
-            <h2 className="text-caption font-semibold text-fg">Projects</h2>
+            <h2 className="text-caption font-semibold text-fg">
+              {dict.footer.projects}
+            </h2>
             <ul className="flex flex-col gap-2 text-caption text-fg-muted">
               <li>
                 <Link
@@ -133,14 +119,16 @@ export function SiteFooter() {
                   href="/island"
                   className="transition-colors hover:text-fg"
                 >
-                  Sky Island 3D
+                  {dict.nav.island}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div className="flex flex-col gap-2.5">
-            <h2 className="text-caption font-semibold text-fg">Connect</h2>
+            <h2 className="text-caption font-semibold text-fg">
+              {dict.footer.connect}
+            </h2>
             <ul className="flex flex-col gap-2 text-caption text-fg-muted">
               {siteConfig.socials.map((item) => (
                 <li key={item.id}>
@@ -166,17 +154,17 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* 版权与 System / Light / Dark 主题胶囊 */}
+        {/* 版权与主题 / 语言双胶囊 */}
         <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-micro text-fg-muted">
             © {new Date().getFullYear()} {siteConfig.name} ·{" "}
-            {siteConfig.location} · Built with Next.js
+            {dict.footer.copyright}
           </p>
 
           <div className="flex flex-wrap items-center gap-2.5">
             <fieldset className="inline-flex items-center gap-0.5 rounded-full bg-surface p-1">
-              <legend className="sr-only">主题模式</legend>
-              {THEME_OPTIONS.map((opt) => {
+              <legend className="sr-only">{dict.footer.themeLegend}</legend>
+              {themeOptions.map((opt) => {
                 const isSelected = activeTheme === opt.value;
                 return (
                   <button
@@ -196,9 +184,7 @@ export function SiteFooter() {
               })}
             </fieldset>
 
-            <span className="inline-flex h-8 items-center rounded-full border border-border px-3 text-micro font-medium text-fg-secondary">
-              中文 / EN
-            </span>
+            <LanguageToggle variant="footer" />
           </div>
         </div>
 

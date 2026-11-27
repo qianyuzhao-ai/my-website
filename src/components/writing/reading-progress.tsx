@@ -47,7 +47,7 @@ export function ReadingProgress() {
     <div
       ref={barRef}
       aria-hidden="true"
-      className="reading-progress-bar pointer-events-none fixed top-0 left-0 z-50 h-[2px] w-full bg-fg"
+      className="reading-progress-bar pointer-events-none fixed top-0 left-0 z-50 h-[2px] w-full bg-fg lg:left-[220px] lg:w-[calc(100%-220px)]"
     />
   );
 }

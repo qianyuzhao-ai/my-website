@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/home/icons";
+import { useLocale } from "@/components/site/locale-provider";
 import type { Post } from "@/lib/post-shared";
 
 const linkClass =
@@ -13,9 +16,11 @@ export function PostPager({
   previous: Post | null;
   next: Post | null;
 }) {
+  const { dict } = useLocale();
+
   return (
     <nav
-      aria-label="上一篇与下一篇"
+      aria-label={`${dict.article.previous} / ${dict.article.next}`}
       className="grid grid-cols-1 gap-4 md:grid-cols-2"
     >
       {previous ? (
@@ -27,7 +32,7 @@ export function PostPager({
           <span className="flex items-center justify-between gap-2 font-mono text-micro text-fg-muted">
             <span className="inline-flex items-center gap-1.5">
               <ArrowLeftIcon className="size-3.5 transition-transform duration-150 group-hover:-translate-x-0.5" />
-              <span>PREVIOUS</span>
+              <span>{dict.article.previous}</span>
             </span>
             <span className="tabular-nums">{previous.date}</span>
           </span>
@@ -46,7 +51,7 @@ export function PostPager({
           <span className="flex items-center justify-between gap-2 font-mono text-micro text-fg-muted">
             <span className="tabular-nums">{next.date}</span>
             <span className="inline-flex items-center gap-1.5">
-              <span>NEXT</span>
+              <span>{dict.article.next}</span>
               <ArrowRightIcon className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
             </span>
           </span>
