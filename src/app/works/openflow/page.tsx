@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 
 export default function OpenFlowPage() {
   return (
-    <div className="glass-ambient-bg flex min-h-dvh flex-col text-fg">
-      <main id="main" className="flex-1">
+    <>
+      <main id="main" className="flex-1 bg-bg text-fg">
         <OpenFlowStory />
       </main>
       <SiteFooter />
-    </div>
+    </>
   );
 }

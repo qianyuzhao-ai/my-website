@@ -162,11 +162,56 @@ export function OpenFlowStory() {
             .to(".hero-center-core", { y: -24, scale: 0.96, ease: "none" }, 0);
         }
 
-        // B. 板块 02：两幕真实业务痛点情景模拟器（Pin 在 64px 顶栏正下方）
+        // B. 板块 02：3D 等距平台炸裂 → 全屏 clip-path 黑白反色切幕 → 720° 机械死循环转盘
         const painSection = painSectionRef.current;
         if (painSection) {
           const scrubBar =
             painSection.querySelector<HTMLElement>(".pain-scrub-bar");
+          const marqueeLeft =
+            painSection.querySelector<HTMLElement>(".pain-marquee-left");
+          const marqueeRight = painSection.querySelector<HTMLElement>(
+            ".pain-marquee-right",
+          );
+          const isoSlabs = Array.from(
+            painSection.querySelectorAll<HTMLElement>(".pain-iso-slab"),
+          );
+          const plumbLine =
+            painSection.querySelector<HTMLElement>(".pain-plumb-line");
+          const curtain = painSection.querySelector<HTMLElement>(
+            ".pain-inversion-curtain",
+          );
+          const sheetFront =
+            painSection.querySelector<HTMLElement>(".pain-sheet-front");
+          const sheetMid =
+            painSection.querySelector<HTMLElement>(".pain-sheet-mid");
+          const sheetBack =
+            painSection.querySelector<HTMLElement>(".pain-sheet-back");
+          const formProgress = painSection.querySelector<HTMLElement>(
+            ".pain-form-progress",
+          );
+          const blockedQueue = painSection.querySelector<HTMLElement>(
+            ".pain-blocked-queue",
+          );
+
+          // 初始化：5 块板紧凑堆叠在等距 3D 视角，反色幕布藏在视口底边之下（clip-path: inset(100% 0% 0% 0%)）
+          if (scrubBar) {
+            gsap.set(scrubBar, { scaleX: 0 });
+          }
+          if (curtain) {
+            gsap.set(curtain, { clipPath: "inset(100% 0% 0% 0%)" });
+          }
+          isoSlabs.forEach((slab, idx) => {
+            gsap.set(slab, {
+              y: (idx - 2) * 14,
+              rotateX: 46,
+              rotateY: -12,
+              rotateZ: 10,
+              scale: 0.96,
+            });
+          });
+          if (plumbLine) {
+            gsap.set(plumbLine, { scaleY: 0, transformOrigin: "top center" });
+          }
 
           let prevStage = 0;
           let prevPlatform = 0;
@@ -180,44 +225,126 @@ export function OpenFlowStory() {
             anticipatePin: 1,
             invalidateOnRefresh: true,
             start: "top 64px",
-            end: () => `+=${Math.round(window.innerHeight * 2.8)}`,
+            end: () => `+=${Math.round(window.innerHeight * 3.4)}`,
             onUpdate: (self) => {
               const p = self.progress;
               if (scrubBar) {
                 scrubBar.style.transform = `scaleX(${p})`;
               }
 
-              // 前半段 (0 ~ 0.52)：情景一 · 5 个付费平台依次切标签搬运
+              // 1) 背景巨型空心字标双向剪切滑行
+              if (marqueeLeft) {
+                marqueeLeft.style.transform = `translate3d(${(-p * 320).toFixed(1)}px, 0, 0)`;
+              }
+              if (marqueeRight) {
+                marqueeRight.style.transform = `translate3d(${(-96 + p * 320).toFixed(1)}px, 0, 0)`;
+              }
+
+              // 2) 第一幕 (0.00 ~ 0.44)：5 块 3D 等距建筑板随滚动物理炸裂展开；(0.44 ~ 0.54)：拍扁坍缩合一！
+              const explodeRatio = Math.min(1, p / 0.38);
+              const collapseRatio =
+                p <= 0.42 ? 0 : Math.min(1, (p - 0.42) / 0.12);
+
+              const spread = (14 + explodeRatio * 56) * (1 - collapseRatio);
+              const rotX = 46 * (1 - collapseRatio);
+              const rotY = -12 * (1 - collapseRatio);
+              const rotZ = 10 * (1 - collapseRatio);
+              const slabScale =
+                0.96 + explodeRatio * 0.04 - collapseRatio * 0.14;
+
+              isoSlabs.forEach((slab, idx) => {
+                const offset = (idx - 2) * spread;
+                const shiftX =
+                  (idx - 2) * 14 * explodeRatio * (1 - collapseRatio);
+                slab.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${offset.toFixed(1)}px, 0) rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg) scale(${slabScale.toFixed(3)})`;
+              });
+
+              if (plumbLine) {
+                const plumbScale = explodeRatio * (1 - collapseRatio);
+                plumbLine.style.transform = `translateX(-50%) scaleY(${plumbScale.toFixed(3)})`;
+              }
+
+              // 3) 震撼转场 (0.45 ~ 0.57)：全屏黑白反色幕布自底向上一刀切开整屏！
+              const wipeRatio =
+                p <= 0.45 ? 0 : p >= 0.57 ? 1 : (p - 0.45) / 0.12;
+              const easedWipe =
+                wipeRatio < 0.5
+                  ? 2 * wipeRatio * wipeRatio
+                  : 1 - (-2 * wipeRatio + 2) ** 2 / 2;
+              if (curtain) {
+                const topInset = ((1 - easedWipe) * 100).toFixed(2);
+                curtain.style.clipPath = `inset(${topInset}% 0% 0% 0%)`;
+              }
+
+              // 4) 第二幕 (0.56 ~ 1.00)：无限撕页式单表单叠层传送带——每轮跑完 01→05，主表单向上剥离飞走，下一张同款表单顶上！
+              const r2 = Math.max(0, Math.min(1, (p - 0.56) / 0.44));
+              const cycles = 3;
+              const cycleFloat = r2 * cycles;
+              const cycleFrac = cycleFloat % 1;
+              const currentCycle = Math.min(cycles, Math.floor(cycleFloat) + 1);
+
+              // 单轮节奏：0.00~0.80 依次推进 01→05 与进度条；0.80~1.00 主表单剥离飞出、中卡顶上！
+              const peel =
+                cycleFrac <= 0.8 ? 0 : Math.min(1, (cycleFrac - 0.8) / 0.2);
+
+              if (sheetFront) {
+                const liftY = -peel * 44;
+                const tilt = -peel * 2.2;
+                const scale = 1 - peel * 0.05;
+                sheetFront.style.transform = `translate3d(0, ${liftY.toFixed(1)}px, 0) rotate(${tilt.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+                sheetFront.style.opacity = String(1 - peel * 0.88);
+              }
+              if (sheetMid) {
+                const riseY = -peel * 12;
+                const scale = 0.985 + peel * 0.015;
+                sheetMid.style.transform = `translate3d(0, ${riseY.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+              }
+              if (sheetBack) {
+                const riseY = -peel * 8;
+                sheetBack.style.transform = `translate3d(0, ${riseY.toFixed(1)}px, 0)`;
+              }
+              if (formProgress) {
+                // 在第 4 步（0.48 ~ 0.68）快速拉满单条耗时条，第 5 步保持满格
+                const barRatio =
+                  cycleFrac < 0.45
+                    ? 0.06
+                    : cycleFrac > 0.68
+                      ? 1
+                      : 0.06 + ((cycleFrac - 0.45) / 0.23) * 0.94;
+                formProgress.style.transform = `scaleX(${barRatio.toFixed(3)})`;
+              }
+              if (blockedQueue) {
+                const nudge = Math.sin(cycleFrac * Math.PI * 2) * 3;
+                blockedQueue.style.transform = `translate3d(${nudge.toFixed(1)}px, 0, 0)`;
+              }
+
+              // 5) 离散文本状态同步
               if (p < 0.52) {
                 if (prevStage !== 0) {
                   prevStage = 0;
                   setActivePainStage(0);
                 }
-                const ratio1 = Math.min(0.999, p / 0.52);
-                const nextPlatform = Math.floor(ratio1 * platformCount);
+                const r1 = Math.max(0, Math.min(0.999, p / 0.44));
+                const nextPlatform = Math.floor(r1 * platformCount);
                 if (nextPlatform !== prevPlatform) {
                   prevPlatform = nextPlatform;
                   setActivePlatformIndex(nextPlatform);
                 }
               } else {
-                // 后半段 (0.52 ~ 1.0)：情景二 · 公司统一 API 单线程死循环（滚动期间跑 3 整圈，直观感受无休止循环）
                 if (prevStage !== 1) {
                   prevStage = 1;
                   setActivePainStage(1);
                 }
-                const ratio2 = Math.min(0.999, (p - 0.52) / 0.48);
-                const totalSteps = loopStepCount * 3;
-                const stepCursor = Math.floor(ratio2 * totalSteps);
-                const nextLoop = stepCursor % loopStepCount;
-                const nextCycle = Math.floor(stepCursor / loopStepCount) + 1;
+                const stepRatio = Math.min(0.999, cycleFrac / 0.82);
+                const nextLoop = Math.floor(stepRatio * loopStepCount);
 
                 if (nextLoop !== prevLoop) {
                   prevLoop = nextLoop;
                   setActiveLoopIndex(nextLoop);
                 }
-                if (nextCycle !== prevCycle) {
-                  prevCycle = nextCycle;
-                  setLoopCycleCount(nextCycle);
+                if (currentCycle !== prevCycle) {
+                  prevCycle = currentCycle;
+                  setLoopCycleCount(currentCycle);
                 }
               }
             },
@@ -404,16 +531,16 @@ export function OpenFlowStory() {
       <section
         id="openflow-outcome"
         aria-labelledby="outcome-heading"
-        className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:px-8 md:py-28"
+        className="mx-auto max-w-[1120px] px-4 py-16 sm:px-6 md:px-10 md:py-24 lg:px-12"
       >
         <div data-reveal className="max-w-3xl">
           <h2
             id="outcome-heading"
-            className="text-balance text-[clamp(2rem,4.6vw,3.4rem)] leading-[1.06] font-bold tracking-[-0.04em] text-fg"
+            className="text-balance text-[24px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[32px]"
           >
             最后的成果：团队复用与业务交付
           </h2>
-          <p className="mt-4 max-w-[58ch] text-body leading-relaxed text-fg-secondary">
+          <p className="mt-3 max-w-[58ch] text-label leading-[1.7] text-fg-secondary md:text-[15px]">
             从解决一线重复劳动出发，最终沉淀为 12
             人产运团队每日依赖的跨平台生产工作流，并直接支撑公司级大会展示案例。
           </p>
@@ -422,15 +549,15 @@ export function OpenFlowStory() {
         {/* 建筑级纯排印量化成果带 */}
         <div
           data-reveal
-          className="mt-12 grid grid-cols-1 divide-y divide-border/80 border-y border-border/80 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x"
+          className="mt-10 grid grid-cols-1 divide-y divide-border border-y border-border sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x"
         >
           {openflowStory.impactMetrics.map((metric) => (
             <div
               key={metric.id}
-              className="flex flex-col justify-between py-7 sm:px-6 sm:first:pl-0 lg:py-8 lg:last:pr-0"
+              className="flex flex-col justify-between py-6 sm:px-6 sm:first:pl-0 lg:py-8 lg:last:pr-0"
             >
               <div>
-                <p className="text-[clamp(2.75rem,5vw,4.25rem)] leading-none font-bold tracking-[-0.045em] text-fg tabular-nums">
+                <p className="text-[clamp(2.4rem,4.5vw,3.5rem)] leading-none font-semibold tracking-[-0.04em] text-fg tabular-nums">
                   {metric.count !== undefined ? (
                     <span data-count={metric.count}>{metric.count}</span>
                   ) : (
@@ -438,27 +565,27 @@ export function OpenFlowStory() {
                   )}
                   {metric.suffix ?? ""}
                 </p>
-                <h3 className="mt-4 text-body font-semibold text-fg">
+                <h3 className="mt-3.5 text-label font-semibold text-fg md:text-[15px]">
                   {metric.label}
                 </h3>
               </div>
-              <p className="mt-2.5 text-label leading-relaxed text-fg-secondary">
+              <p className="mt-2 text-label leading-[1.65] text-fg-secondary">
                 {metric.detail}
               </p>
             </div>
           ))}
         </div>
 
-        {/* 使用前后核心环节对比表 */}
-        <div data-reveal className="mt-16 md:mt-20">
-          <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
+        {/* 使用前后核心环节对比表（0px 锐利直角容器） */}
+        <div data-reveal className="mt-14 md:mt-16">
+          <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
             <h3
               id="openflow-compare-caption"
-              className="text-title font-bold tracking-[-0.025em] text-fg"
+              className="text-[20px] font-semibold tracking-[-0.02em] text-fg md:text-[24px]"
             >
               使用 OpenFlow 前后核心环节对比
             </h3>
-            <span className="text-caption text-fg-muted">
+            <span className="font-mono text-micro text-fg-muted">
               原有内部 API 平台 vs OpenFlow v1.4.0
             </span>
           </div>
@@ -467,7 +594,7 @@ export function OpenFlowStory() {
             // biome-ignore lint/a11y/noNoninteractiveTabindex: 可滚动的响应式数据表容器需要支持键盘聚焦（遵循 modern-web-guidance: responsive-table）
             tabIndex={0}
             aria-labelledby="openflow-compare-caption"
-            className="openflow-compare-wrap glass-panel rounded-[24px] p-1 sm:p-2"
+            className="openflow-compare-wrap border border-border bg-bg"
           >
             <table className="openflow-compare-table w-full text-left">
               <caption className="sr-only">
@@ -477,19 +604,19 @@ export function OpenFlowStory() {
                 <tr>
                   <th
                     scope="col"
-                    className="border-b border-border/80 bg-surface-solid/95 px-4 py-3.5 text-caption font-semibold text-fg-muted"
+                    className="border-b border-border bg-surface px-4 py-3.5 font-mono text-micro font-medium tracking-wider text-fg-muted uppercase"
                   >
                     对比维度
                   </th>
                   <th
                     scope="col"
-                    className="border-b border-border/80 bg-surface-solid/95 px-4 py-3.5 text-caption font-semibold text-fg-muted"
+                    className="border-b border-border bg-surface px-4 py-3.5 font-mono text-micro font-medium tracking-wider text-fg-muted uppercase"
                   >
                     使用 OpenFlow 之前
                   </th>
                   <th
                     scope="col"
-                    className="border-b border-border/80 bg-surface-solid/95 px-4 py-3.5 text-caption font-semibold text-accent"
+                    className="border-b border-border bg-surface px-4 py-3.5 font-mono text-micro font-semibold tracking-wider text-fg uppercase"
                   >
                     使用 OpenFlow 之后（v1.4.0）
                   </th>
@@ -499,18 +626,18 @@ export function OpenFlowStory() {
                 {openflowStory.comparisons.map((row) => (
                   <tr
                     key={row.dimension}
-                    className="border-b border-border/60 last:border-b-0"
+                    className="border-b border-border last:border-b-0"
                   >
                     <th
                       scope="row"
-                      className="px-4 py-4 align-top text-body font-semibold text-fg"
+                      className="px-4 py-4 align-top text-label font-semibold text-fg md:text-[15px]"
                     >
                       {row.dimension}
                     </th>
-                    <td className="px-4 py-4 align-top text-body leading-relaxed text-fg-secondary">
+                    <td className="px-4 py-4 align-top text-label leading-[1.65] text-fg-secondary md:text-[15px]">
                       {row.before}
                     </td>
-                    <td className="px-4 py-4 align-top text-body leading-relaxed font-medium text-fg">
+                    <td className="px-4 py-4 align-top text-label leading-[1.65] font-medium text-fg md:text-[15px]">
                       {row.after}
                     </td>
                   </tr>
@@ -520,10 +647,10 @@ export function OpenFlowStory() {
           </section>
         </div>
 
-        {/* 合作 IP 视频播客成片案例入口 */}
-        <div data-reveal className="mt-16 border-t border-border/80 pt-12">
-          <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
-            <h3 className="text-title font-bold tracking-[-0.025em] text-fg">
+        {/* 合作 IP 视频播客成片案例入口（0px 平面块 + 9999px 胶囊返回） */}
+        <div data-reveal className="mt-14 border-t border-border pt-10">
+          <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
+            <h3 className="text-[20px] font-semibold tracking-[-0.02em] text-fg md:text-[24px]">
               代表交付成片
             </h3>
             <p className="text-caption text-fg-secondary">
@@ -539,25 +666,25 @@ export function OpenFlowStory() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="glass-panel group flex min-h-24 items-center justify-between gap-4 rounded-[24px] p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:border-accent/45 sm:p-6"
+                className="group flex min-h-22 items-center justify-between gap-4 border border-border bg-surface p-5 transition-colors hover:border-border-strong hover:bg-surface-recessed sm:p-6"
               >
                 <div>
-                  <p className="text-body font-semibold text-fg transition-colors group-hover:text-accent">
+                  <p className="text-case-title font-semibold text-fg underline-offset-4 group-hover:underline">
                     {item.title}
                   </p>
                   <p className="mt-1 text-caption text-fg-secondary">
                     {item.subtitle}
                   </p>
                 </div>
-                <ArrowIcon className="size-4.5 shrink-0 text-fg-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent" />
+                <ArrowIcon className="size-4 shrink-0 text-fg-muted transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-fg" />
               </a>
             ))}
           </div>
 
-          <div className="mt-12 flex justify-center">
+          <div className="mt-10 flex justify-center">
             <Link
               href="/works"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border/80 bg-surface/85 px-5 py-2.5 text-caption font-medium text-fg-secondary backdrop-blur-md transition-colors hover:border-accent/45 hover:text-accent"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong bg-bg px-5 text-caption font-medium text-fg transition-colors hover:bg-surface md:min-h-9"
             >
               <span aria-hidden="true">←</span>
               <span>返回作品列表</span>
