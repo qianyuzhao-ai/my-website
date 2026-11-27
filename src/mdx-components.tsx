@@ -105,17 +105,14 @@ const components: MDXComponents = {
     />
   ),
   ul: (props) => (
-    <ul className="flex flex-col gap-3 text-fg-secondary" {...props} />
+    <ul className="mdx-ul flex flex-col gap-3 text-fg-secondary" {...props} />
   ),
   ol: (props) => (
-    <ol
-      className="flex list-decimal flex-col gap-3 pl-6 text-fg-secondary marker:font-mono marker:font-medium marker:tabular-nums marker:text-fg-muted"
-      {...props}
-    />
+    <ol className="mdx-ol flex flex-col gap-3 text-fg-secondary" {...props} />
   ),
   li: (props) => (
     <li
-      className="relative pl-6 in-[ol]:pl-0 before:absolute before:top-0 before:left-0 before:font-mono before:text-fg-muted before:content-['—'] in-[ol]:before:hidden"
+      className="relative pl-6 before:absolute before:top-0 before:left-0 before:font-mono before:text-fg-muted"
       {...props}
     />
   ),

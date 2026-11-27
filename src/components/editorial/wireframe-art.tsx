@@ -393,6 +393,251 @@ export function MobileOrderDiagramArt(props: ArtProps) {
   );
 }
 
+/** Agent 产品用户体验设计封面：4 阶段纵向流程 × 6 贯穿议题轴 × 信任校准闭环 */
+export function AgentUxDesignArt(props: ArtProps) {
+  return (
+    <svg viewBox="0 0 460 250" fill="none" aria-hidden="true" {...props}>
+      {/* 四角建筑图纸对位十字 */}
+      <path
+        d="M16 24H28M22 18V30M432 24H444M438 18V30M16 226H28M22 220V232M432 226H444M438 220V232"
+        stroke="var(--lineart-muted)"
+        strokeWidth="0.9"
+      />
+
+      {/* 6 条横向贯穿议题基准线（A–F） */}
+      <path
+        d="M44 58H416M44 82H416M44 106H416M44 130H416M44 154H416M44 178H416"
+        stroke="var(--lineart-muted)"
+        strokeWidth="0.75"
+        strokeDasharray="3 4"
+      />
+
+      {/* 左侧 A–F 坐标刻度点 */}
+      {[58, 82, 106, 130, 154, 178].map((y) => (
+        <circle key={y} cx="44" cy={y} r="1.8" fill="var(--lineart-muted)" />
+      ))}
+
+      {/* 主流程连接轴 */}
+      <path d="M72 118H388" stroke="var(--lineart-primary)" strokeWidth="1.2" />
+
+      {/* Phase 1: Before the Task (01–03) — 入口漏斗与意图槽位 */}
+      <rect
+        x="62"
+        y="74"
+        width="64"
+        height="88"
+        fill="var(--surface)"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.3"
+      />
+      <path
+        d="M72 92H116M72 106H104M72 122H116M72 138H96"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.1"
+      />
+      <rect
+        x="104"
+        y="133"
+        width="12"
+        height="10"
+        stroke="var(--lineart-muted)"
+        strokeWidth="1"
+      />
+      <circle cx="94" cy="58" r="2.5" fill="var(--lineart-primary)" />
+
+      {/* Phase 2: During the Task (04–07) — 核心执行与人机协同控制环 */}
+      <rect
+        x="156"
+        y="50"
+        width="88"
+        height="136"
+        fill="var(--surface)"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.5"
+      />
+      <circle
+        cx="200"
+        cy="118"
+        r="32"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.3"
+      />
+      <circle
+        cx="200"
+        cy="118"
+        r="19"
+        stroke="var(--lineart-muted)"
+        strokeWidth="1"
+        strokeDasharray="3 3"
+      />
+      <path
+        d="M200 76V160M162 118H238"
+        stroke="var(--lineart-muted)"
+        strokeWidth="0.9"
+      />
+      <rect
+        x="193"
+        y="111"
+        width="14"
+        height="14"
+        fill="var(--surface)"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.4"
+      />
+      <circle cx="200" cy="118" r="2.5" fill="var(--lineart-primary)" />
+      {/* 四个校准点（Explainable / Controllable / Predictable / Recoverable） */}
+      <circle cx="200" cy="86" r="2.8" fill="var(--lineart-primary)" />
+      <circle cx="232" cy="118" r="2.8" fill="var(--lineart-primary)" />
+      <circle cx="200" cy="150" r="2.8" fill="var(--lineart-primary)" />
+      <circle cx="168" cy="118" r="2.8" fill="var(--lineart-primary)" />
+
+      {/* Phase 3: After the Task (08–10) — 产物画布与版本层叠 */}
+      <rect
+        x="278"
+        y="78"
+        width="56"
+        height="78"
+        stroke="var(--lineart-muted)"
+        strokeWidth="1"
+      />
+      <rect
+        x="270"
+        y="70"
+        width="56"
+        height="78"
+        fill="var(--surface)"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.3"
+      />
+      <path
+        d="M280 90H316M280 104H310M280 118H316"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.1"
+      />
+      <circle
+        cx="310"
+        cy="132"
+        r="5"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.1"
+      />
+      <path
+        d="M308 132L309.5 133.5L312.5 130.5"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.1"
+      />
+
+      {/* Phase 4: Long-term (11–12) — 长期记忆与主动服务节点 */}
+      <rect
+        x="358"
+        y="78"
+        width="48"
+        height="80"
+        fill="var(--surface)"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.3"
+      />
+      <circle
+        cx="382"
+        cy="108"
+        r="12"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.2"
+      />
+      <circle cx="382" cy="108" r="4" fill="var(--lineart-primary)" />
+      <path
+        d="M368 134H396M368 144H388"
+        stroke="var(--lineart-muted)"
+        strokeWidth="1"
+      />
+
+      {/* 阶段间流向箭头 */}
+      <path
+        d="M148 113L155 118L148 123M262 113L269 118L262 123M350 113L357 118L350 123"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.2"
+      />
+
+      {/* 长期反馈回流曲线：Phase 4 → Phase 1（记忆与沉淀回流） */}
+      <path
+        d="M382 158V204H94V164"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.1"
+        strokeDasharray="4 3"
+      />
+      <path
+        d="M89 170L94 163L99 170"
+        stroke="var(--lineart-primary)"
+        strokeWidth="1.1"
+      />
+
+      {/* 底部标尺刻度与坐标标注 */}
+      <text
+        x="94"
+        y="224"
+        textAnchor="middle"
+        fill="var(--lineart-muted)"
+        fontSize="8.5"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+        letterSpacing="0.08em"
+      >
+        01–03
+      </text>
+      <text
+        x="200"
+        y="224"
+        textAnchor="middle"
+        fill="var(--lineart-primary)"
+        fontSize="8.5"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+        letterSpacing="0.08em"
+      >
+        04–07 · HITL
+      </text>
+      <text
+        x="298"
+        y="224"
+        textAnchor="middle"
+        fill="var(--lineart-muted)"
+        fontSize="8.5"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+        letterSpacing="0.08em"
+      >
+        08–10
+      </text>
+      <text
+        x="382"
+        y="224"
+        textAnchor="middle"
+        fill="var(--lineart-muted)"
+        fontSize="8.5"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+        letterSpacing="0.08em"
+      >
+        11–12
+      </text>
+      <text
+        x="426"
+        y="61"
+        fill="var(--lineart-muted)"
+        fontSize="8"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+      >
+        A
+      </text>
+      <text
+        x="426"
+        y="181"
+        fill="var(--lineart-muted)"
+        fontSize="8"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+      >
+        F
+      </text>
+    </svg>
+  );
+}
+
 /** 按文章 slug 自动匹配对应单色架构线框插图与编号 */
 export function PostHeroArt({
   slug,
@@ -401,6 +646,9 @@ export function PostHeroArt({
   slug: string;
   className?: string;
 }) {
+  if (slug === "agent-ux-design") {
+    return <AgentUxDesignArt className={className} />;
+  }
   if (slug === "agent-design-workflow") {
     return <AgentWorkflowArt className={className} />;
   }
