@@ -22,9 +22,11 @@ import { skyAudio } from "@/lib/sky-audio";
 
 function NavLinkList({
   pathname,
+  orientation = "vertical",
   onNavigate,
 }: {
   pathname: string;
+  orientation?: "vertical" | "horizontal";
   onNavigate?: () => void;
 }) {
   const { dict } = useLocale();
@@ -41,6 +43,32 @@ function NavLinkList({
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
+  if (orientation === "horizontal") {
+    return (
+      <ul className="flex items-center gap-1">
+        {items.map((item) => {
+          const active = isItemActive(item.href);
+          return (
+            <li key={item.href} className="shrink-0">
+              <Link
+                href={item.href}
+                onClick={onNavigate}
+                aria-current={active ? "page" : undefined}
+                className={`site-nav-link relative inline-flex h-10 items-center whitespace-nowrap px-3 text-label transition-colors ${
+                  active
+                    ? "font-semibold text-fg"
+                    : "font-normal text-fg-muted hover:text-fg"
+                }`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+
   return (
     <ul className="flex flex-col gap-1.5">
       {items.map((item) => {
@@ -51,10 +79,10 @@ function NavLinkList({
               href={item.href}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-11 items-center text-label transition-colors lg:min-h-9 ${
+              className={`site-nav-drawer-link flex min-h-11 items-center border-l-2 pl-3 text-label transition-colors ${
                 active
-                  ? "font-semibold text-fg"
-                  : "font-normal text-fg-muted hover:text-fg"
+                  ? "border-fg font-semibold text-fg"
+                  : "border-transparent font-normal text-fg-muted hover:text-fg"
               }`}
             >
               {item.label}
@@ -140,7 +168,7 @@ function IslandFloatingBar() {
 /**
  * 全局黑白编辑部外壳：
  * - /island 路由：交出全屏给 3D 空岛，仅保留悬浮返回条；
- * - 其余路由：桌面端左侧固定 220px 导航栏（首页 / 项目 / 写作 / 关于 / 3D岛）+ 移动端 60px 顶栏（内联搜索展开 + 滑动抽屉）。
+ * - 其余路由：全端统一顶部粘性导航栏（桌面端横向展示 首页 / 项目 / 写作 / 关于 / 3D岛 + Connect + 语言切换；移动端保留内联搜索展开与侧滑抽屉）。
  */
 export function EditorialShell({ children }: { children: ReactNode }) {
   const { dict } = useLocale();
@@ -150,33 +178,27 @@ export function EditorialShell({ children }: { children: ReactNode }) {
   const drawerRef = useRef<HTMLDialogElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLElement>(null);
-  const desktopAsideRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
-  // 阻止鼠标/触控板悬停在左侧固定栏时的滚轮穿透与顶底回弹
+  // 阻止鼠标/触控板悬停在固定顶栏上时的滚轮穿透与顶底回弹
   useEffect(() => {
     if (isIsland) return;
-    const aside = desktopAsideRef.current;
-    if (!aside) return;
+    const header = headerRef.current;
+    if (!header) return;
 
     const handleWheel = (event: WheelEvent) => {
-      const canScroll = aside.scrollHeight > aside.clientHeight + 1;
-      if (!canScroll) {
-        event.preventDefault();
-        return;
+      let el = event.target as HTMLElement | null;
+      while (el && el !== header) {
+        if (el.scrollHeight > el.clientHeight + 1) return;
+        el = el.parentElement;
       }
-      const atTop = aside.scrollTop <= 0 && event.deltaY < 0;
-      const atBottom =
-        aside.scrollTop + aside.clientHeight >= aside.scrollHeight - 1 &&
-        event.deltaY > 0;
-      if (atTop || atBottom) {
-        event.preventDefault();
-      }
+      event.preventDefault();
     };
 
-    aside.addEventListener("wheel", handleWheel, { passive: false });
-    return () => aside.removeEventListener("wheel", handleWheel);
+    header.addEventListener("wheel", handleWheel, { passive: false });
+    return () => header.removeEventListener("wheel", handleWheel);
   }, [isIsland]);
 
   const openDrawer = useCallback(async () => {
@@ -294,19 +316,45 @@ export function EditorialShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-dvh bg-bg text-fg">
-      {/* 移动端与平板端顶部导航条（60px + 内联展开搜索，非弹窗） */}
-      <header className="sticky top-0 z-30 border-b border-border bg-bg/95 backdrop-blur-sm lg:hidden">
-        <div className="flex h-[60px] items-center justify-between px-4 sm:px-6">
+    <div className="flex min-h-dvh flex-col bg-bg text-fg">
+      {/* 全端统一固定顶栏（fixed 钉死视口顶部，不随页面顶底弹性回弹） */}
+      <header
+        ref={headerRef}
+        className="fixed inset-x-0 top-0 z-30 overscroll-none border-b border-border bg-bg/95 px-4 backdrop-blur-sm sm:px-6 md:px-10 lg:px-12"
+      >
+        <div className="mx-auto flex h-[60px] max-w-[1120px] items-center justify-between gap-4 lg:h-[64px]">
           <Link
             href="/"
-            className="inline-flex min-h-11 items-center gap-2 text-label font-semibold tracking-[-0.02em] text-fg"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2.5 text-[15px] font-semibold tracking-[-0.02em] text-fg lg:min-h-9"
           >
-            <BrandQMark className="size-[18px] shrink-0" />
+            <BrandQMark className="size-[18px] shrink-0 lg:size-[20px]" />
+            <span
+              aria-hidden="true"
+              className="hidden h-4 w-px bg-border-strong sm:block"
+            />
             <span>{siteConfig.name}</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          {/* 桌面端横向主导航 */}
+          <nav aria-label={dict.nav.menu} className="hidden lg:block">
+            <NavLinkList pathname={pathname} orientation="horizontal" />
+          </nav>
+
+          {/* 桌面端右侧操作：Connect + 中/EN */}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <button
+              type="button"
+              onClick={openConnectDialog}
+              aria-haspopup="dialog"
+              className="inline-flex h-9 items-center justify-center rounded-full border border-border-strong bg-bg px-4 text-caption font-medium text-fg transition-colors hover:bg-surface"
+            >
+              {dict.nav.connect}
+            </button>
+            <LanguageToggle variant="compact" />
+          </div>
+
+          {/* 移动端与平板端右侧操作：内联搜索 + 菜单抽屉 */}
+          <div className="flex items-center gap-2 lg:hidden">
             <button
               type="button"
               onClick={() => setMobileSearchOpen((prev) => !prev)}
@@ -343,7 +391,7 @@ export function EditorialShell({ children }: { children: ReactNode }) {
 
         {/* 移动端内联搜索条（贴顶展开，下拉结果锚定在正下方） */}
         {mobileSearchOpen ? (
-          <div className="border-t border-border px-4 py-3 sm:px-6">
+          <div className="-mx-4 border-t border-border px-4 py-3 sm:-mx-6 sm:px-6 md:-mx-10 md:px-10 lg:hidden">
             <SearchPill
               autoFocus
               align="left"
@@ -413,42 +461,8 @@ export function EditorialShell({ children }: { children: ReactNode }) {
         </div>
       </dialog>
 
-      {/* 桌面端固定 220px 左侧导航栏（fixed 钉死视口，悬停其上不穿透滚动也不触发回弹） */}
-      <aside
-        ref={desktopAsideRef}
-        aria-label={dict.nav.menu}
-        className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-20 lg:flex lg:w-[220px] lg:flex-col lg:justify-between lg:overflow-y-auto lg:overscroll-none lg:border-r lg:border-border lg:bg-bg lg:px-6 lg:py-7"
-      >
-        <div className="flex flex-col gap-9">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2.5 text-[15px] font-semibold tracking-[-0.02em] text-fg"
-          >
-            <BrandQMark className="size-[22px] shrink-0" />
-            <span aria-hidden="true" className="h-4 w-px bg-border-strong" />
-            <span>{siteConfig.name}</span>
-          </Link>
-
-          <nav aria-label={dict.nav.menu}>
-            <NavLinkList pathname={pathname} />
-          </nav>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={openConnectDialog}
-            aria-haspopup="dialog"
-            className="inline-flex h-9 items-center justify-center rounded-full border border-border-strong bg-bg px-4 text-caption font-medium text-fg transition-colors hover:bg-surface"
-          >
-            {dict.nav.connect}
-          </button>
-          <LanguageToggle variant="compact" />
-        </div>
-      </aside>
-
-      {/* 右侧主画布区（保留原生文档滚动与顶底回弹反馈） */}
-      <div className="flex min-h-dvh min-w-0 flex-col lg:pl-[220px]">
+      {/* 全宽居中主画布区（预留固定顶栏高度，避免内容被遮挡） */}
+      <div className="flex min-w-0 flex-1 flex-col pt-[60px] lg:pt-[64px]">
         {children}
       </div>
     </div>

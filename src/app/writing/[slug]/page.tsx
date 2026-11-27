@@ -180,7 +180,7 @@ export default async function PostPage({ params }: Props) {
             {/* 桌面端右侧粘性元信息栏 */}
             <aside
               aria-label={dict.article.author}
-              className="hidden xl:sticky xl:top-10 xl:flex xl:max-h-[calc(100svh-3.5rem)] xl:flex-col xl:gap-7 xl:overflow-y-auto xl:pt-12 xl:pr-1"
+              className="hidden xl:sticky xl:top-[84px] xl:flex xl:max-h-[calc(100svh-6.5rem)] xl:flex-col xl:gap-7 xl:overflow-y-auto xl:pt-2 xl:pr-1"
             >
               <div className="flex flex-col gap-2.5">
                 <p className="text-micro text-fg-muted">

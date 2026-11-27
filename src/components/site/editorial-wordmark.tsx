@@ -123,11 +123,11 @@ export function EditorialWordmark() {
       onPointerUp={(e) => {
         if (e.pointerType === "touch") handleReset();
       }}
-      className="editorial-wordmark-stage relative mt-8 cursor-crosshair touch-pan-y select-none pb-4"
+      className="editorial-wordmark-stage relative cursor-crosshair touch-pan-y select-none py-8 md:py-10"
     >
-      {/* 建筑套版微坐标指示（仅交互时浮现） */}
+      {/* 建筑套版微坐标指示（悬浮在顶部留白内，不挤压字标垂直居中） */}
       <div
-        className={`pointer-events-none mb-2 flex items-center justify-between font-mono text-[10px] tracking-widest text-fg-muted uppercase transition-opacity duration-200 ${
+        className={`pointer-events-none absolute inset-x-0 top-2.5 flex items-center justify-between font-mono text-[10px] tracking-widest text-fg-muted uppercase transition-opacity duration-200 ${
           isActive ? "opacity-85" : "opacity-0"
         }`}
       >

@@ -62,13 +62,16 @@ export function SearchProvider({
       keywords: `${p.title} ${p.summary} ${(p.tags ?? []).join(" ")}`,
     }));
 
-    const workEntries: SearchEntry[] = dict.works.items.map((w) => ({
-      id: `work-${w.id}`,
-      title: w.title,
-      excerpt: `${w.subtitle} ${w.summary}`,
-      href: w.href ?? "/works",
-      keywords: `${w.title} ${w.subtitle} ${w.summary} ${w.kind}`,
-    }));
+    const staticIds = new Set(dict.search.staticEntries.map((s) => s.id));
+    const workEntries: SearchEntry[] = dict.works.items
+      .filter((w) => !staticIds.has(`work-${w.id}`))
+      .map((w) => ({
+        id: `work-${w.id}`,
+        title: w.title,
+        excerpt: `${w.subtitle} ${w.summary}`,
+        href: w.href ?? "/works",
+        keywords: `${w.title} ${w.subtitle} ${w.summary} ${w.kind}`,
+      }));
 
     return [...postEntries, ...dict.search.staticEntries, ...workEntries];
   }, [posts, dict]);

@@ -10,7 +10,6 @@ import { SearchPill } from "@/components/site/search-dialog";
 import { SiteFooter } from "@/components/site/site-footer";
 import { getDictionary, type WorkCardEntry } from "@/lib/i18n/dictionaries";
 import { getServerLocale } from "@/lib/i18n/server";
-import { openflowStory } from "@/lib/openflow-story";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
@@ -22,13 +21,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function WorkArtwork({ work }: { work: WorkCardEntry }) {
+  if (work.id === "openflow") {
+    return <OpenFlowIsometricArt className="h-auto w-full max-w-[320px]" />;
+  }
   if (work.id === "aigc-storyboard-studio") {
-    return <StoryboardGridArt className="h-auto w-full max-w-[290px]" />;
+    return <StoryboardGridArt className="h-auto w-full max-w-[300px]" />;
   }
   if (work.id === "agentic-design-compiler") {
-    return <AgentWorkflowArt className="h-auto w-full max-w-[290px]" />;
+    return <AgentWorkflowArt className="h-auto w-full max-w-[300px]" />;
   }
-  return <ArchitectureLayersArt className="h-auto w-full max-w-[290px]" />;
+  return <ArchitectureLayersArt className="h-auto w-full max-w-[300px]" />;
 }
 
 export default async function WorksPage() {
@@ -51,83 +53,19 @@ export default async function WorksPage() {
               <h1 className="text-[30px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[42px] md:leading-[1.12]">
                 {dict.works.title}
               </h1>
-              <p className="mt-1 max-w-[56ch] text-label leading-relaxed text-fg-secondary md:text-[15px]">
+              <p className="mt-1 max-w-[56ch] text-pretty text-label leading-relaxed text-fg-secondary md:text-[15px]">
                 {dict.works.description}
               </p>
             </div>
             <SearchPill className="hidden lg:block" />
           </header>
 
-          {/* 01 · Featured Case Study: OpenFlow */}
-          <section
-            aria-labelledby="featured-openflow-heading"
-            className="flex flex-col gap-5"
-          >
-            <div className="flex items-baseline justify-between gap-4">
-              <h2
-                id="featured-openflow-heading"
-                className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase"
-              >
-                01 {"//"} {dict.works.featuredEyebrow}
-              </h2>
-              <span className="font-mono text-micro text-fg-muted">
-                {openflowStory.hero.version}
-              </span>
-            </div>
-
-            <div className="bg-surface p-5 sm:p-7 lg:p-10">
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
-                <div className="flex flex-col gap-5 lg:col-span-6">
-                  <div className="flex items-center gap-2 font-mono text-micro text-fg-muted">
-                    <span aria-hidden="true" className="size-1.5 bg-fg" />
-                    <span className="font-medium text-fg uppercase">
-                      OPENFLOW
-                    </span>
-                    <span aria-hidden="true">·</span>
-                    <span>{dict.works.featuredType}</span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-[24px] leading-snug font-bold tracking-[-0.02em] text-fg md:text-[32px]">
-                      {openflowStory.hero.title}
-                    </h3>
-                    <p className="mt-2 text-body font-medium text-fg-secondary">
-                      {dict.works.openflowSubtitle}
-                    </p>
-                    <p className="mt-3 max-w-[52ch] text-label leading-relaxed text-fg-muted">
-                      {dict.works.openflowLead}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 font-mono text-micro text-fg-muted">
-                    <span>Electron + React 19</span>
-                    <span>React Flow</span>
-                    <span>Hono + SQLite</span>
-                  </div>
-
-                  <div className="pt-1">
-                    <Link
-                      href="/works/openflow"
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-5 text-caption font-medium text-ink-fg transition-opacity hover:opacity-85 sm:w-fit md:min-h-9"
-                    >
-                      {dict.works.featuredCta}
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center lg:col-span-6">
-                  <OpenFlowIsometricArt className="h-auto w-full max-w-[420px]" />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 02 · Selected Systems 3 列展廊 */}
+          {/* 01 · Selected Systems 3 列展廊 */}
           <section
             aria-labelledby="selected-works-heading"
             className="flex flex-col gap-6"
           >
-            <div className="flex items-baseline justify-between gap-4 border-t border-border pt-8">
+            <div className="flex items-baseline justify-between gap-4">
               <h2
                 id="selected-works-heading"
                 className="text-[22px] font-semibold tracking-[-0.02em] text-fg md:text-[26px]"
@@ -139,7 +77,7 @@ export default async function WorksPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-10">
               {dict.works.items.map((work) => {
                 const cardBody = (
                   <>
@@ -155,13 +93,21 @@ export default async function WorksPage() {
                     </div>
 
                     <h3
-                      className={`text-case-title font-bold tracking-[-0.01em] text-fg ${
+                      className={`flex items-center justify-between gap-2 text-case-title font-bold tracking-[-0.01em] text-fg ${
                         work.href
                           ? "underline-offset-4 group-hover:underline"
                           : ""
                       }`}
                     >
-                      {work.title}
+                      <span>{work.title}</span>
+                      {work.href ? (
+                        <span
+                          aria-hidden="true"
+                          className="font-mono text-caption font-normal text-fg-muted transition-transform group-hover:translate-x-0.5 group-hover:text-fg"
+                        >
+                          →
+                        </span>
+                      ) : null}
                     </h3>
 
                     <p className="line-clamp-3 text-label leading-[1.6] text-fg-secondary">
@@ -196,14 +142,14 @@ export default async function WorksPage() {
             </div>
           </section>
 
-          {/* 03 · 3D岛实验子页入口 */}
+          {/* 02 · 3D岛实验子页入口 */}
           <section
             aria-labelledby="sky-island-heading"
             className="flex flex-col gap-5 bg-surface p-6 sm:p-8 md:flex-row md:items-center md:justify-between md:px-10"
           >
             <div className="flex flex-col gap-2">
               <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
-                03 {"//"} {dict.works.islandEyebrow}
+                02 {"//"} {dict.works.islandEyebrow}
               </p>
               <h2
                 id="sky-island-heading"

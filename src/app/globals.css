@@ -917,6 +917,24 @@ progress.wireframe-progress::-moz-progress-bar {
   border-block-end: 2px solid var(--fg);
 }
 
+/* 顶部导航当前页指示线（遵循 modern-web-guidance: navbar，不依赖纯颜色且兼容 forced-colors） */
+.site-nav-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.75rem;
+  inset-block-end: 0;
+  border-block-end: 2px solid var(--fg);
+}
+
+@media (forced-colors: active) {
+  .site-nav-link[aria-current="page"]::after {
+    border-block-end-color: Highlight;
+  }
+  .site-nav-drawer-link[aria-current="page"] {
+    border-inline-start-color: Highlight;
+  }
+}
+
 /* MDX 列表标记：有序与无序列表标记均与正文左缘严格齐平（list-style-type: "" 保留 Safari 列表语义） */
 .mdx-ul > li::before {
   content: "—";

@@ -71,12 +71,17 @@ export type Dictionary = {
   };
   home: {
     title: string;
+    featuredWorksHeading: string;
+    allWorksLink: string;
     heroBadge: string;
     heroMobileBadge: string;
     heroTitle: string;
     heroDesc: string;
     heroSpecs: [string, string];
     heroCta: string;
+    featuredWritingHeading: string;
+    allWritingLink: string;
+    readArticleCta: string;
     storiesHeading: string;
     storiesSubtitle: string;
     stories: StoryCardEntry[];
@@ -192,8 +197,7 @@ const zh: Dictionary = {
     siteDescription:
       "QianYu 的个人网站：以工程骨架驱动生成式想象力，在代码与潜空间之间造物。",
     worksTitle: "项目 · QianYu",
-    worksDescription:
-      "AI Agent 工程架构、全栈交互工具链与高可控 AIGC 视觉工作流代表作及 3D 交互实验。",
+    worksDescription: "围绕 AI Agent 产品、AIGC 工作流与交互原型的实践记录。",
     writingTitle: "写作 · QianYu",
     writingDescription:
       "关于 AI Agent 工程、全栈架构与 AIGC 视觉工作流的一线实战笔记与复盘。",
@@ -257,6 +261,8 @@ const zh: Dictionary = {
   },
   home: {
     title: "QianYu 的造物与写作",
+    featuredWorksHeading: "精选案例",
+    allWorksLink: "全部项目 →",
     heroBadge: "精选案例",
     heroMobileBadge: "精选项目 · 2026",
     heroTitle: "OpenFlow：面向 12 人团队的 AIGC 无限画布生产平台",
@@ -264,6 +270,9 @@ const zh: Dictionary = {
       "面向 AI 视频播客与多模态评测一线场景，以需求拆解驱动 Coding Agent 全栈落地，将单条 5 分钟串行等待重构为并发工作流。",
     heroSpecs: ["MACOS & WINDOWS", "ELECTRON + REACT FLOW"],
     heroCta: "阅读项目复盘",
+    featuredWritingHeading: "精选文章",
+    allWritingLink: "全部文章 →",
+    readArticleCta: "阅读文章",
     storiesHeading: "精选阅读与项目",
     storiesSubtitle: "来自 QianYu 工作室的工程实践、设计思考与 AIGC 笔记",
     stories: [],
@@ -333,8 +342,7 @@ const zh: Dictionary = {
   works: {
     eyebrow: "项目与实验台",
     title: "项目",
-    description:
-      "AI Agent 工程架构、全栈交互工具链与高可控 AIGC 视觉工作流代表作及 3D 交互实验。",
+    description: "围绕 AI Agent 产品、AIGC 工作流与交互原型的实践记录。",
     featuredEyebrow: "精选深度案例",
     featuredType: "桌面端生产平台",
     openflowSubtitle:
@@ -346,8 +354,24 @@ const zh: Dictionary = {
     itemsUnit: "个项目",
     items: [
       {
-        id: "aigc-storyboard-studio",
+        id: "openflow",
         index: "01",
+        kind: "coding",
+        year: "2026",
+        title: "OpenFlow",
+        subtitle:
+          "用 AI Agent 从 0 到 1，打造 12 人团队的 AIGC 无限画布生产平台",
+        summary:
+          "面向 AI 视频播客生产与多模态评测一线场景，以需求拆解驱动 Coding Agent 全栈落地，将单条 4–5 分钟的串行等待重构为全员复用的并发工作流。",
+        href: "/works/openflow",
+        metrics: [
+          { label: "版本", value: "v1.4.0" },
+          { label: "平台", value: "macOS & Windows" },
+        ],
+      },
+      {
+        id: "aigc-storyboard-studio",
+        index: "02",
         kind: "aigc",
         year: "2026",
         title: "Latent Storyboard Engine",
@@ -361,7 +385,7 @@ const zh: Dictionary = {
       },
       {
         id: "agentic-design-compiler",
-        index: "02",
+        index: "03",
         kind: "coding",
         year: "2026",
         title: "Agentic UI Compiler",
@@ -376,7 +400,7 @@ const zh: Dictionary = {
       },
       {
         id: "kinetic-shader-zine",
-        index: "03",
+        index: "04",
         kind: "aigc",
         year: "2026",
         title: "Chromatic Latent Zine",
@@ -452,7 +476,7 @@ const en: Dictionary = {
       "QianYu's personal studio: pairing deterministic engineering with generative imagination across code and latent space.",
     worksTitle: "Works · QianYu",
     worksDescription:
-      "Selected AI Agent systems, full-stack tooling, controllable AIGC workflows, and interactive 3D experiments.",
+      "Hands-on builds across AI Agent products, AIGC workflows, and interactive prototypes.",
     writingTitle: "Writing · QianYu",
     writingDescription:
       "Field notes and engineering retrospectives on AI Agent workflows, full-stack architecture, and AIGC production.",
@@ -518,6 +542,8 @@ const en: Dictionary = {
   },
   home: {
     title: "Insights & Works from QianYu",
+    featuredWorksHeading: "Featured Case Study",
+    allWorksLink: "All works →",
     heroBadge: "FEATURED CASE STUDY",
     heroMobileBadge: "FEATURED WORK · 2026",
     heroTitle:
@@ -526,6 +552,9 @@ const en: Dictionary = {
       "Built for AI video podcast production and multimodal evaluation, turning 5-minute serial waits into a shared concurrent desktop workflow powered by coding agents.",
     heroSpecs: ["MACOS & WINDOWS", "ELECTRON + REACT FLOW"],
     heroCta: "Read Case Study",
+    featuredWritingHeading: "Featured Writing",
+    allWritingLink: "All essays →",
+    readArticleCta: "Read essay",
     storiesHeading: "Stories worth your time",
     storiesSubtitle: "picks from QianYu's studio — engineering, design & AIGC",
     stories: [],
@@ -593,7 +622,7 @@ const en: Dictionary = {
     eyebrow: "WORKS & INTERACTIVE LAB",
     title: "Works",
     description:
-      "Selected AI Agent engineering architectures, full-stack tooling, controllable AIGC visual pipelines, and 3D experiments.",
+      "Hands-on builds across AI Agent products, AIGC workflows, and interactive prototypes.",
     featuredEyebrow: "FEATURED CASE STUDY",
     featuredType: "DESKTOP PLATFORM",
     openflowSubtitle:
@@ -605,8 +634,24 @@ const en: Dictionary = {
     itemsUnit: "ITEMS",
     items: [
       {
-        id: "aigc-storyboard-studio",
+        id: "openflow",
         index: "01",
+        kind: "coding",
+        year: "2026",
+        title: "OpenFlow",
+        subtitle:
+          "Building an infinite-canvas AIGC production platform for a 12-person team from 0 to 1 with AI agents",
+        summary:
+          "Designed for real-world AI video podcast production and multimodal evaluation—replacing 4–5 minute serial bottlenecks with a shared concurrent workflow.",
+        href: "/works/openflow",
+        metrics: [
+          { label: "Release", value: "v1.4.0" },
+          { label: "Platform", value: "macOS & Windows" },
+        ],
+      },
+      {
+        id: "aigc-storyboard-studio",
+        index: "02",
         kind: "aigc",
         year: "2026",
         title: "Latent Storyboard Engine",
@@ -621,7 +666,7 @@ const en: Dictionary = {
       },
       {
         id: "agentic-design-compiler",
-        index: "02",
+        index: "03",
         kind: "coding",
         year: "2026",
         title: "Agentic UI Compiler",
@@ -636,7 +681,7 @@ const en: Dictionary = {
       },
       {
         id: "kinetic-shader-zine",
-        index: "03",
+        index: "04",
         kind: "aigc",
         year: "2026",
         title: "Chromatic Latent Zine",

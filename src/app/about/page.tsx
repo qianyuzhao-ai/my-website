@@ -37,7 +37,7 @@ export default async function AboutPage() {
         id="main"
         className="flex-1 px-4 pt-6 sm:px-6 md:px-10 md:pt-8 lg:px-12"
       >
-        <div className="mx-auto flex max-w-[920px] flex-col gap-12">
+        <div className="mx-auto flex max-w-[1120px] flex-col gap-12">
           <header className="flex flex-col gap-5 border-b border-border pb-8">
             <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
               {dict.about.eyebrow} · {dict.about.location}
