@@ -14,8 +14,8 @@ export type WorkItem = {
   metrics: { label: string; value: string }[];
   stack: string[];
   /** 站内复盘文章或外部链接 */
-  href: string;
-  ctaLabel: string;
+  href?: string;
+  ctaLabel?: string;
   isExternal?: boolean;
   /** AIGC 作品专属：Prompt 蓝图与渲染成片对比参数 */
   aigcSpec?: {
@@ -49,8 +49,6 @@ export const featuredWorks: WorkItem[] = [
       { label: "管线阶段", value: "3-Stage" },
     ],
     stack: ["ControlNet Depth", "Flux LoRA", "Structured Prompt", "FFmpeg"],
-    href: "/writing/aigc-flow-retrospective",
-    ctaLabel: "阅读三代流程复盘",
     aigcSpec: {
       promptExcerpt:
         "35mm editorial medium shot, warm tungsten rim light cutting through darkroom mist, brutalist concrete desk with glowingCRT waveform, tactile grain --ar 16:10 --cfg 3.5",
@@ -76,8 +74,6 @@ export const featuredWorks: WorkItem[] = [
       { label: "自动走查项", value: "24 Rules" },
     ],
     stack: ["Next.js 16", "React 19", "TypeScript AST", "Agent Tool-Use"],
-    href: "/writing/agent-design-workflow",
-    ctaLabel: "查看工作流拆解",
     codeSpec: {
       command: "agy compile --spec editorial-lab.tokens.json --target rsc",
       stages: [
@@ -115,8 +111,6 @@ export const featuredWorks: WorkItem[] = [
       { label: "交互模式", value: "Touch + Pointer" },
     ],
     stack: ["GSAP ScrollTrigger", "SVG Noise Filter", "MDX", "Tailwind v4"],
-    href: "/writing/from-design-to-fullstack",
-    ctaLabel: "阅读全栈造物手记",
     aigcSpec: {
       promptExcerpt:
         "Swiss editorial typography specimen fused with iridescent emerald liquid glass, macro paper fibers, high-contrast ink bleed, studio strobe --stylize 250",

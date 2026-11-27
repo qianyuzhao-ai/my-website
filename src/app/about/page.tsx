@@ -8,92 +8,97 @@ import {
 } from "@/components/home/icons";
 import { ConnectTriggerButton } from "@/components/site/connect-trigger-button";
 import { SiteFooter } from "@/components/site/site-footer";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getServerLocale } from "@/lib/i18n/server";
 import { type SocialChannel, siteConfig } from "@/lib/site-config";
 
-export const metadata: Metadata = {
-  title: `关于 · ${siteConfig.name}`,
-  description: siteConfig.about.story,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: dict.meta.aboutTitle,
+    description: dict.meta.aboutDescription,
+  };
+}
 
 function ChannelIcon({ id }: { id: SocialChannel["id"] }) {
   if (id === "x") return <XIcon className="size-4" />;
-  if (id === "github") return <GitHubIcon className="size-4.5" />;
-  return <SparklesIcon className="size-4.5" />;
+  if (id === "github") return <GitHubIcon className="size-4" />;
+  return <SparklesIcon className="size-4" />;
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+
   return (
-    <div className="glass-ambient-bg min-h-dvh text-fg">
+    <>
       <main
         id="main"
-        className="px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
+        className="flex-1 px-4 pt-6 sm:px-6 md:px-10 md:pt-8 lg:px-12"
       >
-        <div className="mx-auto max-w-4xl">
-          {/* 守岛人简介毛玻璃主卡 */}
-          <section className="glass-panel rounded-[26px] p-6 sm:rounded-[32px] sm:p-9">
-            <div className="inline-flex items-center gap-2 rounded-full bg-signal-soft px-3 py-1 font-mono text-micro font-semibold tracking-wider text-signal uppercase">
-              <span className="size-1.5 rounded-full bg-signal-dot signal-dot" />
-              <span>ABOUT &amp; NOW</span>
-            </div>
-
-            <h1 className="mt-4 text-[clamp(1.85rem,4.5vw,2.85rem)] leading-[1.12] font-bold tracking-[-0.03em] text-fg">
-              {siteConfig.about.headline}
+        <div className="mx-auto flex max-w-[1120px] flex-col gap-12">
+          <header className="flex flex-col gap-5 border-b border-border pb-8">
+            <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+              {dict.about.eyebrow} · {dict.about.location}
+            </p>
+            <h1 className="text-[30px] leading-[1.18] font-bold tracking-[-0.025em] text-fg md:text-[40px]">
+              {dict.about.headline}
             </h1>
-
-            <p className="mt-4 max-w-[60ch] text-body leading-[1.82] text-fg-secondary md:text-[17px]">
-              {siteConfig.about.story}
+            <p className="max-w-[60ch] text-body leading-[1.82] text-fg-secondary md:text-[17px]">
+              {dict.about.story}
             </p>
 
-            {/* 状态胶囊条 */}
-            <div className="mt-5 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-surface-elevated/85 px-3.5 py-1.5 font-mono text-caption text-fg-secondary">
-                <span className="size-1.5 rounded-full bg-signal-dot" />
-                {siteConfig.location}
-              </span>
-              <span className="inline-flex items-center rounded-full border border-border/80 bg-surface-elevated/85 px-3.5 py-1.5 font-mono text-caption text-fg-secondary">
-                {siteConfig.role}
-              </span>
-              <span className="inline-flex items-center rounded-full bg-accent-soft px-3.5 py-1.5 font-mono text-caption font-medium text-accent">
-                Open to Collaborate
-              </span>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 font-mono text-caption text-fg-muted">
+              <span className="font-medium text-fg">{dict.about.role}</span>
+              <span aria-hidden="true">/</span>
+              <span>{dict.about.location}</span>
+              <span aria-hidden="true">/</span>
+              <span>{dict.about.availability}</span>
             </div>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-border/80 pt-6">
-              <ConnectTriggerButton label="发起信号连接" />
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <ConnectTriggerButton label={dict.about.connectCta} />
               <Link
-                href="/"
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-border bg-surface-solid/80 px-5 text-label font-medium text-fg transition-colors hover:border-accent/45 hover:text-accent"
+                href="/island"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-border-strong bg-bg px-5 text-caption font-medium text-fg transition-colors hover:bg-surface md:min-h-9"
               >
-                返回 3D 云上庭园
+                {dict.about.islandCta}
               </Link>
             </div>
-          </section>
+          </header>
 
-          {/* NOW 与 ARSENAL 双栏毛玻璃卡片 */}
-          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-            <section className="glass-card rounded-[24px] p-6">
-              <p className="font-mono text-micro font-semibold tracking-widest text-signal uppercase">
-                NOW {"//"} 近期正在折腾
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <section className="bg-surface p-6 sm:p-7">
+              <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+                NOW {"//"} {dict.about.nowEyebrow}
               </p>
-              <ul className="mt-4 space-y-3 text-label text-fg">
-                {siteConfig.about.nowItems.map((item) => (
-                  <li key={item} className="flex items-start gap-2.5">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-signal-dot" />
-                    <span className="leading-relaxed">{item}</span>
+              <ul className="mt-4 flex flex-col gap-3.5 text-label text-fg">
+                {dict.about.nowItems.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="font-mono text-fg-muted"
+                    >
+                      —
+                    </span>
+                    <span className="leading-relaxed text-fg-secondary">
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
             </section>
 
-            <section className="glass-card rounded-[24px] p-6">
-              <p className="font-mono text-micro font-semibold tracking-widest text-accent uppercase">
-                ARSENAL {"//"} 常用造物工具栈
+            <section className="bg-surface p-6 sm:p-7">
+              <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+                ARSENAL {"//"} {dict.about.arsenalEyebrow}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {siteConfig.about.arsenal.map((tool) => (
                   <span
                     key={tool}
-                    className="rounded-full border border-border/85 bg-surface-solid/85 px-3.5 py-1.5 font-mono text-caption text-fg"
+                    className="rounded-full border border-border bg-bg px-3.5 py-1.5 font-mono text-caption text-fg"
                   >
                     {tool}
                   </span>
@@ -102,36 +107,38 @@ export default function AboutPage() {
             </section>
           </div>
 
-          {/* 社交频段矩阵 */}
-          <section className="glass-card mt-6 rounded-[24px] p-6">
-            <p className="font-mono text-micro font-semibold tracking-widest text-fg-muted uppercase">
-              SOCIAL FREQUENCIES {"//"} 在这里找到我
-            </p>
-            <ul className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+          <section className="flex flex-col gap-4">
+            <h2 className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+              SOCIAL CHANNELS {"//"} {dict.about.socialEyebrow}
+            </h2>
+            <ul className="divide-y divide-border border-y border-border">
               {siteConfig.socials.map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex h-full flex-col justify-between gap-3 rounded-2xl border border-border/80 bg-surface-solid/75 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:bg-surface-solid"
+                    className="group flex flex-col gap-2 py-4 transition-colors hover:bg-surface sm:flex-row sm:items-center sm:justify-between sm:px-3 sm:py-5"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-surface-recessed/70 text-fg transition-colors group-hover:border-accent/40 group-hover:bg-accent-soft group-hover:text-accent">
+                    <div className="flex items-center gap-3.5">
+                      <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-bg text-fg">
                         <ChannelIcon id={item.id} />
                       </span>
-                      <ArrowIcon className="size-4 text-fg-muted transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent" />
+                      <div>
+                        <p className="text-label font-semibold text-fg">
+                          {item.label}
+                        </p>
+                        <p className="font-mono text-micro text-fg-muted">
+                          {item.handle}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-label font-semibold text-fg transition-colors group-hover:text-accent">
-                        {item.label}
+
+                    <div className="flex items-center justify-between gap-4 sm:justify-end">
+                      <p className="text-caption text-fg-secondary">
+                        {dict.about.socialDescriptions[item.id]}
                       </p>
-                      <p className="mt-0.5 font-mono text-micro text-fg-muted">
-                        {item.handle}
-                      </p>
-                      <p className="mt-1.5 text-caption leading-relaxed text-fg-secondary">
-                        {item.description}
-                      </p>
+                      <ArrowIcon className="size-4 shrink-0 text-fg-muted transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-fg" />
                     </div>
                   </a>
                 </li>
@@ -141,6 +148,6 @@ export default function AboutPage() {
         </div>
       </main>
       <SiteFooter />
-    </div>
+    </>
   );
 }

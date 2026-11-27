@@ -377,27 +377,29 @@ export function WorksShowcase() {
                     ))}
                   </ul>
 
-                  <div>
-                    {work.isExternal ? (
-                      <a
-                        href={work.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-5 text-label font-medium text-bg transition-opacity hover:opacity-90"
-                      >
-                        <span>{work.ctaLabel}</span>
-                        <ArrowIcon className="size-4" />
-                      </a>
-                    ) : (
-                      <Link
-                        href={work.href}
-                        className="inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-5 text-label font-medium text-bg transition-opacity hover:opacity-90"
-                      >
-                        <span>{work.ctaLabel}</span>
-                        <ArrowRightIcon className="size-4" />
-                      </Link>
-                    )}
-                  </div>
+                  {work.href ? (
+                    <div>
+                      {work.isExternal ? (
+                        <a
+                          href={work.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-5 text-label font-medium text-bg transition-opacity hover:opacity-90"
+                        >
+                          <span>{work.ctaLabel}</span>
+                          <ArrowIcon className="size-4" />
+                        </a>
+                      ) : (
+                        <Link
+                          href={work.href}
+                          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-5 text-label font-medium text-bg transition-opacity hover:opacity-90"
+                        >
+                          <span>{work.ctaLabel}</span>
+                          <ArrowRightIcon className="size-4" />
+                        </Link>
+                      )}
+                    </div>
+                  ) : null}
                 </div>
               </div>
 

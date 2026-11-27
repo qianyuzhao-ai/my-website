@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocale } from "@/components/site/locale-provider";
 import type { PostHeading } from "@/lib/post-shared";
 
 export function PostToc({
@@ -10,6 +11,7 @@ export function PostToc({
   headings: PostHeading[];
   variant: "mobile" | "desktop";
 }) {
+  const { dict } = useLocale();
   const navRef = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState<string>(headings[0]?.id ?? "");
   const [usesNativeScrollspy, setUsesNativeScrollspy] = useState(false);
@@ -78,16 +80,16 @@ export function PostToc({
 
   if (variant === "mobile") {
     return (
-      <details className="writing-toc-details overflow-hidden rounded-2xl border border-border/85 bg-surface-recessed/70 lg:hidden">
-        <summary className="flex min-h-12 items-center gap-2.5 px-4 text-label font-medium text-fg">
-          <span>章节目录</span>
-          <span className="font-mono text-caption text-fg-muted tabular-nums">
-            ({headings.length})
+      <details className="writing-toc-details overflow-hidden rounded-[22px] border border-border bg-bg xl:hidden">
+        <summary className="flex min-h-11 items-center gap-2 px-4 text-caption font-medium text-fg">
+          <span>{dict.article.onThisPage}</span>
+          <span className="font-mono text-micro text-fg-muted tabular-nums">
+            · {headings.length} {dict.article.sectionsUnit}
           </span>
         </summary>
         <nav
-          aria-label="移动端文章目录"
-          className="border-t border-border/80 px-4 py-3"
+          aria-label={dict.article.onThisPage}
+          className="border-t border-border px-4 py-3"
         >
           <ul className="flex flex-col gap-1">
             {headings.map((item) => (
@@ -97,7 +99,7 @@ export function PostToc({
               >
                 <a
                   href={`#${item.id}`}
-                  className="block rounded-lg px-2 py-1.5 text-label text-fg-secondary transition-colors duration-150 hover:bg-surface-solid/80 hover:text-accent"
+                  className="block py-1.5 text-label text-fg-secondary transition-colors hover:text-fg"
                 >
                   {item.text}
                 </a>
@@ -110,16 +112,16 @@ export function PostToc({
   }
 
   return (
-    <div>
-      <p className="font-mono text-micro font-semibold tracking-widest text-fg-muted uppercase">
-        ON THIS PAGE
+    <div className="border-t border-border pt-6">
+      <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+        {dict.article.onThisPage}
       </p>
       <nav
         ref={navRef}
-        aria-label="文章章节目录"
+        aria-label={dict.article.onThisPage}
         className="writing-toc-nav mt-3"
       >
-        <ul className="flex flex-col gap-0.5 border-l border-border/80">
+        <ul className="flex flex-col gap-1 border-l border-border">
           {headings.map((item) => {
             const active = !usesNativeScrollspy && item.id === activeId;
             return (
@@ -127,7 +129,7 @@ export function PostToc({
                 <a
                   href={`#${item.id}`}
                   aria-current={active ? "true" : undefined}
-                  className={`writing-toc-link -ml-px block rounded-r-lg border-l-2 border-transparent py-1.5 pr-2.5 text-caption text-fg-secondary transition-all duration-150 hover:text-fg ${
+                  className={`writing-toc-link -ml-px block border-l-[1.5px] border-transparent py-1 text-caption text-fg-muted transition-colors hover:text-fg ${
                     item.level === 3 ? "pl-5" : "pl-3"
                   } ${active ? "target-current" : ""}`}
                 >

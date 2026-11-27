@@ -4,7 +4,7 @@ import { ArrowRightIcon } from "@/components/home/icons";
 import { openConnectDialog } from "@/components/site/connect-sheet";
 
 export function ConnectTriggerButton({
-  label = "发起信号连接",
+  label = "Connect",
 }: {
   label?: string;
 }) {
@@ -13,10 +13,10 @@ export function ConnectTriggerButton({
       type="button"
       onClick={openConnectDialog}
       aria-haspopup="dialog"
-      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-ink px-5 text-label font-medium text-ink-fg shadow-xs transition-opacity hover:opacity-90"
+      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-ink px-5 text-caption font-medium text-ink-fg transition-opacity hover:opacity-85 md:min-h-9"
     >
       <span>{label}</span>
-      <ArrowRightIcon className="size-4" />
+      <ArrowRightIcon className="size-3.5" />
     </button>
   );
 }

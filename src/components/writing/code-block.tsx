@@ -3,6 +3,7 @@
 import type { ComponentProps, ReactElement } from "react";
 import { isValidElement, useRef, useState } from "react";
 import { CheckIcon, CopyIcon } from "@/components/home/icons";
+import { useLocale } from "@/components/site/locale-provider";
 
 function extractLanguage(children: ComponentProps<"pre">["children"]): string {
   if (!isValidElement(children)) return "";
@@ -11,7 +12,9 @@ function extractLanguage(children: ComponentProps<"pre">["children"]): string {
   return match ? match[1] : "";
 }
 
+/** 极简黑白平面代码块（0px 直角、1px 细线顶栏与复制胶囊） */
 export function CodeBlock(props: ComponentProps<"pre">) {
+  const { dict } = useLocale();
   const preRef = useRef<HTMLPreElement>(null);
   const [copied, setCopied] = useState(false);
   const lang = extractLanguage(props.children);
@@ -29,46 +32,41 @@ export function CodeBlock(props: ComponentProps<"pre">) {
   }
 
   return (
-    <div className="glass-dark-surface relative my-2 w-full overflow-hidden rounded-2xl">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
-        <div className="flex items-center gap-2.5">
-          <span aria-hidden="true" className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-full bg-white/18" />
-            <span className="size-2.5 rounded-full bg-white/18" />
-            <span className="size-2.5 rounded-full bg-white/18" />
-          </span>
-          <span className="font-mono text-micro tracking-wider text-[#94a3b8] uppercase">
-            {lang || "code"}
-          </span>
-        </div>
+    <div className="my-2 w-full overflow-hidden border border-border bg-surface">
+      <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+        <span className="font-mono text-micro font-medium tracking-wider text-fg uppercase">
+          {lang || "code"}
+        </span>
 
         <button
           type="button"
           onClick={handleCopy}
-          aria-label={copied ? "代码已复制" : "复制代码"}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/12 bg-white/8 px-3 text-caption font-medium text-[#cbd5e1] transition-colors duration-150 hover:bg-white/15 hover:text-white sm:min-h-8"
+          aria-label={
+            copied ? dict.article.copiedCodeAria : dict.article.copyCodeAria
+          }
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-bg px-3 text-micro font-medium text-fg-secondary transition-colors hover:border-border-strong hover:text-fg sm:min-h-7"
         >
           {copied ? (
             <>
-              <CheckIcon className="size-3.5 text-[#34d399]" />
-              <span className="text-[#34d399]">已复制</span>
+              <CheckIcon className="size-3.5 text-fg" />
+              <span className="text-fg">{dict.article.copiedCode}</span>
             </>
           ) : (
             <>
               <CopyIcon className="size-3.5" />
-              <span>复制</span>
+              <span>{dict.article.copyCode}</span>
             </>
           )}
         </button>
       </div>
 
       <p aria-live="polite" className="sr-only">
-        {copied ? "代码已复制到剪贴板" : ""}
+        {copied ? dict.article.copiedCodeAria : ""}
       </p>
 
       <pre
         ref={preRef}
-        className="overflow-x-auto px-5 py-4 font-mono text-code text-[#e2e8f0] [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[length:inherit] [&_code]:text-inherit"
+        className="overflow-x-auto px-4 py-4 font-mono text-code text-fg [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[length:inherit] [&_code]:text-inherit"
         {...props}
       />
     </div>

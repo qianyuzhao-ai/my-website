@@ -314,37 +314,39 @@ export function ShrineModal({
                         </div>
                       </div>
 
-                      <div className="border-t border-border/70 pt-3">
-                        {work.isExternal ? (
-                          <a
-                            href={work.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex min-h-10 items-center gap-1.5 font-mono text-caption font-medium text-accent transition-opacity hover:opacity-80"
-                          >
-                            <span>{work.ctaLabel}</span>
-                            <ArrowIcon className="size-3.5" />
-                          </a>
-                        ) : (
-                          <Link
-                            href={work.href}
-                            target={
-                              work.href.startsWith("/writing")
-                                ? "_blank"
-                                : undefined
-                            }
-                            rel={
-                              work.href.startsWith("/writing")
-                                ? "noopener noreferrer"
-                                : undefined
-                            }
-                            className="group inline-flex min-h-10 items-center gap-1.5 font-mono text-caption font-medium text-accent transition-opacity hover:opacity-80"
-                          >
-                            <span>{work.ctaLabel}</span>
-                            <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-                          </Link>
-                        )}
-                      </div>
+                      {work.href ? (
+                        <div className="border-t border-border/70 pt-3">
+                          {work.isExternal ? (
+                            <a
+                              href={work.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex min-h-10 items-center gap-1.5 font-mono text-caption font-medium text-accent transition-opacity hover:opacity-80"
+                            >
+                              <span>{work.ctaLabel}</span>
+                              <ArrowIcon className="size-3.5" />
+                            </a>
+                          ) : (
+                            <Link
+                              href={work.href}
+                              target={
+                                work.href.startsWith("/writing")
+                                  ? "_blank"
+                                  : undefined
+                              }
+                              rel={
+                                work.href.startsWith("/writing")
+                                  ? "noopener noreferrer"
+                                  : undefined
+                              }
+                              className="group inline-flex min-h-10 items-center gap-1.5 font-mono text-caption font-medium text-accent transition-opacity hover:opacity-80"
+                            >
+                              <span>{work.ctaLabel}</span>
+                              <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                            </Link>
+                          )}
+                        </div>
+                      ) : null}
                     </article>
                   );
                 })}

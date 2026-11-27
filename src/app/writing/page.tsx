@@ -1,65 +1,60 @@
 import type { Metadata } from "next";
+import { MorePostsIndex } from "@/components/editorial/more-posts-index";
+import { SearchPill } from "@/components/site/search-dialog";
 import { SiteFooter } from "@/components/site/site-footer";
-import { WritingArchive } from "@/components/writing/writing-archive";
-import { getPosts, groupByYear } from "@/lib/posts";
-import { siteConfig } from "@/lib/site-config";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getServerLocale } from "@/lib/i18n/server";
+import { getPosts } from "@/lib/posts";
 
-const description =
-  "关于 AI Agent 工程、全栈架构与 AIGC 视觉工作流的一线实战笔记与复盘。";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: dict.meta.writingTitle,
+    description: dict.meta.writingDescription,
+  };
+}
 
-export const metadata: Metadata = {
-  title: `Writing · ${siteConfig.name}`,
-  description,
+type Props = {
+  searchParams: Promise<{ tag?: string }>;
 };
 
-export default async function WritingPage() {
-  const posts = await getPosts();
-  const years = groupByYear(posts);
-  const latestYear = years[0]?.[0];
-  const earliestYear = years.at(-1)?.[0];
-  const yearRange =
-    earliestYear && latestYear && earliestYear !== latestYear
-      ? `${earliestYear}–${latestYear}`
-      : latestYear;
+export default async function WritingPage({ searchParams }: Props) {
+  const locale = await getServerLocale();
+  const dict = getDictionary(locale);
+  const [{ tag }, posts] = await Promise.all([searchParams, getPosts(locale)]);
 
   return (
     <>
       <main
         id="main"
-        className="px-4 pt-24 pb-16 sm:px-6 md:px-8 md:pt-28 md:pb-24"
+        className="flex-1 px-4 pt-6 sm:px-6 md:px-10 md:pt-8 lg:px-12"
       >
-        <div className="mx-auto max-w-6xl">
-          {/* Liquid Glass 博客刊头 */}
-          <header className="grid grid-cols-1 gap-5 pb-8 md:pb-10 lg:grid-cols-12 lg:items-end lg:gap-8">
-            <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/85 px-3 py-1 font-mono text-micro font-medium tracking-wider text-accent uppercase backdrop-blur-md">
-                <span className="size-1.5 rounded-full bg-signal-dot" />
-                <span>ESSAYS &amp; FIELD NOTES</span>
-              </div>
-              <h1 className="mt-3 text-[clamp(2.5rem,5.8vw,4rem)] leading-[1.02] font-bold tracking-[-0.035em] text-fg">
-                Writing
+        <div className="mx-auto flex max-w-[1120px] flex-col gap-10 md:gap-12">
+          <header className="flex flex-col gap-5 border-b border-border pb-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+                {dict.writing.eyebrow}
+              </p>
+              <h1 className="text-[30px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[42px] md:leading-[1.12]">
+                {dict.writing.title}
               </h1>
+              <p className="mt-1 max-w-[56ch] text-label leading-relaxed text-fg-secondary md:text-[15px]">
+                {dict.writing.description}
+              </p>
             </div>
 
-            <div className="flex flex-col gap-3 lg:col-span-5 lg:items-end lg:pb-1 lg:text-right">
-              <p className="max-w-[46ch] text-body leading-relaxed text-fg-secondary">
-                {description}
-              </p>
-              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-3.5 py-1.5 font-mono text-caption text-fg-muted tabular-nums backdrop-blur-md">
-                <span className="font-semibold text-fg">
-                  {posts.length} 篇归档
-                </span>
-                {yearRange ? (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span>{yearRange}</span>
-                  </>
-                ) : null}
-              </div>
-            </div>
+            <SearchPill className="hidden lg:block" />
           </header>
 
-          <WritingArchive posts={posts} />
+          <MorePostsIndex
+            key={`${locale}-${tag ?? "all"}`}
+            posts={posts}
+            heading={
+              tag ? `${dict.archive.topicPrefix}${tag}` : dict.archive.allEssays
+            }
+            initialTag={tag}
+          />
         </div>
       </main>
       <SiteFooter />
