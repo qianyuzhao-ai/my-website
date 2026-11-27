@@ -2,58 +2,62 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Liquid Glass 清透毛玻璃设计系统：清昼 (Light) × 霜夜 (Dark)
- * 对应 Figma 变量集「Liquid Glass UI」（fileKey: ietU9mUnJjMIdm5PDfBNbQ）
- * 浅深两套语义色均满足 WCAG AA 正文 ≥ 4.5:1 对比度要求。
+ * Monochrome Architectural Editorial 设计系统（参考 blog.x.com/en 与 Figma 设计稿）
+ * 严格黑白灰单色层级：清昼 Light (#FFFFFF / #F4F4F4) × 纯黑 OLED Dark (#000000 / #141414)
+ * 0px 锐利直角内容容器 × 9999px 胶囊交互控件；浅深两套语义色均满足 WCAG AA 对比度要求。
  */
 :root {
-  color-scheme: light;
-  --bg: #f4f6fa;
-  --surface: rgb(255 255 255 / 0.78);
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --surface: #f4f4f4;
   --surface-solid: #ffffff;
-  --surface-elevated: rgb(248 250 253 / 0.76);
-  --surface-recessed: rgb(237 241 247 / 0.86);
-  --border: rgb(226 232 240 / 0.88);
-  --border-glass: rgb(255 255 255 / 0.86);
-  --border-strong: #cbd5e1;
-  --fg: #0f172a;
-  --fg-secondary: #475569;
-  --fg-muted: #5b697d;
-  --ink: #111827;
+  --surface-elevated: #fafafa;
+  --surface-recessed: #efefef;
+  --border: #e5e5e5;
+  --border-glass: #e5e5e5;
+  --border-strong: #d4d4d4;
+  --fg: #0f0f0f;
+  --fg-secondary: #525252;
+  --fg-muted: #737373;
+  --ink: #0f0f0f;
   --ink-fg: #ffffff;
-  --accent: #1d6cf6;
-  --accent-hover: #1558d6;
-  --accent-soft: #eaf2ff;
-  --signal: #0a7f58;
-  --signal-dot: #0ea572;
-  --signal-soft: #e7f8f1;
-  --focus: #1d6cf6;
+  --accent: #0f0f0f;
+  --accent-hover: #262626;
+  --accent-soft: #efefef;
+  --signal: #0f0f0f;
+  --signal-dot: #171717;
+  --signal-soft: #f4f4f4;
+  --focus: #0f0f0f;
   --danger: #dc2626;
-  --backdrop: rgb(15 23 42 / 0.34);
-  --code-bg: rgb(15 23 42 / 0.94);
-  --code-surface: rgb(30 41 59 / 0.72);
-  --code-border: rgb(148 163 184 / 0.2);
-  --glass-specular:
-    inset 0 1.5px 0 0 rgb(255 255 255 / 0.92),
-    inset 0 0 0 1px rgb(255 255 255 / 0.38);
-  --elevation-glass:
-    0 18px 44px -14px rgb(15 23 42 / 0.12), 0 4px 16px -4px rgb(15 23 42 / 0.05);
-  --elevation-lg:
-    0 24px 60px -16px rgb(15 23 42 / 0.16), 0 8px 24px -8px rgb(15 23 42 / 0.07);
+  --backdrop: rgb(0 0 0 / 0.48);
+  --lineart-primary: #171717;
+  --lineart-muted: #a3a3a3;
+  --code-bg: #f4f4f4;
+  --code-surface: #efefef;
+  --code-border: #e5e5e5;
+  --code-fg: #0f0f0f;
+  --elevation-glass: none;
+  --elevation-lg: 0 20px 50px -12px rgb(0 0 0 / 0.14);
+  --scrollbar-thumb: #c4c4c4;
+  --scrollbar-track: #ffffff;
 
-  /* 兼容辅助语义色 */
-  --nav-track: rgb(237 241 247 / 0.85);
+  /* 兼容辅助语义色（保留供历史页面与 OpenFlow 复用） */
+  --nav-track: #efefef;
   --nav-selected: #ffffff;
-  --pill: rgb(237 241 247 / 0.85);
-  --toggle-track: rgb(237 241 247 / 0.85);
-  --card-blue: #eaf2ff;
-  --card-pink: #fce7f3;
-  --card-yellow: #fef3c7;
-  --card-mint: #e7f8f1;
-  --case-stroke: #e2e8f0;
+  --pill: #efefef;
+  --toggle-track: #efefef;
+  --card-blue: #f4f4f4;
+  --card-pink: #f4f4f4;
+  --card-yellow: #f4f4f4;
+  --card-mint: #f4f4f4;
+  --case-stroke: #e5e5e5;
   --social-icon: #ffffff;
-  --map-pin: #1d6cf6;
-  --pulse: #1d6cf6;
+  --map-pin: #0f0f0f;
+  --pulse: #0f0f0f;
+}
+
+.light {
+  color-scheme: light;
 }
 
 /*
@@ -63,115 +67,101 @@
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
     color-scheme: dark;
-    --bg: #0b0e14;
-    --surface: rgb(22 27 38 / 0.8);
-    --surface-solid: #161b26;
-    --surface-elevated: rgb(30 37 52 / 0.74);
-    --surface-recessed: rgb(35 43 59 / 0.84);
-    --border: rgb(40 50 68 / 0.92);
-    --border-glass: rgb(148 163 184 / 0.22);
-    --border-strong: #475569;
-    --fg: #f8fafc;
-    --fg-secondary: #cbd5e1;
-    --fg-muted: #94a3b8;
-    --ink: #f8fafc;
-    --ink-fg: #0b0e14;
-    --accent: #4f94ff;
-    --accent-hover: #6aa6ff;
-    --accent-soft: rgb(22 38 66 / 0.92);
-    --signal: #34d399;
-    --signal-dot: #34d399;
-    --signal-soft: rgb(18 46 38 / 0.88);
-    --focus: #60a5fa;
+    --bg: #000000;
+    --surface: #141414;
+    --surface-solid: #0a0a0a;
+    --surface-elevated: #141414;
+    --surface-recessed: #1f1f1f;
+    --border: #262626;
+    --border-glass: #262626;
+    --border-strong: #404040;
+    --fg: #f5f5f5;
+    --fg-secondary: #a3a3a3;
+    --fg-muted: #737373;
+    --ink: #ffffff;
+    --ink-fg: #000000;
+    --accent: #f5f5f5;
+    --accent-hover: #d4d4d4;
+    --accent-soft: #1f1f1f;
+    --signal: #f5f5f5;
+    --signal-dot: #e5e5e5;
+    --signal-soft: #141414;
+    --focus: #ffffff;
     --danger: #f87171;
-    --backdrop: rgb(4 7 12 / 0.64);
-    --code-bg: rgb(11 15 24 / 0.96);
-    --code-surface: rgb(22 30 46 / 0.82);
-    --code-border: rgb(148 163 184 / 0.16);
-    --glass-specular:
-      inset 0 1px 0 0 rgb(255 255 255 / 0.14),
-      inset 0 0 0 1px rgb(255 255 255 / 0.06);
-    --elevation-glass:
-      0 20px 52px -14px rgb(0 0 0 / 0.52), 0 4px 16px -4px rgb(0 0 0 / 0.28);
-    --elevation-lg:
-      0 28px 68px -16px rgb(0 0 0 / 0.68), 0 8px 24px -8px rgb(0 0 0 / 0.38);
-    --nav-track: rgb(30 37 52 / 0.85);
-    --nav-selected: #232b3b;
-    --pill: rgb(35 43 59 / 0.84);
-    --toggle-track: rgb(35 43 59 / 0.84);
-    --card-blue: #162642;
-    --card-pink: #2a1b2b;
-    --card-yellow: #2b2416;
-    --card-mint: #122e26;
-    --case-stroke: #283244;
-    --social-icon: #f8fafc;
-    --map-pin: #4f94ff;
-    --pulse: #4f94ff;
-  }
-
-  :root:not(.light) .glass-ambient-bg {
-    background-image:
-      radial-gradient(
-        62rem 34rem at 14% -4%,
-        rgb(79 148 255 / 0.16),
-        transparent 65%
-      ),
-      radial-gradient(
-        52rem 30rem at 86% 2%,
-        rgb(52 211 153 / 0.11),
-        transparent 62%
-      );
+    --backdrop: rgb(0 0 0 / 0.76);
+    --lineart-primary: #e5e5e5;
+    --lineart-muted: #525252;
+    --code-bg: #141414;
+    --code-surface: #1f1f1f;
+    --code-border: #262626;
+    --code-fg: #f5f5f5;
+    --elevation-glass: none;
+    --elevation-lg: 0 24px 60px -16px rgb(0 0 0 / 0.72);
+    --scrollbar-thumb: #404040;
+    --scrollbar-track: #000000;
+    --nav-track: #141414;
+    --nav-selected: #1f1f1f;
+    --pill: #1f1f1f;
+    --toggle-track: #1f1f1f;
+    --card-blue: #141414;
+    --card-pink: #141414;
+    --card-yellow: #141414;
+    --card-mint: #141414;
+    --case-stroke: #262626;
+    --social-icon: #f5f5f5;
+    --map-pin: #f5f5f5;
+    --pulse: #f5f5f5;
   }
 }
 
 .dark {
   color-scheme: dark;
-  --bg: #0b0e14;
-  --surface: rgb(22 27 38 / 0.8);
-  --surface-solid: #161b26;
-  --surface-elevated: rgb(30 37 52 / 0.74);
-  --surface-recessed: rgb(35 43 59 / 0.84);
-  --border: rgb(40 50 68 / 0.92);
-  --border-glass: rgb(148 163 184 / 0.22);
-  --border-strong: #475569;
-  --fg: #f8fafc;
-  --fg-secondary: #cbd5e1;
-  --fg-muted: #94a3b8;
-  --ink: #f8fafc;
-  --ink-fg: #0b0e14;
-  --accent: #4f94ff;
-  --accent-hover: #6aa6ff;
-  --accent-soft: rgb(22 38 66 / 0.92);
-  --signal: #34d399;
-  --signal-dot: #34d399;
-  --signal-soft: rgb(18 46 38 / 0.88);
-  --focus: #60a5fa;
+  --bg: #000000;
+  --surface: #141414;
+  --surface-solid: #0a0a0a;
+  --surface-elevated: #141414;
+  --surface-recessed: #1f1f1f;
+  --border: #262626;
+  --border-glass: #262626;
+  --border-strong: #404040;
+  --fg: #f5f5f5;
+  --fg-secondary: #a3a3a3;
+  --fg-muted: #737373;
+  --ink: #ffffff;
+  --ink-fg: #000000;
+  --accent: #f5f5f5;
+  --accent-hover: #d4d4d4;
+  --accent-soft: #1f1f1f;
+  --signal: #f5f5f5;
+  --signal-dot: #e5e5e5;
+  --signal-soft: #141414;
+  --focus: #ffffff;
   --danger: #f87171;
-  --backdrop: rgb(4 7 12 / 0.64);
-  --code-bg: rgb(11 15 24 / 0.96);
-  --code-surface: rgb(22 30 46 / 0.82);
-  --code-border: rgb(148 163 184 / 0.16);
-  --glass-specular:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.14),
-    inset 0 0 0 1px rgb(255 255 255 / 0.06);
-  --elevation-glass:
-    0 20px 52px -14px rgb(0 0 0 / 0.52), 0 4px 16px -4px rgb(0 0 0 / 0.28);
-  --elevation-lg:
-    0 28px 68px -16px rgb(0 0 0 / 0.68), 0 8px 24px -8px rgb(0 0 0 / 0.38);
+  --backdrop: rgb(0 0 0 / 0.76);
+  --lineart-primary: #e5e5e5;
+  --lineart-muted: #525252;
+  --code-bg: #141414;
+  --code-surface: #1f1f1f;
+  --code-border: #262626;
+  --code-fg: #f5f5f5;
+  --elevation-glass: none;
+  --elevation-lg: 0 24px 60px -16px rgb(0 0 0 / 0.72);
+  --scrollbar-thumb: #404040;
+  --scrollbar-track: #000000;
 
   /* 兼容辅助语义色 */
-  --nav-track: rgb(30 37 52 / 0.85);
-  --nav-selected: #232b3b;
-  --pill: rgb(35 43 59 / 0.84);
-  --toggle-track: rgb(35 43 59 / 0.84);
-  --card-blue: #162642;
-  --card-pink: #2a1b2b;
-  --card-yellow: #2b2416;
-  --card-mint: #122e26;
-  --case-stroke: #283244;
-  --social-icon: #f8fafc;
-  --map-pin: #4f94ff;
-  --pulse: #4f94ff;
+  --nav-track: #141414;
+  --nav-selected: #1f1f1f;
+  --pill: #1f1f1f;
+  --toggle-track: #1f1f1f;
+  --card-blue: #141414;
+  --card-pink: #141414;
+  --card-yellow: #141414;
+  --card-mint: #141414;
+  --case-stroke: #262626;
+  --social-icon: #f5f5f5;
+  --map-pin: #f5f5f5;
+  --pulse: #f5f5f5;
 }
 
 @theme inline {
@@ -212,79 +202,84 @@
   --color-pulse: var(--pulse);
   --color-focus: var(--focus);
   --color-danger: var(--danger);
-  --color-brand-green: #0ea572;
+  --color-lineart-primary: var(--lineart-primary);
+  --color-lineart-muted: var(--lineart-muted);
+  --color-brand-green: #171717;
   --color-brand-yellow: #fedd9a;
   --shadow-lg: var(--elevation-lg);
   --shadow-glass: var(--elevation-glass);
 
   --font-sans:
-    var(--font-poppins), -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, "SF Mono", "JetBrains Mono", Menlo,
+    Consolas, monospace;
   --font-serif: var(--font-fraunces), Georgia, "Songti SC", serif;
 }
 
 @theme {
-  --breakpoint-lg: 72rem;
-  --font-mono:
-    ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --breakpoint-lg: 64rem;
   --spacing: 4px;
+  --radius-none: 0px;
   --radius-full: 9999px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-card-sm: 24px;
-  --radius-card: 32px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-card-sm: 0px;
+  --radius-card: 0px;
 
-  /* 现代排版字号体系 */
-  --text-hero: clamp(2.5rem, 6.8vw, 5.6rem);
-  --text-hero--line-height: 1.03;
-  --text-section: clamp(1.85rem, 4.2vw, 3.35rem);
-  --text-section--line-height: 1.08;
-  --text-logo: 42px;
-  --text-logo--line-height: 50px;
-  --text-name: 34px;
-  --text-name--line-height: 38px;
+  /* 瑞士编辑部排版字号体系 */
+  --text-hero: clamp(2rem, 4.5vw, 2.75rem);
+  --text-hero--line-height: 1.1;
+  --text-section: clamp(1.5rem, 3vw, 1.75rem);
+  --text-section--line-height: 1.2;
+  --text-logo: 36px;
+  --text-logo--line-height: 44px;
+  --text-name: 30px;
+  --text-name--line-height: 36px;
   --text-title: 22px;
   --text-title--line-height: 30px;
   --text-body: 16px;
-  --text-body--line-height: 26px;
+  --text-body--line-height: 28px;
   --text-label: 14px;
   --text-label--line-height: 20px;
   --text-caption: 13px;
-  --text-caption--line-height: 19px;
+  --text-caption--line-height: 18px;
   --text-micro: 11px;
   --text-micro--line-height: 16px;
 
   /* 文章与案例字号 */
-  --text-case-display: 80px;
-  --text-case-display--line-height: 88px;
-  --text-case-heading: 36px;
-  --text-case-heading--line-height: 50px;
-  --text-case-title: 18px;
-  --text-case-title--line-height: 26px;
+  --text-case-display: 64px;
+  --text-case-display--line-height: 72px;
+  --text-case-heading: 32px;
+  --text-case-heading--line-height: 42px;
+  --text-case-title: 17px;
+  --text-case-title--line-height: 25px;
   --text-case-small: 14px;
-  --text-case-small--line-height: 24px;
-  --text-display: 48px;
-  --text-display--line-height: 56px;
+  --text-case-small--line-height: 22px;
+  --text-display: 42px;
+  --text-display--line-height: 48px;
   --text-display-sm: 26px;
   --text-display-sm--line-height: 34px;
-  --text-post-title: 40px;
-  --text-post-title--line-height: 52px;
-  --text-post-title-sm: 28px;
-  --text-post-title-sm--line-height: 38px;
+  --text-post-title: 38px;
+  --text-post-title--line-height: 48px;
+  --text-post-title-sm: 26px;
+  --text-post-title-sm--line-height: 35px;
   --text-post-heading: 24px;
   --text-post-heading--line-height: 34px;
-  --text-post-body: 17px;
-  --text-post-body--line-height: 30px;
+  --text-post-body: 16px;
+  --text-post-body--line-height: 29px;
   --text-reading: 16px;
   --text-reading--line-height: 28px;
-  --text-code: 14px;
+  --text-code: 13px;
   --text-code--line-height: 22px;
 }
 
 html {
-  accent-color: var(--accent);
+  accent-color: var(--fg);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   @media (prefers-reduced-motion: no-preference) {
     scroll-behavior: smooth;
   }
@@ -316,119 +311,81 @@ summary {
 }
 
 ::selection {
-  background: var(--accent-soft);
-  color: var(--fg);
+  background: var(--ink);
+  color: var(--ink-fg);
 }
 
-/* Liquid Glass 液态毛玻璃材质族 */
+/* 兼容类名映射到极简黑白平面材质（零模糊、零彩色光晕、1px 细线边框） */
 .glass-panel {
-  background: var(--surface);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--glass-specular), var(--elevation-lg);
-  backdrop-filter: blur(28px) saturate(165%);
-  -webkit-backdrop-filter: blur(28px) saturate(165%);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  box-shadow: var(--elevation-lg);
 }
 
 .glass-card {
-  background: var(--surface-elevated);
+  background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--glass-specular), var(--elevation-glass);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
 }
 
 .glass-dock {
-  background: var(--surface);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--glass-specular), var(--elevation-glass);
-  backdrop-filter: blur(24px) saturate(175%);
-  -webkit-backdrop-filter: blur(24px) saturate(175%);
+  background: var(--bg);
+  border: 1px solid var(--border);
 }
 
-/* 深色磨砂终端/代码块：独立暗色作用域（遵循 component-specific-light-dark-theme） */
 .glass-dark-surface {
-  color-scheme: only dark;
   background: var(--code-bg);
-  color: #e2e8f0;
+  color: var(--code-fg);
   border: 1px solid var(--code-border);
-  box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.1),
-    0 16px 36px -14px rgb(15 23 42 / 0.38);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
 }
 
-/* 独立内容页顶部柔和晴空与薄荷光晕（对应 Figma 05 / 06） */
 .glass-ambient-bg {
   background-color: var(--bg);
-  background-image:
-    radial-gradient(
-      62rem 34rem at 14% -4%,
-      rgb(29 108 246 / 0.11),
-      transparent 65%
-    ),
-    radial-gradient(
-      52rem 30rem at 86% 2%,
-      rgb(14 165 114 / 0.09),
-      transparent 62%
-    );
-}
-.dark .glass-ambient-bg {
-  background-image:
-    radial-gradient(
-      62rem 34rem at 14% -4%,
-      rgb(79 148 255 / 0.16),
-      transparent 65%
-    ),
-    radial-gradient(
-      52rem 30rem at 86% 2%,
-      rgb(52 211 153 / 0.11),
-      transparent 62%
-    );
 }
 
-/* 实验台微刻度点阵 */
+/* 建筑图纸微点阵 */
 .lab-grid {
-  background-image: radial-gradient(
-    rgb(148 163 184 / 0.26) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
+/* 页脚通栏空心描边字标（致敬 blog.x.com 的 X.COM 描边底标） */
+.editorial-wordmark {
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--border-strong);
+  user-select: none;
+}
+
 /*
- * 原生模态 <dialog> 顶层过渡与滚动隔离
+ * 原生模态 <dialog> 顶层过渡与滚动隔离（非抽屉类对话框）
  * 遵循 modern-web-guidance: light-dismiss-a-dialog + animate-to-from-top-layer
- * 包含 :where(:not([data-closing])) 供 Firefox/Safari 离场过渡回退使用
  */
 dialog:modal {
   overscroll-behavior: contain;
 }
 
-dialog {
+dialog:not(.editorial-drawer) {
   opacity: 0;
   transition-property: opacity, transform, display, overlay;
-  transition-duration: 240ms;
+  transition-duration: 220ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   transition-behavior: allow-discrete;
 
   @media (prefers-reduced-motion: no-preference) {
-    transform: translateY(14px) scale(0.985);
+    transform: translateY(10px) scale(0.985);
   }
 }
 
-dialog::backdrop {
+dialog:not(.editorial-drawer)::backdrop {
   overflow: hidden;
   overscroll-behavior: contain;
   background-color: transparent;
-  backdrop-filter: blur(0px);
-  transition-property: background-color, backdrop-filter, display, overlay;
-  transition-duration: 240ms;
+  transition-property: background-color, display, overlay;
+  transition-duration: 220ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   transition-behavior: allow-discrete;
 }
 
-dialog[open]:where(:not([data-closing])) {
+dialog:not(.editorial-drawer)[open]:where(:not([data-closing])) {
   opacity: 1;
 
   @starting-style {
@@ -439,29 +396,122 @@ dialog[open]:where(:not([data-closing])) {
     transform: translateY(0) scale(1);
 
     @starting-style {
-      transform: translateY(14px) scale(0.985);
+      transform: translateY(10px) scale(0.985);
     }
   }
 
   &::backdrop {
     background-color: var(--backdrop);
-    backdrop-filter: blur(10px);
 
     @starting-style {
       background-color: transparent;
-      backdrop-filter: blur(0px);
     }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  dialog,
-  dialog::backdrop {
+  dialog:not(.editorial-drawer),
+  dialog:not(.editorial-drawer)::backdrop {
     transition-duration: 100ms;
   }
 }
 
-/* 阅读页顶部滚动进度条（遵循 scroll-progress-indicator：animation-timeline 声明在 animation 之后） */
+/*
+ * 移动端原生滑动导航抽屉（遵循 modern-web-guidance: navigation-drawer）
+ * 基于 <dialog> + 水平 scroll-snap + 100svh + scroll-driven backdrop fade
+ */
+.editorial-drawer {
+  --drawer-width: min(20rem, 82dvw, 100dvw - 24px);
+  --drawer-backdrop: 0;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+
+.editorial-drawer::backdrop {
+  background: #000000;
+  opacity: calc(var(--drawer-backdrop) * 0.55);
+}
+
+.editorial-drawer-scroller {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--drawer-width) 100%;
+  overflow-x: scroll;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+.editorial-drawer-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .editorial-drawer-scroller {
+    scroll-behavior: smooth;
+  }
+}
+
+.editorial-drawer-scroller::after {
+  content: "";
+  scroll-snap-align: end;
+  /* biome-ignore lint/correctness/noUnknownProperty: CSS Overflow 5 scroll-initial-target per modern-web-guidance */
+  scroll-initial-target: nearest;
+}
+
+.editorial-drawer-sheet {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100svh;
+  background: var(--bg);
+  color: var(--fg);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scrollbar-width: none;
+}
+
+.editorial-drawer-sheet::-webkit-scrollbar {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .editorial-drawer {
+    timeline-scope: --editorial-drawer-fade;
+    animation: fade-editorial-drawer-backdrop linear both;
+    animation-timeline: --editorial-drawer-fade;
+  }
+
+  .editorial-drawer-scroller {
+    scroll-timeline: --editorial-drawer-fade x;
+  }
+
+  @property --drawer-backdrop {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+  }
+
+  @keyframes fade-editorial-drawer-backdrop {
+    0% {
+      --drawer-backdrop: 1;
+    }
+    100% {
+      --drawer-backdrop: 0;
+    }
+  }
+}
+
+/* 阅读页顶部极细黑白滚动进度条（遵循 scroll-progress-indicator） */
 @keyframes grow-reading-progress {
   from {
     transform: scaleX(0);
@@ -482,7 +532,6 @@ dialog[open]:where(:not([data-closing])) {
   }
 }
 
-/* 状态呼吸绿点（尊重减弱动画） */
 @keyframes signal-pulse {
   0%,
   100% {
@@ -500,27 +549,12 @@ dialog[open]:where(:not([data-closing])) {
   }
 }
 
-/* View Transitions 仅在允许动画时启用位移过渡 */
-@media (prefers-reduced-motion: no-preference) {
-  ::view-transition-group(*) {
-    animation-duration: 280ms;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none;
-  }
-}
-
 @layer components {
   .ui-button {
     @apply inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-transparent text-label font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
   }
   .ui-button[data-size="sm"] {
-    @apply h-8 px-3;
+    @apply h-8 px-3.5;
   }
   .ui-button[data-size="md"] {
     @apply h-9 px-4;
@@ -529,19 +563,19 @@ dialog[open]:where(:not([data-closing])) {
     @apply h-11 px-6;
   }
   .ui-button[data-variant="primary"] {
-    @apply bg-ink text-ink-fg enabled:hover:opacity-90;
+    @apply bg-ink text-ink-fg enabled:hover:opacity-85;
   }
   .ui-button[data-variant="secondary"] {
-    @apply border-border bg-surface text-fg enabled:hover:bg-surface-elevated;
+    @apply bg-surface-recessed text-fg enabled:hover:opacity-85;
   }
   .ui-button[data-variant="ghost"] {
-    @apply bg-transparent text-fg enabled:hover:bg-surface-recessed;
+    @apply border-border bg-transparent text-fg enabled:hover:bg-surface;
   }
   .ui-input {
     @apply h-11 w-full border-b border-border bg-transparent text-body text-fg placeholder:text-fg-muted disabled:cursor-not-allowed disabled:opacity-50;
   }
   .ui-input:focus {
-    border-color: var(--accent);
+    border-color: var(--fg);
     outline: none;
   }
   .ui-input:focus-visible {
@@ -572,9 +606,8 @@ dialog[open]:where(:not([data-closing])) {
 }
 .writing-toc-link[aria-current="true"],
 .writing-toc-link.target-current {
-  border-inline-start-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent);
+  border-inline-start-color: var(--fg);
+  color: var(--fg);
   font-weight: 600;
 }
 
@@ -585,19 +618,20 @@ dialog[open]:where(:not([data-closing])) {
 .writing-toc-details > summary::-webkit-details-marker {
   display: none;
 }
-.writing-toc-details > summary::before {
+.writing-toc-details > summary::after {
   content: "";
+  margin-inline-start: auto;
   inline-size: 0.9em;
   block-size: 0.9em;
   flex-shrink: 0;
   background-color: currentColor;
   mask:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")
     no-repeat center / contain;
-  rotate: -90deg;
-}
-.writing-toc-details[open] > summary::before {
   rotate: 0deg;
+}
+.writing-toc-details[open] > summary::after {
+  rotate: 180deg;
 }
 .writing-toc-details::details-content {
   interpolate-size: allow-keywords;
@@ -608,7 +642,7 @@ dialog[open]:where(:not([data-closing])) {
   block-size: 0;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .writing-toc-details > summary::before {
+  .writing-toc-details > summary::after {
     transition: rotate 180ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .writing-toc-details::details-content {
@@ -620,7 +654,6 @@ dialog[open]:where(:not([data-closing])) {
   }
 }
 
-/* 强对比模式（Windows Forced Colors）兜底状态指示 */
 @media (forced-colors: active) {
   .glass-panel,
   .glass-card,
@@ -632,13 +665,9 @@ dialog[open]:where(:not([data-closing])) {
     border-inline-start-color: Highlight;
     color: Highlight;
   }
-  .writing-tab[aria-selected="true"] {
-    outline: 2px solid Highlight;
-    color: Highlight;
-  }
 }
 
-/* 三维线条加载页原生 <progress> 建筑细线进度轴（遵循 modern-web-guidance: progress） */
+/* 三维线条加载页原生 <progress> 建筑细线进度轴（保留供 /island 3D 页使用） */
 progress.wireframe-progress {
   appearance: none;
   border: 0 solid;
@@ -651,12 +680,12 @@ progress.wireframe-progress::-webkit-progress-bar {
 }
 progress.wireframe-progress::-webkit-progress-value {
   border-radius: 1e5px;
-  background: linear-gradient(90deg, var(--accent), var(--signal-dot));
+  background: var(--fg);
   transition: inline-size 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 progress.wireframe-progress::-moz-progress-bar {
   border-radius: 1e5px;
-  background: linear-gradient(90deg, var(--accent), var(--signal-dot));
+  background: var(--fg);
 }
 
 /* OpenFlow 前后对比响应式表格（遵循 modern-web-guidance: responsive-table） */
@@ -696,7 +725,6 @@ progress.wireframe-progress::-moz-progress-bar {
   .openflow-compare-table tr {
     margin-block-end: 0.75rem;
     border: 1px solid var(--border);
-    border-radius: 16px;
     background: var(--surface-solid);
     overflow: hidden;
   }
@@ -710,7 +738,7 @@ progress.wireframe-progress::-moz-progress-bar {
     inset-block-start: 0;
     z-index: 2;
     border-bottom: 1px solid var(--border);
-    background: var(--surface-recessed);
+    background: var(--surface);
     padding: 0.75rem 1rem;
   }
 
@@ -733,7 +761,7 @@ progress.wireframe-progress::-moz-progress-bar {
     margin-bottom: 0.25rem;
     font-size: 12px;
     font-weight: 600;
-    color: var(--accent);
+    color: var(--fg);
   }
 }
 

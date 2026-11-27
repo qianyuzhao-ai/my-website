@@ -1,17 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Poppins } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { ConnectSheet } from "@/components/site/connect-sheet";
-import { SiteDock } from "@/components/site/site-dock";
+import { EditorialShell } from "@/components/site/editorial-shell";
+import { SearchProvider } from "@/components/site/search-dialog";
 import { SkipLink } from "@/components/site/skip-link";
+import { getPosts } from "@/lib/posts";
 import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
-const poppins = Poppins({
+const geistSans = Geist({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-poppins",
+  variable: "--font-geist-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-geist-mono",
 });
 
 const fraunces = Fraunces({
@@ -30,13 +39,15 @@ export const metadata: Metadata = {
   description: `${siteConfig.name} 的个人网站：${siteConfig.tagline}`,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const posts = await getPosts();
+
   return (
     <html
       lang="zh-CN"
-      className={`${poppins.variable} ${fraunces.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable}`}
       suppressHydrationWarning
     >
       <body>
@@ -47,10 +58,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SkipLink />
-          <SiteDock />
-          {children}
-          <ConnectSheet />
+          <SearchProvider posts={posts}>
+            <SkipLink />
+            <EditorialShell>{children}</EditorialShell>
+            <ConnectSheet />
+          </SearchProvider>
         </ThemeProvider>
       </body>
     </html>

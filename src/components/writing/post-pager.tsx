@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/home/icons";
-import { formatDate, type Post } from "@/lib/post-shared";
+import type { Post } from "@/lib/post-shared";
 
-const cardClass =
-  "glass-card group flex flex-col justify-between gap-3 rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:bg-surface-solid/90";
-const labelClass =
-  "flex items-center gap-1.5 font-mono text-micro font-medium text-fg-muted transition-colors duration-150 group-hover:text-accent";
-const titleClass =
-  "line-clamp-2 text-case-title font-bold tracking-[-0.015em] text-fg transition-colors duration-150 group-hover:text-accent";
+const linkClass =
+  "group flex flex-col justify-between gap-2.5 border border-border bg-bg p-5 transition-colors hover:bg-surface";
 
 /** 上一篇（更早）在左，下一篇（更新）在右；移动端上下排列 */
 export function PostPager({
@@ -26,21 +22,18 @@ export function PostPager({
         <Link
           href={`/writing/${previous.slug}`}
           rel="prev"
-          className={cardClass}
+          className={linkClass}
         >
-          <span className={labelClass}>
-            <ArrowLeftIcon className="size-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
-            <span>更早一篇</span>
-            <span className="ml-auto tabular-nums text-fg-muted">
-              {formatDate(previous.date)}
+          <span className="flex items-center justify-between gap-2 font-mono text-micro text-fg-muted">
+            <span className="inline-flex items-center gap-1.5">
+              <ArrowLeftIcon className="size-3.5 transition-transform duration-150 group-hover:-translate-x-0.5" />
+              <span>PREVIOUS</span>
             </span>
+            <span className="tabular-nums">{previous.date}</span>
           </span>
-          <div>
-            <span className={titleClass}>{previous.title}</span>
-            <p className="mt-1.5 line-clamp-1 text-caption text-fg-secondary">
-              {previous.summary}
-            </p>
-          </div>
+          <span className="line-clamp-2 text-label font-semibold text-fg underline-offset-4 group-hover:underline">
+            {previous.title}
+          </span>
         </Link>
       ) : null}
 
@@ -48,23 +41,18 @@ export function PostPager({
         <Link
           href={`/writing/${next.slug}`}
           rel="next"
-          className={`${cardClass} md:col-start-2`}
+          className={`${linkClass} md:col-start-2`}
         >
-          <span className={`${labelClass} justify-between`}>
-            <span className="tabular-nums text-fg-muted">
-              {formatDate(next.date)}
-            </span>
+          <span className="flex items-center justify-between gap-2 font-mono text-micro text-fg-muted">
+            <span className="tabular-nums">{next.date}</span>
             <span className="inline-flex items-center gap-1.5">
-              <span>更新一篇</span>
-              <ArrowRightIcon className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              <span>NEXT</span>
+              <ArrowRightIcon className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
             </span>
           </span>
-          <div className="md:text-right">
-            <span className={titleClass}>{next.title}</span>
-            <p className="mt-1.5 line-clamp-1 text-caption text-fg-secondary">
-              {next.summary}
-            </p>
-          </div>
+          <span className="line-clamp-2 text-label font-semibold text-fg underline-offset-4 group-hover:underline md:text-right">
+            {next.title}
+          </span>
         </Link>
       ) : null}
     </nav>
