@@ -10,9 +10,9 @@ type Props = {
 };
 
 /**
- * 板块 03 · 横向无限画布镜头漫游（Monochrome Architectural Editorial 统一风格）
- * 去掉深蓝霓虹，用纯白/纯黑建筑图纸 + 0px 锐利直角工程站 + 9999px 胶囊导航，
- * 桌面端垂直滚动驱动横向平推 4 座工作站，一条单色 SVG 数据脊线随滚动 1:1 绘制贯穿全轨。
+ * 板块 03 下篇 / 研发与 Agent 协作横向画布漫游（Monochrome Architectural Editorial）
+ * 垂直滚动驱动横向平推 4 座研发工程站：
+ * 01 全栈技术栈与 Electron 架构 → 02 我与 Claude Code 协作方法 → 03 核心并发与播客闭环落地 → 04 真实踩坑与联合排障
  */
 export function InfiniteCanvasTrack({
   viewportRef,
@@ -21,7 +21,7 @@ export function InfiniteCanvasTrack({
   isPinnedDesktop,
   onSelectStation,
 }: Props) {
-  const stations = openflowStory.buildChapters;
+  const { engineeringStory, buildChapters: stations } = openflowStory;
 
   return (
     <section
@@ -43,15 +43,17 @@ export function InfiniteCanvasTrack({
         <div className="mx-auto w-full max-w-[1120px] px-4 sm:px-6 md:px-10 lg:px-12">
           <div className="flex flex-wrap items-baseline justify-between gap-4">
             <div>
+              <p className="font-mono text-micro font-medium tracking-widest text-fg-muted uppercase">
+                ENGINEERING {"//"} TECH STACK &amp; AGENT COLLABORATION
+              </p>
               <h2
                 id="build-heading"
-                className="text-[24px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[32px]"
+                className="mt-1.5 text-[24px] leading-[1.15] font-semibold tracking-[-0.025em] text-fg md:text-[32px]"
               >
-                确定形态之后：穿行 OpenFlow 无限画布
+                {engineeringStory.heading}
               </h2>
               <p className="mt-2 max-w-2xl text-balance text-label leading-relaxed text-fg-secondary md:text-[15px]">
-                需求拆解驱动 Claude Code（Vibe
-                Coding），把痛点逐一改造成桌面端节点流水线。
+                {engineeringStory.lead}
               </p>
             </div>
             <div className="font-mono text-micro tracking-wider text-fg-muted uppercase tabular-nums">
@@ -63,7 +65,7 @@ export function InfiniteCanvasTrack({
           {/* 4 站胶囊跳点导航 */}
           <div
             role="tablist"
-            aria-label="画布建造阶段"
+            aria-label="研发与协作阶段"
             className="mt-4 flex flex-wrap gap-2"
           >
             {stations.map((station, idx) => {
@@ -120,20 +122,20 @@ export function InfiniteCanvasTrack({
               />
             </svg>
 
-            {/* 站点 1：Electron 全栈桌面端与 12 人零门槛分发 */}
-            <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border bg-bg p-6 sm:p-7 lg:w-[min(86vw,56rem)]">
+            {/* 站点 01：用了什么技术栈（4 层全栈架构 + 双端发布产物） */}
+            <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border bg-bg p-6 sm:p-7 lg:w-[min(86vw,58rem)]">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
-                <div className="space-y-3 lg:col-span-6">
+                <div className="space-y-3 lg:col-span-5">
                   <div className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
                     01 {"//"} {stations[0].version}
                   </div>
-                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[26px]">
+                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[25px]">
                     {stations[0].title}
                   </h3>
                   <p className="text-label leading-[1.7] text-fg-secondary">
                     {stations[0].summary}
                   </p>
-                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.65] text-fg-secondary">
+                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.62] text-fg-secondary">
                     {stations[0].bullets.map((b) => (
                       <li key={b} className="flex items-start gap-2.5">
                         <span
@@ -148,39 +150,44 @@ export function InfiniteCanvasTrack({
                   </ul>
                 </div>
 
-                <div className="space-y-3 lg:col-span-6">
-                  <div className="border border-border bg-surface p-4">
-                    <div className="font-mono text-micro tracking-wider text-fg-muted uppercase">
-                      ELECTRON 主进程内嵌全栈服务
-                    </div>
-                    <div className="mt-2.5 grid grid-cols-2 gap-2 font-mono text-micro text-fg">
-                      <div className="border border-border bg-bg p-2.5">
-                        React 19 + React Flow
+                {/* 右侧：四层技术栈规格表 + GitHub Releases 双端产物 */}
+                <div className="space-y-3 lg:col-span-7">
+                  <div className="divide-y divide-border border border-border bg-surface">
+                    {engineeringStory.techLayers.map((row) => (
+                      <div
+                        key={row.layer}
+                        className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-12 sm:items-baseline sm:gap-3"
+                      >
+                        <span className="font-mono text-micro tracking-wider text-fg-muted sm:col-span-3">
+                          {row.layer}
+                        </span>
+                        <div className="sm:col-span-9">
+                          <div className="font-mono text-caption font-semibold text-fg">
+                            {row.stack}
+                          </div>
+                          <div className="mt-0.5 text-micro text-fg-secondary">
+                            {row.note}
+                          </div>
+                        </div>
                       </div>
-                      <div className="border border-border bg-bg p-2.5">
-                        Hono + SQLite 本地库
-                      </div>
-                    </div>
-                    <p className="mt-2.5 font-mono text-micro text-fg-secondary">
-                      内网安全调用 · req_from 署名 · 统一接入 6+ 多模态模型
-                    </p>
+                    ))}
                   </div>
 
-                  <div className="border border-border bg-surface p-4 font-mono text-micro tabular-nums">
+                  <div className="border border-border bg-surface px-4 py-3 font-mono text-micro tabular-nums">
                     <div className="flex items-center justify-between text-fg-muted">
-                      <span>GITHUB RELEASES v1.4.0</span>
-                      <span className="text-fg">双击安装 · 自动更新</span>
+                      <span>GITHUB ACTIONS 自动构建产物（v1.4.0）</span>
+                      <span className="text-fg">双击即装</span>
                     </div>
-                    <div className="mt-2.5 divide-y divide-border border-t border-border">
+                    <div className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-3">
                       {openflowStory.releaseArtifacts.map((asset) => (
                         <div
                           key={asset.name}
-                          className="flex items-center justify-between gap-2 py-2 text-fg"
+                          className="border border-border bg-bg px-2.5 py-1.5"
                         >
-                          <span className="truncate">{asset.name}</span>
-                          <span className="shrink-0 text-fg-muted">
-                            {asset.size}
-                          </span>
+                          <div className="truncate font-semibold text-fg">
+                            {asset.target}
+                          </div>
+                          <div className="text-fg-muted">{asset.size}</div>
                         </div>
                       ))}
                     </div>
@@ -189,20 +196,20 @@ export function InfiniteCanvasTrack({
               </div>
             </article>
 
-            {/* 站点 2：核心破局——1 → N 并发分叉爆发 */}
+            {/* 站点 02：我是怎么和 AI Agent（Claude Code）协作的 */}
             <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border-strong bg-bg p-6 sm:p-7 lg:w-[min(86vw,58rem)]">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
                 <div className="space-y-3 lg:col-span-5">
                   <div className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
                     02 {"//"} {stations[1].version}
                   </div>
-                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[26px]">
+                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[25px]">
                     {stations[1].title}
                   </h3>
                   <p className="text-label leading-[1.7] text-fg-secondary">
                     {stations[1].summary}
                   </p>
-                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.65] text-fg-secondary">
+                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.62] text-fg-secondary">
                     {stations[1].bullets.map((b) => (
                       <li key={b} className="flex items-start gap-2.5">
                         <span
@@ -217,27 +224,106 @@ export function InfiniteCanvasTrack({
                   </ul>
                 </div>
 
-                <div className="lg:col-span-7">
-                  <div className="border border-border bg-surface p-4 sm:p-5">
+                {/* 右侧：人 × Coding Agent 清晰分工矩阵 + v1.0 → v1.4 演进轨 */}
+                <div className="space-y-3 lg:col-span-7">
+                  <div className="grid grid-cols-1 divide-y divide-border border border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+                    <div className="bg-bg p-4">
+                      <div className="font-mono text-micro font-semibold tracking-wider text-fg uppercase">
+                        HUMAN {"//"}{" "}
+                        {engineeringStory.collaborationSplit.humanTitle}
+                      </div>
+                      <ul className="mt-3 space-y-2 text-micro leading-relaxed text-fg-secondary">
+                        {engineeringStory.collaborationSplit.humanItems.map(
+                          (item) => (
+                            <li key={item} className="flex items-start gap-2">
+                              <span
+                                aria-hidden="true"
+                                className="font-mono text-fg"
+                              >
+                                +
+                              </span>
+                              <span>{item}</span>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="bg-ink p-4 text-ink-fg">
+                      <div className="font-mono text-micro font-semibold tracking-wider text-ink-fg uppercase">
+                        AGENT {"//"}{" "}
+                        {engineeringStory.collaborationSplit.agentTitle}
+                      </div>
+                      <ul className="mt-3 space-y-2 text-micro leading-relaxed text-ink-fg/80">
+                        {engineeringStory.collaborationSplit.agentItems.map(
+                          (item) => (
+                            <li key={item} className="flex items-start gap-2">
+                              <span
+                                aria-hidden="true"
+                                className="font-mono text-ink-fg"
+                              >
+                                →
+                              </span>
+                              <span>{item}</span>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* v1.0 → v1.4 迭代里程碑条 */}
+                  <div className="grid grid-cols-2 divide-x divide-y divide-border border border-border bg-surface font-mono text-micro sm:grid-cols-4 sm:divide-y-0">
+                    {engineeringStory.collaborationSplit.milestones.map((m) => (
+                      <div key={m.ver} className="p-3">
+                        <div className="font-semibold text-fg">{m.ver}</div>
+                        <div className="mt-1 leading-snug text-fg-secondary">
+                          {m.desc}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            {/* 站点 03：核心功能落地——1 → N 并发爆发 + 播客分镜与统计 */}
+            <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border bg-bg p-6 sm:p-7 lg:w-[min(86vw,58rem)]">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
+                <div className="space-y-3 lg:col-span-5">
+                  <div className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
+                    03 {"//"} {stations[2].version}
+                  </div>
+                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[25px]">
+                    {stations[2].title}
+                  </h3>
+                  <p className="text-label leading-[1.7] text-fg-secondary">
+                    {stations[2].summary}
+                  </p>
+                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.62] text-fg-secondary">
+                    {stations[2].bullets.map((b) => (
+                      <li key={b} className="flex items-start gap-2.5">
+                        <span
+                          aria-hidden="true"
+                          className="font-mono text-fg-muted"
+                        >
+                          —
+                        </span>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="space-y-3 lg:col-span-7">
+                  <div className="border border-border bg-surface p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-micro">
                       <span className="font-semibold text-fg">
-                        @ 资产直连 Prompt → 1 次 N 条并发入队
+                        @ 资产直连 → 1 次 N 条并发入队
                       </span>
-                      <span className="text-fg-muted">6 路并发执行</span>
+                      <span className="text-fg-muted">6 路并行生成</span>
                     </div>
-                    <p className="mt-2.5 border border-border bg-bg px-3 py-2.5 font-mono text-micro leading-relaxed text-fg-secondary">
-                      参考{" "}
-                      <span className="inline-block whitespace-nowrap border border-border-strong bg-surface px-1.5 py-0.5 text-fg">
-                        @半拿铁双人全画面.jpg
-                      </span>{" "}
-                      与{" "}
-                      <span className="inline-block whitespace-nowrap border border-border-strong bg-surface px-1.5 py-0.5 text-fg">
-                        @刘飞.wav
-                      </span>{" "}
-                      框选批量连线直达下游节点
-                    </p>
-
-                    <div className="mt-3.5 grid grid-cols-1 gap-2 font-mono text-micro tabular-nums sm:grid-cols-2">
+                    <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-micro tabular-nums sm:grid-cols-3">
                       {[
                         { seg: "Seg 01", status: "可用", tone: "bg-fg" },
                         { seg: "Seg 02", status: "可用", tone: "bg-fg" },
@@ -256,17 +342,17 @@ export function InfiniteCanvasTrack({
                       ].map((lane) => (
                         <div
                           key={lane.seg}
-                          className="border border-border bg-bg p-2.5"
+                          className="border border-border bg-bg p-2"
                         >
-                          <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center justify-between gap-1">
                             <span className="font-semibold text-fg">
                               {lane.seg}
                             </span>
-                            <span className="whitespace-nowrap text-fg-muted">
+                            <span className="truncate text-fg-muted">
                               {lane.status}
                             </span>
                           </div>
-                          <div className="mt-2 h-1.5 overflow-hidden bg-surface-recessed">
+                          <div className="mt-1.5 h-1.5 overflow-hidden bg-surface-recessed">
                             <div
                               className={`parallel-surge-bar h-full origin-left ${lane.tone}`}
                             />
@@ -275,99 +361,34 @@ export function InfiniteCanvasTrack({
                       ))}
                     </div>
                   </div>
-                </div>
-              </div>
-            </article>
 
-            {/* 站点 3：播客脚本流水线、画布 Agent 与生成统计 */}
-            <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border bg-bg p-6 sm:p-7 lg:w-[min(86vw,56rem)]">
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
-                <div className="space-y-3 lg:col-span-5">
-                  <div className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
-                    03 {"//"} {stations[2].version}
-                  </div>
-                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[26px]">
-                    {stations[2].title}
-                  </h3>
-                  <p className="text-label leading-[1.7] text-fg-secondary">
-                    {stations[2].summary}
-                  </p>
-                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.65] text-fg-secondary">
-                    {stations[2].bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2.5">
-                        <span
-                          aria-hidden="true"
-                          className="font-mono text-fg-muted"
-                        >
-                          —
-                        </span>
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="space-y-3 lg:col-span-7">
-                  <div className="grid grid-cols-3 divide-x divide-border border border-border bg-surface text-center font-mono text-micro">
+                  {/* 真实画布统计面板快照 */}
+                  <div className="grid grid-cols-3 divide-x divide-border border border-border bg-surface font-mono tabular-nums">
                     <div className="p-3">
-                      <div className="text-fg-muted">STEP 01</div>
-                      <div className="mt-1 font-semibold text-fg">脚本切割</div>
-                      <div className="mt-0.5 text-fg-secondary">
-                        4–15s 自动切片
+                      <div className="text-micro text-fg-muted">生成次数</div>
+                      <div className="mt-1 text-title font-bold text-fg">
+                        106
+                      </div>
+                      <div className="text-micro text-fg-secondary">
+                        成功 102 · 失败 4
                       </div>
                     </div>
                     <div className="p-3">
-                      <div className="text-fg-muted">STEP 02</div>
-                      <div className="mt-1 font-semibold text-fg">分镜表格</div>
-                      <div className="mt-0.5 text-fg-secondary">
-                        TSV + 火山 TTS
+                      <div className="text-micro text-fg-muted">视频总秒数</div>
+                      <div className="mt-1 text-title font-bold text-fg">
+                        1028s
+                      </div>
+                      <div className="text-micro text-fg-secondary">
+                        一键复制核算表
                       </div>
                     </div>
                     <div className="p-3">
-                      <div className="text-fg-muted">STEP 03</div>
-                      <div className="mt-1 font-semibold text-fg">一键落成</div>
-                      <div className="mt-0.5 text-fg-secondary">
-                        网格批量节点
+                      <div className="text-micro text-fg-muted">画布 Agent</div>
+                      <div className="mt-1 text-title font-bold text-fg">
+                        Auto
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="border border-border bg-surface p-4 font-mono tabular-nums">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-micro">
-                      <span className="font-semibold text-fg">
-                        v1.4.0 生成统计面板 · 真实画布快照
-                      </span>
-                      <span className="text-fg-muted">一键复制开销汇报</span>
-                    </div>
-                    <div className="mt-3 grid grid-cols-3 divide-x divide-border border border-border bg-bg">
-                      <div className="p-3">
-                        <div className="text-micro text-fg-muted">生成次数</div>
-                        <div className="mt-1 text-title font-bold text-fg">
-                          106
-                        </div>
-                        <div className="text-micro text-fg-secondary">
-                          成功 102 · 失败 4
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <div className="text-micro text-fg-muted">视频秒数</div>
-                        <div className="mt-1 text-title font-bold text-fg">
-                          1028s
-                        </div>
-                        <div className="text-micro text-fg-secondary">
-                          Seedance 1080p
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <div className="text-micro text-fg-muted">
-                          画布 Agent
-                        </div>
-                        <div className="mt-1 text-title font-bold text-fg">
-                          Auto
-                        </div>
-                        <div className="text-micro text-fg-secondary">
-                          自然语言编排
-                        </div>
+                      <div className="text-micro text-fg-secondary">
+                        自然语言编排链路
                       </div>
                     </div>
                   </div>
@@ -375,20 +396,20 @@ export function InfiniteCanvasTrack({
               </div>
             </article>
 
-            {/* 站点 4：504 断线自愈找回与一线体验修复 */}
-            <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border bg-bg p-6 sm:p-7 lg:w-[min(86vw,56rem)]">
+            {/* 站点 04：真实踩坑与人机联合排障 */}
+            <article className="canvas-station relative z-10 flex w-full shrink-0 flex-col justify-between border border-border bg-bg p-6 sm:p-7 lg:w-[min(86vw,58rem)]">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
                 <div className="space-y-3 lg:col-span-5">
                   <div className="font-mono text-micro font-medium tracking-wider text-fg-muted uppercase">
                     04 {"//"} {stations[3].version}
                   </div>
-                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[26px]">
+                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em] text-fg md:text-[25px]">
                     {stations[3].title}
                   </h3>
                   <p className="text-label leading-[1.7] text-fg-secondary">
                     {stations[3].summary}
                   </p>
-                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.65] text-fg-secondary">
+                  <ul className="space-y-2 border-t border-border pt-3 text-label leading-[1.62] text-fg-secondary">
                     {stations[3].bullets.map((b) => (
                       <li key={b} className="flex items-start gap-2.5">
                         <span
@@ -407,7 +428,7 @@ export function InfiniteCanvasTrack({
                   <div className="border border-border bg-surface p-4 font-mono text-micro">
                     <div className="flex flex-wrap items-center justify-between gap-2 text-fg">
                       <span className="font-semibold">
-                        长连接断连「结果找回」闭环
+                        长连接断连「结果找回」机制
                       </span>
                       <span className="text-fg-muted">超时拉长至 30 min</span>
                     </div>

@@ -459,7 +459,7 @@ export function OpenFlowStory() {
                 duration: 0.24,
                 ease: "power2.out",
               },
-              0.2,
+              0.52,
             );
           }
 
